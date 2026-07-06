@@ -1544,10 +1544,10 @@ body {
     position: fixed;
 
 
-    width: 420px;
+    width: 800px;
 
 
-    height: 320px;
+    height: 500px;
 
 
     background: var(--bg-secondary);
@@ -2527,21 +2527,20 @@ select.form-control option {
     }
     .mission-box {
         flex-direction: column;
-        text-align: center;
-        gap: 1.5rem !important;
-    }
-    .mission-box > div:last-child {
-        text-align: center;
-    }
-    .mission-box > div:last-child > div {
         justify-content: center;
-    }
-    .about-content h2 {
+        align-items: center !important;
         text-align: center;
+        padding: 1.5rem !important;
     }
-    .about-content p, .mission-box p {
+    .mission-box > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         text-align: center;
-        font-size: 0.95rem;
+        margin: 0 auto;
+    }
+    .mission-box p {
+        text-align: center !important;
     }
 }
 

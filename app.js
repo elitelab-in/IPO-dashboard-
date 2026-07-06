@@ -96,16 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     if (tooltip.dataset.symbol !== symbol) {
                         const encodedSymbol = encodeURIComponent(symbol);
-                        if (iframe) iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${encodedSymbol}&interval=D&theme=dark&style=1&hide_top_toolbar=1&hide_legend=1&save_image=0&timezone=Asia/Kolkata`;
+                        if (iframe) iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${encodedSymbol}&interval=D&theme=dark&style=1&hide_top_toolbar=0&hide_legend=0&save_image=0&timezone=Asia/Kolkata`;
                         tooltip.dataset.symbol = symbol;
                     }
                     
                     if (!tooltip.classList.contains('visible')) {
-                        let left = e.clientX + 20;
-                        let top = e.clientY - 150;
-                        if (left + 420 > window.innerWidth) left = e.clientX - 440;
+                        let left = e.clientX + 100; // Comfortable 60px gap to the right
+                        let top = e.clientY - 250; // Centered vertically
+                        if (left + 800 > window.innerWidth) left = e.clientX - 860; // Flip to left if no room
                         if (top < 20) top = 20;
-                        if (top + 320 > window.innerHeight) top = window.innerHeight - 340;
+                        if (top + 500 > window.innerHeight) top = window.innerHeight - 520;
                         
                         tooltip.style.left = left + 'px';
                         tooltip.style.top = top + 'px';
