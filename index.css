@@ -2593,3 +2593,27 @@ h1, h2, h3, h4, h5, h6 {
         transform: translateY(0);
     }
 }
+
+@media (max-width: 768px) {
+    .copyright-desktop {
+        display: none !important;
+    }
+    .copyright-mobile {
+        display: block !important;
+        text-align: center;
+        margin-top: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-secondary);
+    }
+}
+@media (min-width: 769px) {
+    .copyright-mobile {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem !important;
+    }
+}
