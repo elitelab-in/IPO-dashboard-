@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elitelab - Fundamentals Deep Dive</title>
+    <meta name="description" content="Elitelab Stock Fundamentals">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="index.css?v=29">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for the price chart and bar charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        .search-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 50px;
+        }
+        
+        /* Fundamental Dashboard specific layout */
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+        }
+        .stock-title h2 {
+            font-size: 2rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .stock-symbol-badge {
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+        .stock-price {
+            text-align: right;
+        }
+        .stock-price .price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .stock-price .change {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .change.positive { color: #22c55e; }
+        .change.negative { color: #ef4444; }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            position: relative;
+            white-space: nowrap;
+        }
+        .tab.active {
+            color: var(--accent-primary);
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-primary);
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        /* Overview layout */
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-card-icon {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+        .stat-title {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        /* Table overrides for financials */
+        .financial-table th { background: transparent; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .financial-table td { font-weight: 400; }
+        .financial-table tr:hover { background: rgba(255,255,255,0.02); }
+        
+        #initial-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        #initial-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        #error-state {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        #dashboard-data { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">AI Auto Screener</a>
+                <a href="/indian-market-news" class="nav-link">Top Stories</a>
+                <a href="/articles" class="nav-link">Articles</a>
+                <a href="/about" class="nav-link">About Us</a>
+                <div class="market-status-widget mobile-only"></div>
+                
+            </div>
+            <div class="nav-actions">
+                <div class="market-status-widget desktop-only"></div>
+                
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Section -->
+    <main class="container dashboard-container" style="padding-top: 2rem;">
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="stock-search" class="search-input" placeholder="Search a stock (e.g., RELIANCE.NS, TATAMOTORS.NS)">
+            <button class="btn btn-primary btn-sm search-btn" id="search-submit">Analyze</button>
+        </div>
+        
+        <div class="glass-panel" style="min-height: 400px;">
+            
+            <div id="initial-state">
+                <i class="fa-solid fa-chart-pie"></i>
+                <h3>Fundamental Deep Dive</h3>
+                <p>Enter a stock symbol above (e.g. INFY.NS for Infosys) to load its complete financial dashboard.</p>
+            </div>
+            
+            <div id="loading-state" class="loading-state" style="display: none; padding: 4rem 0;">
+                <div class="spinner"></div>
+                <p>Crunching financial data...</p>
+            </div>
+            
+            <div id="error-state">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                <h3 id="error-message">Could not find stock data</h3>
+                <p>Please check the symbol and try again.</p>
+            </div>
+            
+            <div id="dashboard-data">
+                <div class="stock-header">
+                    <div class="stock-title">
+                        <h2 id="stock-name">Reliance Industries <span class="stock-symbol-badge" id="stock-symbol">RELIANCE.NS</span></h2>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;" id="stock-sector">Energy</span>
+                    </div>
+                    <div class="stock-price">
+                        <p class="price" id="live-price">₹0.00</p>
+                        <p class="change positive" id="live-change"><i class="fa-solid fa-caret-up"></i> 0.00%</p>
+                    </div>
+                </div>
+                
+                <div class="nav-tabs">
+                    <div class="tab active" data-target="overview">Overview</div>
+                    <div class="tab" data-target="financials">Financials</div>
+                    <div class="tab" data-target="holdings">Holdings</div>
+                    <div class="tab" data-target="dividends">Events</div>
+                </div>
+                
+                <!-- Overview Tab -->
+                <div class="tab-content active" id="overview">
+                    <div class="chart-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                    <div class="stats-grid" id="overview-stats">
+                        <div class="stat-card">
+                            <i class="fa-solid fa-building stat-card-icon"></i>
+                            <span class="stat-title">Market Cap</span>
+                            <span class="stat-value" id="stat-mcap">-</span>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-scale-balanced stat-card-icon"></i>
+                            <span class="stat-title">P/E Ratio</span>
+                            <span class="stat-value" id="stat-pe">-</span>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-chart-line stat-card-icon"></i>
+                            <span class="stat-title">EPS (TTM)</span>
+                            <span class="stat-value" id="stat-eps">-</span>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-bolt stat-card-icon"></i>
+                            <span class="stat-title">52W High</span>
+                            <span class="stat-value" id="stat-high">-</span>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-book stat-card-icon"></i>
+                            <span class="stat-title">P/B Ratio</span>
+                            <span class="stat-value" id="stat-pb">-</span>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fa-solid fa-coins stat-card-icon"></i>
+                            <span class="stat-title">Div Yield</span>
+                            <span class="stat-value" id="stat-yield">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financials Tab -->
+                <div class="tab-content" id="financials">
+                    <h3 style="margin-bottom: 1rem;">Income Statement</h3>
+                    <div class="table-responsive">
+                        <table class="data-table financial-table">
+                            <thead>
+                                <tr id="financial-headers">
+                                    <th>Metric</th>
+                                    <!-- Dynamic quarters -->
+                                </tr>
+                            </thead>
+                            <tbody id="financial-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Holdings Tab -->
+                <div class="tab-content" id="holdings">
+                    <div style="margin-bottom: 1.5rem;">
+                        <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Shareholding History</h2>
+                        <select id="holdings-type-select" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.7rem 1rem; border-radius: 6px; font-family: 'Poppins', sans-serif; outline: none; width: 100%; max-width: 300px; font-size: 1rem; cursor: pointer; appearance: none;">
+                            <option value="promoters" style="background: #0f172a;">Total Promoter Holding</option>
+                            <option value="mutual_funds" style="background: #0f172a;">Mutual Funds</option>
+                            <option value="fii" selected style="background: #0f172a;">Foreign Institutions</option>
+                            <option value="retail" style="background: #0f172a;">Retail and Others</option>
+                        </select>
+                    </div>
+                    <div class="chart-container" style="height: 350px; background: transparent; padding: 0;">
+                        <canvas id="holdingsChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Events Tab (Dividends) -->
+                <div class="tab-content" id="dividends">
+                    <h3 style="margin-bottom: 1rem;">Upcoming & Recent Dividends</h3>
+                    <div class="table-responsive">
+                        <table class="data-table financial-table">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Amount (₹)</th>
+                                    <th>Ex-Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dividends-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p>&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script src="fundamentals.js?v=1"></script>
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+    </script>
+    <script src="market-status.js?v=7"></script>
+</body>
+</html>

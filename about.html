@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elitelab - About Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="index.css?v=29">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .about-content {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        .about-content h2 {
+            color: var(--text-primary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .mission-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--accent-primary);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            position: relative;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+        }
+        .mission-box::before {
+            content: "\f10d";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            padding: 0 10px;
+            font-size: 1.5rem;
+        }
+        .mission-box p {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-style: italic;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">AI Auto Screener</a>
+                <a href="/indian-market-news" class="nav-link">Top Stories</a>
+                <a href="/articles" class="nav-link">Articles</a>
+                <a href="/about" class="nav-link active">About Us</a>
+                <div class="market-status-widget mobile-only"></div>
+                
+            </div>
+            <div class="nav-actions">
+                <div class="market-status-widget desktop-only"></div>
+                
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <!-- Hero Section -->
+    <header class="hero text-center" style="padding: 4rem 0 2rem;">
+        <div class="container hero-content">
+            <h1 class="hero-title">
+                Elitelab<span class="highlight-text">.in</span>
+            </h1>
+            <p class="hero-subtitle">
+                Empowering Indian traders with next-generation algorithmic tools.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Section -->
+    <main class="container dashboard-container" style="display: flex; justify-content: center; padding-bottom: 4rem;">
+        <div class="glass-panel" style="width: 100%; max-width: 800px; padding: 3rem;">
+            <div class="about-content">
+                
+                <div class="mission-box" style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                    <div style="flex-shrink: 0; width: 150px; height: 150px; border-radius: 50%; background-color: rgba(139, 92, 246, 0.1); border: 2px solid var(--accent-primary); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="abhishek_jalal.png" alt="Abhishek Jalal" style="width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scale(0.95) translateY(5px);">
+                    </div>
+                    <div style="flex: 1; min-width: 250px;">
+                        <p>"Hi, I'm <span style="color: var(--accent-primary); font-weight: 700;">Abhishek Jalal</span>, founder of <span style="color: var(--accent-primary); font-weight: 700;">Elitelab.in</span>. With over 3 years of trading experience, I built this platform to cut through the noise and make profitable trading accessible and easy for everyday retail traders."</p>
+                        <div style="margin-top: 1rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                            <a href="https://www.instagram.com/abhishek.jalal/" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+                                <i class="fa-brands fa-instagram" style="font-size: 1.2rem;"></i> Instagram
+                            </a>
+                            <a href="https://www.linkedin.com/in/abhishek-jalal/" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease;" onmouseover="this.style.color='#0a66c2'" onmouseout="this.style.color='var(--text-secondary)'">
+                                <i class="fa-brands fa-linkedin" style="font-size: 1.2rem;"></i> LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Who We Are</h2>
+                <p>Elitelab was born out of a simple frustration: discovering high-probability swing trade setups in the vast Indian stock market was too time-consuming, and existing tools were either overly complicated or prohibitively expensive.</p>
+                <p>We are a dedicated team of market enthusiasts, data engineers, and algorithmic traders who decided to build the solution we always wanted. By combining live data feeds with proprietary filtering algorithms—like our signature IPO Base screener—we cut through the noise to deliver actionable insights directly to your dashboard.</p>
+
+                <h2>What We Do</h2>
+                <p>We focus on one core philosophy: <strong>Quality over Quantity</strong>. Our algorithms scan thousands of equities across the NSE and BSE to identify unique setups, specifically focusing on newly listed companies forming solid bases. We aim to help you catch the next big breakout before it hits mainstream news.</p>
+
+                <h2>Join the Revolution</h2>
+                <p>Whether you're a seasoned professional or a passionate part-time trader, Elitelab is designed to be your edge in the markets. With real-time Top Stories, instant Push Notification alerts, and robust fundamental scans on the horizon, we're just getting started.</p>
+                
+                <div style="margin-top: 3rem; text-align: center;">
+                    <a href="/contact" class="btn btn-primary">🎧 Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p>&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script src="app.js?v=33"></script>
+    <script src="market-status.js?v=7"></script>
+</body>
+</html>
+
+
