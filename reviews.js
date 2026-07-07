@@ -102,12 +102,5 @@ function switchToReview(index) {
 
 function updateMainCard(review) {
     document.getElementById('review-screenshot').src = review.screenshot;
-    document.getElementById('review-name').textContent = review.name + ' Trade';
-    document.getElementById('review-strategy').textContent = `Strategy: ${review.strategy}`;
     document.getElementById('review-metric').textContent = review.metric + ' Profit';
-
-    const avatarLarge = document.getElementById('review-avatar-large');
-    avatarLarge.innerHTML = review.logo
-        ? `<img src="${review.logo}" alt="${review.name}" onerror="this.textContent='${review.initials}'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
-        : review.initials;
 }
