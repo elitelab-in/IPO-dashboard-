@@ -260,7 +260,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelector('.nav-links');
     if (mobileMenuBtn && navLinks) {
         mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+            const isActive = navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) {
+                icon.className = isActive ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+            }
+            document.body.style.overflow = isActive ? 'hidden' : '';
+        });
+        // Close menu when a nav link is clicked
+        navLinks.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = mobileMenuBtn.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-bars';
+                document.body.style.overflow = '';
+            });
         });
     }
 

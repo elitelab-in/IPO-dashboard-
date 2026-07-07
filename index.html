@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elitelab - IPO Base Dashboard</title>
     <meta name="description" content="Elitelab IPO Base Screener Dashboard">
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    
+    
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="index.css?v=51">
+    <link rel="stylesheet" href="index.css?v=58">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Navbar -->
+        <!-- Navbar -->
     <nav class="nav glass">
         <div class="container nav-inner">
-            <a href="#" class="logo" aria-label="Elitelab Home">
+            <a href="/" class="logo" aria-label="Elitelab Home">
                 <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
                     <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
-                    <text x="14" y="27" fill="#FFFFFF" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">Elite</text>
-                    <text x="40" y="48" fill="#E2E8F0" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
                 </svg>
             </a>
             <div class="nav-links">
-                <a href="/" class="nav-link active">AI Auto Screener</a>
-                <a href="/indian-market-news" class="nav-link">Top Stories</a>
-                <a href="/articles" class="nav-link">Articles</a>
-                <a href="/about" class="nav-link">About Us</a>
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/screener" class="nav-link ">AI Auto Screener</a>
+                <a href="/indian-market-news" class="nav-link ">Top Stories</a>
+                <a href="/about" class="nav-link ">About Us</a>
                 <div class="market-status-widget mobile-only"></div>
-                
             </div>
             <div class="nav-actions">
                 <div class="market-status-widget desktop-only"></div>
-                
                 <button class="mobile-menu-btn" aria-label="Toggle Menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>
@@ -51,66 +50,110 @@
             <p class="hero-subtitle fade-in-up delay-1">
                 Advanced Algorithmic Scan. Let <span style="color: #FFFFFF; font-weight: 600;">Elitelab</span><span style="color: var(--accent-primary); font-weight: 600;">.in</span> discover the optimal stocks for your next swing trade.
             </p>
-                </div>
-    </header>
-
-    <!-- Main Dashboard Section -->
-    <main class="container dashboard-container">
-
-        <div class="glass-panel">
-            <div class="panel-header">
-                <div class="window-controls">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                
-                <div class="status-indicator">
-                    <span class="ping"></span>
-                    <span id="scan-status">Live</span>
-                </div>
-            </div>
-            
-            <!-- Quick Stats Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;">
-                    <i class="fa-solid fa-satellite-dish" style="font-size: 1.5rem; color: var(--accent-primary); margin-bottom: 0.5rem;"></i>
-                    <span style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.2rem;">Total Scanned Stocks</span>
-                    <span style="font-size: 1.2rem; font-weight: 600;" id="stat-total-scanned">0</span>
-                </div>
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;">
-                    <i class="fa-solid fa-chart-pie" style="font-size: 1.5rem; color: #f59e0b; margin-bottom: 0.5rem;"></i>
-                    <span style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.2rem;">Top Sectors</span>
-                    <span style="font-size: 0.95rem; font-weight: 500; line-height: 1.5; color: var(--text-primary);" id="stat-top-sector">Calculating...</span>
-                </div>
-            </div>
-            
-            <div class="table-responsive">
-                <table class="data-table" id="results-table">
-                    <thead>
-                        <tr>
-                            <th>Symbol</th>
-                            <th>Company Name</th>
-                            <th>LTP</th>
-                            <th>% Chg</th>
-                            <th>Volume</th>
-                            <th>Sector</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <!-- Data will be populated here by app.js -->
-                    </tbody>
-                </table>
-                <div id="loading-state" class="loading-state">
-                    <div class="spinner"></div>
-                    <p>Scanning markets...</p>
-                </div>
-                
-                <!-- Pagination Controls -->
-                <div id="pagination-controls" class="pagination-controls"></div>
+            <div class="fade-in-up delay-2" style="margin-top: 2.5rem; display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;">
+                <a href="/screener" class="btn btn-primary" style="padding: 0.9rem 2.2rem; font-size: 1.1rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 600; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4); border: none;">
+                    <i class="fa-solid fa-bolt"></i> Launch AI Screener
+                </a>
+                <a href="/about" class="btn btn-secondary" style="padding: 0.9rem 2.2rem; font-size: 1.1rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 600; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                    Learn More
+                </a>
             </div>
         </div>
-    </main>
+    </header>
+
+    
+
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="features-header text-center">
+                <span class="features-eyebrow">Everything you need</span>
+                <h2 class="features-title">The complete algorithmic<br><span class="features-title-gradient">trading platform</span></h2>
+                <p class="features-desc">From automated stock screening to advanced analytics to smart alerts — <strong>Elitelab</strong> is the only platform serious swing traders need.</p>
+            </div>
+            <div class="features-cards-grid">
+                <!-- Card 1: AI Auto Screener -->
+                <div class="feature-card glass-panel">
+                    <div class="feature-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-card-title">AI Auto Screener</h3>
+                    <p class="feature-card-desc">Advanced algorithmic stock screening powered by AI — scans 1500+ NSE stocks in real-time to identify the best swing trade setups automatically.</p>
+                </div>
+                <!-- Card 2: Real-Time Analytics -->
+                <div class="feature-card glass-panel">
+                    <div class="feature-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+                            <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+                            <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+                            <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+                        </svg>
+                    </div>
+                    <h3 class="feature-card-title">Real-Time Analytics</h3>
+                    <p class="feature-card-desc">Comprehensive dashboard with live charts, technical indicators, and fundamental data — everything you need at a glance to make informed decisions.</p>
+                </div>
+                <!-- Card 3: Smart Alerts -->
+                <div class="feature-card glass-panel">
+                    <div class="feature-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-card-title">Smart Alerts</h3>
+                    <p class="feature-card-desc">Customizable price and technical indicator alerts delivered instantly — never miss a breakout or entry opportunity on your watchlist again.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section container fade-in-up delay-2">
+        <div class="reviews-header text-center">
+            <span class="reviews-subtitle">TRUSTED BY TRADERS</span>
+            <h2 class="reviews-title">Real trades. Real results.<br><span style="color: var(--accent-primary);">Real money.</span></h2>
+        </div>
+
+        <div class="reviews-container">
+            <!-- Main Review Card -->
+            <div class="review-card glass-panel" id="main-review-card">
+                <div class="review-metric" id="review-metric" style="text-align: center; margin-bottom: 1rem; font-size: 2.5rem; color: #10B981; font-weight: 800; font-family: 'DM Sans', sans-serif;">₹4,729</div>
+                <div class="review-screenshot-container" style="margin-bottom: 2rem; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                    <img id="review-screenshot" src="review1.jpg" alt="" style="width: 100%; display: block;">
+                </div>
+                
+                <div class="review-author-area">
+                    <div class="author-info-left">
+                        <div class="author-avatar-large" id="review-avatar-large">HEX</div>
+                        <div class="author-details">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <h4 class="author-name" id="review-name">Hexaware Trade</h4>
+                                <span class="verified-badge"><i class="fa-solid fa-check"></i> Verified</span>
+                            </div>
+                            <span class="author-strategy" id="review-strategy">Strategy: SWING TRADE</span>
+                        </div>
+                    </div>
+                    <div class="author-stars">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviewer Navigation Pills -->
+            <div class="reviewer-pills-container" id="reviewer-pills">
+                <!-- Pills injected by JS -->
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -119,8 +162,8 @@
                 <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
                     <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
                         <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
-                        <text x="14" y="27" fill="#FFFFFF" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">Elite</text>
-                        <text x="40" y="48" fill="#E2E8F0" font-family="'Poppins', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
                     </svg>
                 </a>
                 
@@ -158,6 +201,7 @@
 
     <script src="app.js?v=3"></script>
     <script src="market-status.js?v=7"></script>
+    <script src="reviews.js?v=8"></script>
 </body>
 </html>
 
