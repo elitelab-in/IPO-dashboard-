@@ -3109,4 +3109,11 @@ h1, h2, h3, h4, h5, h6 {
     .reviewer-pills-container {
         gap: 0.5rem;
     }
+    .reviews-section {
+        padding: 4rem 0 2rem 0 !important;
+    }
+    .contact-section {
+        margin-top: 3rem !important;
+        padding-top: 2rem !important;
+    }
 }
