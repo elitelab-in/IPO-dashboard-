@@ -4,6 +4,10 @@
     {
       "src": "server.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "**/*.{html,css,js,png,jpg,jpeg,svg,gif,ico}",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -17,6 +21,7 @@
     { "src": "/article", "dest": "server.py" },
     { "src": "/privacy", "dest": "server.py" },
     { "src": "/terms", "dest": "server.py" },
-    { "src": "/fundamentals", "dest": "server.py" }
+    { "src": "/fundamentals", "dest": "server.py" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
