@@ -50,11 +50,11 @@
             <p class="hero-subtitle fade-in-up delay-1">
                 Advanced Algorithmic Scan. Let <span style="color: #FFFFFF; font-weight: 600;">Elitelab</span><span style="color: var(--accent-primary); font-weight: 600;">.in</span> discover the optimal stocks for your next swing trade.
             </p>
-            <div class="fade-in-up delay-2" style="margin-top: 2.5rem; display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;">
-                <a href="/screener" class="btn btn-primary" style="padding: 0.9rem 2.2rem; font-size: 1.1rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 600; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4); border: none;">
+            <div class="fade-in-up delay-2" style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap;">
+                <a href="/screener" class="btn btn-primary" style="padding: 0.6rem 1.4rem; font-size: 0.9rem; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4); border: none;">
                     <i class="fa-solid fa-bolt"></i> Launch AI Screener
                 </a>
-                <a href="/about" class="btn btn-secondary" style="padding: 0.9rem 2.2rem; font-size: 1.1rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 600; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                <a href="/about" class="btn btn-secondary" style="padding: 0.6rem 1.4rem; font-size: 0.9rem; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
                     Learn More
                 </a>
             </div>
@@ -155,6 +155,55 @@
         </div>
     </section>
 
+    <!-- Contact Us Section -->
+    <section class="contact-section container fade-in-up delay-3" style="padding: 4rem 1rem 6rem; display: flex; flex-direction: column; align-items: center;">
+        <div class="reviews-header text-center" style="margin-bottom: 2.5rem; width: 100%;">
+            <span class="reviews-subtitle">CONTACT SUPPORT</span>
+            <h2 class="reviews-title">Have Questions? <span style="color: var(--accent-primary);">Get In Touch</span></h2>
+            <p style="color: var(--text-secondary); max-width: 580px; margin: 1rem auto 0; font-size: 0.95rem; line-height: 1.6;">
+                We're here to help you navigate the markets. Fill out the form below, or email us directly at <a href="mailto:Elitelab.in@gmail.com" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">Elitelab.in@gmail.com</a>
+            </p>
+        </div>
+        
+        <div class="glass-panel contact-form-container" style="width: 100%; max-width: 600px;">
+            <div data-fs-success style="display:none; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; border: 1px solid rgba(16, 185, 129, 0.2);">
+                Message sent successfully! We will get back to you soon.
+            </div>
+            <div data-fs-error style="display:none; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; border: 1px solid rgba(239, 68, 68, 0.2);"></div>
+
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required placeholder="John Doe" data-fs-field>
+                    <span data-fs-error="name" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" required placeholder="john@example.com" data-fs-field>
+                    <span data-fs-error="email" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject" name="subject" class="form-control" required data-fs-field>
+                        <option value="" disabled selected>Select a subject</option>
+                        <option value="general">General Inquiry</option>
+                        <option value="technical">Technical Support</option>
+                        <option value="feedback">Feedback</option>
+                    </select>
+                    <span data-fs-error="subject" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" class="form-control" rows="5" required placeholder="How can we help you?" data-fs-field></textarea>
+                    <span data-fs-error="message" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem; display: block;"></span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;" data-fs-submit-btn>
+                    Send Message <i class="fa-solid fa-paper-plane" style="margin-left: 0.5rem;"></i>
+                </button>
+            </form>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container footer-content">
@@ -199,6 +248,11 @@
         <iframe id="chart-iframe" src="" frameborder="0" scrolling="no"></iframe>
     </div>
 
+    <script>
+        window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+        formspree('initForm', { formElement: '#contact-form', formId: 'mvzjlrda' });
+    </script>
+    <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
     <script src="app.js?v=3"></script>
     <script src="market-status.js?v=7"></script>
     <script src="reviews.js?v=8"></script>

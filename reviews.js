@@ -2,8 +2,7 @@ const reviewsData = [
     {
         id: 1,
         initials: "HEX",
-        logo: "https://assets.smallcase.com/images/smallplaces/200/HEXAWARE.png",
-        logoFallback: "https://storage.googleapis.com/kite-app-assets-public/kite-app/1.54.0/static/media/HEXAWARE.svg",
+        logo: "logo_hexaware.png",
         name: "Hexaware",
         metric: "₹4,729",
         strategy: "SWING TRADE",
@@ -12,7 +11,7 @@ const reviewsData = [
     {
         id: 2,
         initials: "SUZ",
-        logo: "https://assets.smallcase.com/images/smallplaces/200/SUZLON.png",
+        logo: "logo_suzlon.png",
         name: "Suzlon",
         metric: "₹6,795",
         strategy: "BREAKOUT",
@@ -21,7 +20,7 @@ const reviewsData = [
     {
         id: 3,
         initials: "ANR",
-        logo: "https://assets.smallcase.com/images/smallplaces/200/ANANTRAJ.png",
+        logo: "logo_anantraj.png",
         name: "Anant Raj",
         metric: "₹7,409",
         strategy: "IPO BASE",
@@ -30,7 +29,7 @@ const reviewsData = [
     {
         id: 4,
         initials: "RED",
-        logo: "https://assets.smallcase.com/images/smallplaces/200/REDTAPE.png",
+        logo: "logo_redtape.png",
         name: "Redtape",
         metric: "₹8,793",
         strategy: "MOMENTUM",
@@ -82,7 +81,7 @@ function startAutoPlay() {
     autoInterval = setInterval(() => {
         currentIndex = (currentIndex + 1) % reviewsData.length;
         switchToReview(currentIndex);
-    }, 1500); // 1 second visible + 300ms fade + 200ms buffer = 1.5s total
+    }, 2500); // 2.5 seconds total interval
 }
 
 function switchToReview(index) {
