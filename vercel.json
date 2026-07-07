@@ -1,16 +1,22 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.py" },
-    { "source": "/", "destination": "/api/index.py" },
-    { "source": "/screener", "destination": "/api/index.py" },
-    { "source": "/about", "destination": "/api/index.py" },
-    { "source": "/contact", "destination": "/api/index.py" },
-    { "source": "/indian-market-news", "destination": "/api/index.py" },
-    { "source": "/articles", "destination": "/api/index.py" },
-    { "source": "/article", "destination": "/api/index.py" },
-    { "source": "/privacy", "destination": "/api/index.py" },
-    { "source": "/terms", "destination": "/api/index.py" },
-    { "source": "/fundamentals", "destination": "/api/index.py" }
+  "builds": [
+    {
+      "src": "server.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "server.py" },
+    { "src": "/", "dest": "server.py" },
+    { "src": "/screener", "dest": "server.py" },
+    { "src": "/about", "dest": "server.py" },
+    { "src": "/contact", "dest": "server.py" },
+    { "src": "/indian-market-news", "dest": "server.py" },
+    { "src": "/articles", "dest": "server.py" },
+    { "src": "/article", "dest": "server.py" },
+    { "src": "/privacy", "dest": "server.py" },
+    { "src": "/terms", "dest": "server.py" },
+    { "src": "/fundamentals", "dest": "server.py" }
   ]
 }

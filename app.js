@@ -331,6 +331,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Live Stock Ticker Fetch
+    const fetchTickerData = async () => {
+        const track = document.getElementById('ticker-track');
+        if (!track) return;
+        
+        try {
+            const response = await fetch('/api/ticker');
+            if (!response.ok) throw new Error('Failed to fetch ticker');
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                track.innerHTML = '';
+                
+                const renderItems = (itemsList) => {
+                    itemsList.forEach(item => {
+                        const isPositive = item.change >= 0;
+                        const sign = isPositive ? '+' : '';
+                        const chgClass = isPositive ? 'positive' : 'negative';
+                        
+                        // Check if it is Sensex or Nifty to omit the Indian Rupee symbol
+                        const isIndex = item.name.includes('NIFTY') || item.name.includes('SENSEX');
+                        const currencySymbol = isIndex ? '' : '₹';
+                        
+                        const div = document.createElement('div');
+                        div.className = 'ticker-item';
+                        div.innerHTML = `
+                            <span class="ticker-name">${item.name}</span>
+                            <span class="ticker-change ${chgClass}">${sign}${item.change}%</span>
+                        `;
+                        track.appendChild(div);
+                    });
+                };
+                
+                renderItems(data);
+                renderItems(data);
+            }
+        } catch (err) {
+            console.error('Error loading live ticker:', err);
+        }
+    };
+
     // Initial load
     if (tableBody) fetchScreenerData();
+    fetchTickerData();
 });
