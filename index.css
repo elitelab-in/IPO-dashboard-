@@ -1443,7 +1443,7 @@ body {
     .hero {
 
 
-        padding: 4rem 1.5rem 2rem;
+        padding: 4rem 1rem 2rem;
 
 
     }
@@ -1482,7 +1482,7 @@ body {
     .dashboard-container {
 
 
-        padding: 0 1.5rem 4rem;
+        padding: 0 1rem 4rem;
 
 
     }
@@ -2743,11 +2743,14 @@ h1, h2, h3, h4, h5, h6 {
     .copyright-mobile {
         display: none !important;
     }
+    .br-mobile {
+        display: none !important;
+    }
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 0 1.5rem !important;
+        padding: 0 1rem !important;
     }
 }
 
@@ -2874,7 +2877,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 768px) {
     .features-section {
-        padding: 3rem 1.5rem 1.5rem;
+        padding: 3rem 1rem 1.5rem;
     }
     .features-header {
         margin-bottom: 2rem;
