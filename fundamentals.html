@@ -9,48 +9,221 @@
     
     
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="index.css?v=58">
+    <link rel="stylesheet" href="index.css?v=60">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js for the price chart and bar charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <style>
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto 3rem auto;
-            position: relative;
+        /* Search Hero CSS (Finology Style) */
+        .search-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: calc(70vh - 100px);
         }
-        .search-input {
-            width: 100%;
-            padding: 1rem 1.5rem 1rem 3rem;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(15, 23, 42, 0.6);
-            color: var(--text-primary);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 1.1rem;
-            outline: none;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+        .search-hero .hero-title {
+            transition: all 0.5s ease;
         }
-        .search-input:focus {
+        .search-hero .hero-subtitle {
+            transition: all 0.5s ease;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-hero .trending-tickers {
+            transition: all 0.5s ease;
+        }
+        .search-box-wrapper input:focus {
             border-color: var(--accent-primary);
             box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
         }
-        .search-icon {
-            position: absolute;
-            left: 1.2rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .trend-pill:hover {
+            background: rgba(139, 92, 246, 0.1) !important;
+            border-color: var(--accent-primary) !important;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Shrunk Search Header state when results are loaded */
+        .has-results .search-hero {
+            min-height: auto;
+            padding: 1.5rem 1rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .has-results .search-hero .hero-title {
+            font-size: 1.5rem !important;
+            margin-bottom: 0 !important;
+        }
+        .has-results .search-hero .hero-subtitle {
+            display: none !important;
+        }
+        .has-results .search-hero .trending-tickers {
+            display: none !important;
+        }
+        .has-results .search-hero .search-box-wrapper {
+            max-width: 550px !important;
+            margin-top: 0.75rem;
+        }
+        .has-results .search-hero .search-box-wrapper input {
+            padding: 0.7rem 1.25rem 0.7rem 2.8rem !important;
+            font-size: 0.95rem !important;
+        }
+        .has-results .search-hero .search-box-wrapper i {
+            font-size: 0.95rem !important;
+            left: 1rem !important;
+        }
+        .has-results .search-hero .search-box-wrapper .btn {
+            padding: 0.4rem 1.1rem !important;
+            font-size: 0.85rem !important;
+            right: 0.35rem !important;
+        }
+
+        /* Momentum Scorecard CSS (copied from intraday.html) */
+        .score-gauge-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 4px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .rating-badge {
+            font-weight: 800;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .rating-very-strong {
+            background: rgba(239, 68, 68, 0.15);
+            color: #F97316;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+        .rating-strong {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .rating-moderate {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .rating-avoid {
+            background: rgba(220, 38, 38, 0.15);
+            color: #EF4444;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        /* Checklist Grid */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .checklist-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .checklist-row-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .checklist-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .checklist-status {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .status-pass {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22C55E;
+        }
+        .status-fail {
+            background: rgba(255, 255, 255, 0.02);
             color: var(--text-secondary);
         }
-        .search-btn {
-            position: absolute;
-            right: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            border-radius: 50px;
+        .checklist-value {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: monospace;
         }
+
+        .tickertape-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            margin-top: 1rem;
+        }
+        .tt-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 100px;
+        }
+        .tt-icon-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -16px;
+            left: 16px;
+            font-size: 0.95rem;
+        }
+        .gauge-divider {
+            width: 1px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        @media (max-width: 768px) {
+            .gauge-divider {
+                display: none !important;
+            }
+        }
+
         
         /* Fundamental Dashboard specific layout */
         .stock-header {
@@ -186,6 +359,15 @@
         }
         
         #dashboard-data { display: none; }
+        
+        .glass-panel {
+            padding: 2.25rem 2rem;
+        }
+        @media (max-width: 768px) {
+            .glass-panel {
+                padding: 1.25rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -203,6 +385,7 @@
             <div class="nav-links">
                 <a href="/" class="nav-link ">Home</a>
                 <a href="/screener" class="nav-link ">AI Auto Screener</a>
+                <a href="/intraday-manager" class="nav-link ">Intraday Manager</a>
                 <a href="/indian-market-news" class="nav-link ">Top Stories</a>
                 <a href="/about" class="nav-link ">About Us</a>
                 <div class="market-status-widget mobile-only"></div>
@@ -217,13 +400,34 @@
     </nav>
 
     <!-- Main Section -->
-    <main class="container dashboard-container fade-in-up delay-2" style="padding-top: 2rem;">
+    <main class="container dashboard-container fade-in-up delay-2" style="padding-top: 1rem;">
         
-        <!-- Search Bar -->
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="stock-search" class="search-input" placeholder="Search a stock (e.g., RELIANCE.NS, TATAMOTORS.NS)">
-            <button class="btn btn-primary btn-sm search-btn" id="search-submit">Analyze</button>
+        <!-- Search Hero Section (Finology Style) -->
+        <div class="search-hero" id="search-hero">
+            <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #FFFFFF; font-weight: 800;">
+                Fundamental ka <span class="highlight-text">search engine</span>
+            </h1>
+            <p class="hero-subtitle" style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                The Modern Stock Screener that helps you pick better stocks.
+            </p>
+            
+            <div class="search-box-wrapper" style="position: relative; width: 100%; max-width: 650px;">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem;"></i>
+                <input type="text" id="stock-search" placeholder="Type a Company Name or Symbol to Search..." style="width: 100%; padding: 0.9rem 1.5rem 0.9rem 3.2rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.3); color: var(--text-primary); font-size: 1.1rem; outline: none; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                <button class="btn btn-primary" id="search-submit" style="position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%); border-radius: 50px; padding: 0.55rem 1.4rem; font-size: 0.95rem; font-weight: 700; border: none; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);">
+                    Analyze
+                </button>
+            </div>
+            
+            <!-- Trending Tickers -->
+            <div class="trending-tickers" style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="font-weight: 700;">What's Trending:</span>
+                <button class="trend-pill" data-symbol="ITC.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">ITC</button>
+                <button class="trend-pill" data-symbol="RELIANCE.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">RELIANCE</button>
+                <button class="trend-pill" data-symbol="HDFCBANK.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">HDFCBANK</button>
+                <button class="trend-pill" data-symbol="TCS.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">TCS</button>
+                <button class="trend-pill" data-symbol="SBIN.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">SBIN</button>
+            </div>
         </div>
         
         <div class="glass-panel" style="min-height: 400px;">
@@ -257,104 +461,137 @@
                     </div>
                 </div>
                 
-                <div class="nav-tabs">
-                    <div class="tab active" data-target="overview">Overview</div>
-                    <div class="tab" data-target="financials">Financials</div>
-                    <div class="tab" data-target="holdings">Holdings</div>
-                    <div class="tab" data-target="dividends">Events</div>
-                </div>
-                
-                <!-- Overview Tab -->
-                <div class="tab-content active" id="overview">
-                    <div class="chart-container">
-                        <canvas id="priceChart"></canvas>
-                    </div>
-                    <div class="stats-grid" id="overview-stats">
-                        <div class="stat-card">
-                            <i class="fa-solid fa-building stat-card-icon"></i>
-                            <span class="stat-title">Market Cap</span>
-                            <span class="stat-value" id="stat-mcap">-</span>
+                <!-- Momentum Scorecard -->
+                    <div class="score-gauge-wrapper" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding: 1.5rem 2rem; margin-top: 1rem;">
+                        <!-- Left: Momentum Rating -->
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div class="score-circle" id="res-score">0</div>
+                            <div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Momentum Rating</span>
+                                <span class="rating-badge rating-strong" id="res-rating">Strong</span>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.35rem;" id="res-updated">Synced: -</span>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <i class="fa-solid fa-scale-balanced stat-card-icon"></i>
-                            <span class="stat-title">P/E Ratio</span>
-                            <span class="stat-value" id="stat-pe">-</span>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fa-solid fa-chart-line stat-card-icon"></i>
-                            <span class="stat-title">EPS (TTM)</span>
-                            <span class="stat-value" id="stat-eps">-</span>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fa-solid fa-bolt stat-card-icon"></i>
-                            <span class="stat-title">52W High</span>
-                            <span class="stat-value" id="stat-high">-</span>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fa-solid fa-book stat-card-icon"></i>
-                            <span class="stat-title">P/B Ratio</span>
-                            <span class="stat-value" id="stat-pb">-</span>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fa-solid fa-coins stat-card-icon"></i>
-                            <span class="stat-title">Div Yield</span>
-                            <span class="stat-value" id="stat-yield">-</span>
+                        
+                        <!-- Divider -->
+                        <div class="gauge-divider"></div>
+                        
+                        <!-- Right: Analyst Ratings & Forecast -->
+                        <div id="analyst-forecast-container" style="display: flex; align-items: center; gap: 1.5rem; flex: 1; min-width: 280px;">
+                            <!-- Circular progress ring -->
+                            <div style="position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg width="80" height="80" viewBox="0 0 80 80">
+                                    <circle cx="40" cy="40" r="32" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+                                    <circle id="analyst-progress-bar" cx="40" cy="40" r="32" fill="transparent" stroke="#22c55e" stroke-width="6" 
+                                            stroke-dasharray="201.06" stroke-dashoffset="201.06" stroke-linecap="round" transform="rotate(-90 40 40)"
+                                            style="transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.3s ease;"/>
+                                </svg>
+                                <span id="analyst-percentage" style="position: absolute; font-size: 1.15rem; font-weight: 800; color: #ffffff;">0%</span>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Analyst Ratings & Forecast</span>
+                                <p id="analyst-desc" style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.4; margin: 0; font-weight: 500;">
+                                    Loading analyst opinions...
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Financials Tab -->
-                <div class="tab-content" id="financials">
-                    <h3 style="margin-bottom: 1rem;">Income Statement</h3>
-                    <div class="table-responsive">
-                        <table class="data-table financial-table">
-                            <thead>
-                                <tr id="financial-headers">
-                                    <th>Metric</th>
-                                    <!-- Dynamic quarters -->
-                                </tr>
-                            </thead>
-                            <tbody id="financial-body">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
+
+                    <!-- Tickertape-style Summary Cards Grid -->
+                    <div class="tickertape-grid">
+                        
+                        <!-- Card 1: Sector & Industry -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.2);">🛍️</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-sector-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <span style="font-size: 0.82rem; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 4px; padding: 0.25rem 0.6rem; color: var(--text-secondary); display: inline-block; font-weight: 600;" id="tt-sector-tag">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Market Cap / Cap Rank -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);">🌿</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-cap-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 0;" id="tt-cap-desc">
+                                -
+                            </p>
+                        </div>
+
+                        <!-- Card 3: Volatility & Risk -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2);">🛤️</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-risk-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 0;" id="tt-risk-desc">
+                                -
+                            </p>
+                        </div>
+
+                        <!-- Card 4: Index Membership -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">📊</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-index-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 0;" id="tt-index-desc">
+                                -
+                            </p>
+                        </div>
+
                     </div>
-                </div>
-                
-                <!-- Holdings Tab -->
-                <div class="tab-content" id="holdings">
-                    <div style="margin-bottom: 1.5rem;">
-                        <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Shareholding History</h2>
-                        <select id="holdings-type-select" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.7rem 1rem; border-radius: 6px; font-family: 'DM Sans', sans-serif; outline: none; width: 100%; max-width: 300px; font-size: 1rem; cursor: pointer; appearance: none;">
-                            <option value="promoters" style="background: #0f172a;">Total Promoter Holding</option>
-                            <option value="mutual_funds" style="background: #0f172a;">Mutual Funds</option>
-                            <option value="fii" selected style="background: #0f172a;">Foreign Institutions</option>
-                            <option value="retail" style="background: #0f172a;">Retail and Others</option>
-                        </select>
+
+                    <!-- Company Description Card -->
+                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column;">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Company Profile Description</span>
+                        <div style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin: 0;" id="res-metadata-summary-container">
+                            <span id="res-metadata-summary-text">-</span>
+                            <button id="res-metadata-read-more-btn" style="background: none; border: none; color: #A78BFA; font-weight: 700; cursor: pointer; padding: 0 0 0 0.5rem; font-size: 0.95rem; outline: none; display: none;">Read More</button>
+                        </div>
                     </div>
-                    <div class="chart-container" style="height: 350px; background: transparent; padding: 0;">
-                        <canvas id="holdingsChart"></canvas>
+                    <div class="checklist-grid" id="res-checklist-grid" style="margin-bottom: 1.5rem;">
+                        <!-- Checklist items populated dynamically -->
                     </div>
-                </div>
-                
-                <!-- Events Tab (Dividends) -->
-                <div class="tab-content" id="dividends">
-                    <h3 style="margin-bottom: 1rem;">Upcoming & Recent Dividends</h3>
-                    <div class="table-responsive">
-                        <table class="data-table financial-table">
-                            <thead>
-                                <tr>
-                                    <th>Event</th>
-                                    <th>Amount (₹)</th>
-                                    <th>Ex-Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dividends-body">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
+
+                    <!-- Shareholding Pattern Section -->
+                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;">
+                            <div>
+                                <h3 style="font-size: 1.35rem; font-weight: 700; color: #FFFFFF; margin: 0;">Shareholding Pattern</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.25rem;">Numbers in percentages</span>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive" style="overflow-x: auto; margin-top: 0.5rem;">
+                            <table class="data-table financial-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr id="holdings-table-headers">
+                                        <th style="padding: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-weight: 600;">Sector</th>
+                                        <!-- Dynamic Quarter Headers -->
+                                    </tr>
+                                </thead>
+                                <tbody id="holdings-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 1rem; display: block; font-style: italic;">
+                            * The classifications might have changed from Sep'2022 onwards.
+                        </span>
+                        
+                        <!-- Holdings Trend Notes -->
+                        <div id="holdings-trend-notes" style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                            <!-- Populated dynamically -->
+                        </div>
                     </div>
-                </div>
+
+
+
                 
             </div>
             
@@ -400,13 +637,18 @@
         </div>
     </footer>
 
-    <script src="fundamentals.js?v=1"></script>
+    <!-- Chart Tooltip (TradingView) — same as AI Auto Screener -->
+    <div id="chart-tooltip" class="chart-tooltip">
+        <iframe id="chart-iframe" src="" frameborder="0" scrolling="no"></iframe>
+    </div>
+
+    <script src="fundamentals.js?v=60"></script>
     <script>
         // Mobile Menu Toggle
         document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
             document.querySelector('.nav-links').classList.toggle('active');
         });
     </script>
-    <script src="market-status.js?v=7"></script>
+    <script src="market-status.js?v=60"></script>
 </body>
 </html>

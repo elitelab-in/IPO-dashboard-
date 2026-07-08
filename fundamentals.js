@@ -1,28 +1,6 @@
-// Fundamentals Page Logic
+// Fundamentals Page Logic (Redesigned for Momentum Scorecard only)
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Tab Switching Logic
-    const tabs = document.querySelectorAll('.tab');
-    const contents = document.querySelectorAll('.tab-content');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all
-            tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked
-            tab.classList.add('active');
-            const targetId = tab.getAttribute('data-target');
-            document.getElementById(targetId).classList.add('active');
-        });
-    });
-
-    // Chart instances
-    let priceChartInstance = null;
-    let holdingsChartInstance = null;
-
     // Search functionality
     const searchInput = document.getElementById('stock-search');
     const searchBtn = document.getElementById('search-submit');
@@ -35,11 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let symbol = searchInput.value.trim().toUpperCase();
         if (!symbol) return;
         
-        // Auto-append .NS if not specified, since most Indian stocks on yfinance use .NS
-        if (!symbol.includes('.')) {
-            symbol += '.NS';
-            searchInput.value = symbol;
-        }
+        // Extract base symbol (remove .NS, .BO suffix if user enters it)
+        const baseSymbol = symbol.split('.')[0];
+        searchInput.value = baseSymbol;
 
         // UI States
         initialState.style.display = 'none';
@@ -48,28 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingState.style.display = 'block';
 
         try {
-            const response = await fetch(`/api/fundamentals/${symbol}`);
+            // Fetch momentum checklist scorecard
+            const response = await fetch(`/api/intraday/analyze?symbol=${baseSymbol}`);
             if (!response.ok) {
-                throw new Error('Stock not found or server error');
+                throw new Error('Symbol not found or technical load error');
             }
             
-            const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.error);
+            const momData = await response.json();
+            if (momData.error) {
+                throw new Error(momData.error);
             }
 
-            renderDashboard(data);
+            // Add has-results class to search hero to trigger transition
+            document.getElementById('search-hero').classList.add('has-results');
+
+            renderDashboard(momData);
             
             loadingState.style.display = 'none';
             dashboardData.style.display = 'block';
-            
-            // Re-render charts to fit new container dimensions
-            if(priceChartInstance) priceChartInstance.resize();
-            if(holdingsChartInstance) holdingsChartInstance.resize();
 
         } catch (error) {
-            console.error('Error fetching fundamentals:', error);
+            console.error('Error fetching stock data:', error);
             loadingState.style.display = 'none';
             errorState.style.display = 'block';
             document.getElementById('error-message').textContent = error.message || 'Could not fetch data';
@@ -81,6 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') fetchFundamentals();
     });
 
+    // Bind trending stock pills click
+    document.querySelectorAll('.trend-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            searchInput.value = pill.getAttribute('data-symbol');
+            fetchFundamentals();
+        });
+    });
+
     // Check for deep link from screener
     const urlParams = new URLSearchParams(window.location.search);
     const deepLinkSymbol = urlParams.get('symbol');
@@ -89,283 +72,256 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchFundamentals();
     }
 
-    // Formatters
-    const formatCurrency = (val) => {
-        if (val === undefined || val === null || val === '-') return '-';
-        if (val > 10000000) return '₹' + (val / 10000000).toFixed(2) + ' Cr';
-        if (val > 100000) return '₹' + (val / 100000).toFixed(2) + ' L';
-        return '₹' + val.toLocaleString('en-IN');
-    };
-
-    function renderDashboard(data) {
+    function renderDashboard(momData) {
         // 1. Header & Overview Stats
-        document.getElementById('stock-name').innerHTML = `${data.name || 'Unknown Company'} <span class="stock-symbol-badge" id="stock-symbol">${data.symbol}</span>`;
-        document.getElementById('stock-sector').textContent = data.sector || 'Equities';
+        document.getElementById('stock-name').innerHTML = `${momData.name || 'Unknown Company'} <span class="stock-symbol-badge" id="stock-symbol">${momData.symbol}</span>`;
         
-        document.getElementById('live-price').textContent = `₹${data.price.toFixed(2)}`;
+        // Find sector from tickertape metadata if available
+        const sectorName = (momData.tickertape && momData.tickertape.sector) ? momData.tickertape.sector.title : 'Equities';
+        document.getElementById('stock-sector').textContent = sectorName;
+        
+        document.getElementById('live-price').textContent = `₹${parseFloat(momData.price).toFixed(2)}`;
         
         const changeEl = document.getElementById('live-change');
-        if (data.change_pct >= 0) {
-            changeEl.innerHTML = `<i class="fa-solid fa-caret-up"></i> ${data.change_pct.toFixed(2)}%`;
+        const changePct = parseFloat(momData.change_pct);
+        const isPositive = changePct >= 0;
+        if (isPositive) {
+            changeEl.innerHTML = `<i class="fa-solid fa-caret-up"></i> ${changePct.toFixed(2)}%`;
             changeEl.className = 'change positive';
         } else {
-            changeEl.innerHTML = `<i class="fa-solid fa-caret-down"></i> ${Math.abs(data.change_pct).toFixed(2)}%`;
+            changeEl.innerHTML = `<i class="fa-solid fa-caret-down"></i> ${Math.abs(changePct).toFixed(2)}%`;
             changeEl.className = 'change negative';
         }
 
-        document.getElementById('stat-mcap').textContent = formatCurrency(data.overview.market_cap);
-        document.getElementById('stat-pe').textContent = data.overview.pe_ratio ? data.overview.pe_ratio.toFixed(2) : '-';
-        document.getElementById('stat-eps').textContent = data.overview.eps ? '₹' + data.overview.eps.toFixed(2) : '-';
-        document.getElementById('stat-high').textContent = data.overview.high_52 ? '₹' + data.overview.high_52.toFixed(2) : '-';
-        document.getElementById('stat-pb').textContent = data.overview.pb_ratio ? data.overview.pb_ratio.toFixed(2) : '-';
-        document.getElementById('stat-yield').textContent = data.overview.div_yield ? (data.overview.div_yield * 100).toFixed(2) + '%' : '-';
-
-        // 2. Render Price Chart
-        renderPriceChart(data.history);
-
-        // 3. Render Financials
-        renderFinancials(data.financials);
-
-        // 4. Render Holdings Chart
-        renderHoldingsChart(data.holdings);
-
-        // 5. Render Dividends
-        renderDividends(data.dividends);
-    }
-
-    function renderPriceChart(history) {
-        const ctx = document.getElementById('priceChart').getContext('2d');
+        // 2. Render Momentum Scorecard elements
+        document.getElementById('res-score').textContent = momData.score;
         
-        if (priceChartInstance) {
-            priceChartInstance.destroy();
+        const resRating = document.getElementById('res-rating');
+        resRating.textContent = momData.rating;
+        resRating.className = 'rating-badge';
+        
+        const scoreCircle = document.getElementById('res-score');
+        if (momData.rating === 'Very Strong') {
+            resRating.classList.add('rating-very-strong');
+            scoreCircle.style.borderColor = '#F97316';
+        } else if (momData.rating === 'Strong') {
+            resRating.classList.add('rating-strong');
+            scoreCircle.style.borderColor = '#22C55E';
+        } else if (momData.rating === 'Moderate') {
+            resRating.classList.add('rating-moderate');
+            scoreCircle.style.borderColor = '#F59E0B';
+        } else {
+            resRating.classList.add('rating-avoid');
+            scoreCircle.style.borderColor = '#EF4444';
         }
 
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(34, 197, 94, 0.4)');
-        gradient.addColorStop(1, 'rgba(34, 197, 94, 0.0)');
+        document.getElementById('res-updated').textContent = `Synced: ${momData.last_updated}`;
 
-        priceChartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: history.dates,
-                datasets: [{
-                    label: 'Close Price',
-                    data: history.prices,
-                    borderColor: '#22c55e',
-                    backgroundColor: gradient,
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    pointHoverRadius: 4,
-                    fill: true,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                        titleColor: '#fff',
-                        bodyColor: '#22c55e',
-                        borderColor: 'rgba(255,255,255,0.1)',
-                        borderWidth: 1
-                    }
-                },
-                scales: {
-                    x: {
-                        display: false
-                    },
-                    y: {
-                        display: true,
-                        position: 'right',
-                        grid: {
-                            color: 'rgba(255,255,255,0.05)'
-                        },
-                        ticks: {
-                            color: 'rgba(255,255,255,0.5)'
-                        }
-                    }
-                },
-                interaction: {
-                    mode: 'nearest',
-                    axis: 'x',
-                    intersect: false
-                }
-            }
-        });
-    }
+        // Tickertape Summary cards
+        const ttSector = momData.tickertape.sector;
+        document.getElementById('tt-sector-title').innerHTML = `${ttSector.title} <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>`;
+        document.getElementById('tt-sector-tag').textContent = ttSector.tag;
 
-    function renderFinancials(financials) {
-        const headers = document.getElementById('financial-headers');
-        const body = document.getElementById('financial-body');
+        const ttCap = momData.tickertape.cap;
+        document.getElementById('tt-cap-title').innerHTML = `${ttCap.title} <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>`;
+        document.getElementById('tt-cap-desc').textContent = ttCap.desc;
+
+        const ttRisk = momData.tickertape.risk;
+        document.getElementById('tt-risk-title').innerHTML = `${ttRisk.title} <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>`;
+        document.getElementById('tt-risk-desc').textContent = ttRisk.desc;
+
+        const idxSign = momData.index_change_pct >= 0 ? '+' : '';
+        const idxColor = momData.index_change_pct >= 0 ? '#22C55E' : '#EF4444';
+        document.getElementById('tt-index-title').innerHTML = `Index: ${momData.index_name} <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>`;
+        document.getElementById('tt-index-desc').innerHTML = `Index daily change is <span style="color: ${idxColor}; font-weight: 700;">${idxSign}${parseFloat(momData.index_change_pct).toFixed(2)}%</span>`;
+
+        // Company Profile Description Truncation
+        const fullDesc = momData.company_summary || 'No description available.';
+        const maxChars = 150;
+        const textSpan = document.getElementById('res-metadata-summary-text');
+        const readMoreBtn = document.getElementById('res-metadata-read-more-btn');
         
-        // Clear existing
-        headers.innerHTML = '<th>Metric</th>';
-        body.innerHTML = '';
-
-        if (!financials || !financials.dates || financials.dates.length === 0) {
-            body.innerHTML = '<tr><td colspan="5" class="text-center">No quarterly data available</td></tr>';
-            return;
-        }
-
-        // Add Date Headers
-        financials.dates.forEach(date => {
-            const th = document.createElement('th');
-            th.textContent = date;
-            headers.appendChild(th);
-        });
-
-        // Add Rows
-        const metrics = [
-            { key: 'revenue', label: 'Total Revenue' },
-            { key: 'ebitda', label: 'EBITDA' },
-            { key: 'pbit', label: 'PBIT' },
-            { key: 'pbt', label: 'PBT' },
-            { key: 'net_income', label: 'Net Income' },
-            { key: 'eps', label: 'EPS' }
-        ];
-
-        metrics.forEach(metric => {
-            if (financials[metric.key] && financials[metric.key].length > 0) {
-                const tr = document.createElement('tr');
-                const tdLabel = document.createElement('td');
-                tdLabel.innerHTML = `<strong>${metric.label}</strong>`;
-                tr.appendChild(tdLabel);
-
-                financials[metric.key].forEach(val => {
-                    const td = document.createElement('td');
-                    td.textContent = metric.key === 'eps' ? (val ? val.toFixed(2) : '-') : formatCurrency(val);
-                    tr.appendChild(td);
-                });
-
-                body.appendChild(tr);
-            }
-        });
-    }
-
-    // Register datalabels
-    if (typeof ChartDataLabels !== 'undefined') {
-        Chart.register(ChartDataLabels);
-    }
-
-    let currentHoldingsData = null;
-
-    function renderHoldingsChart(holdings) {
-        currentHoldingsData = holdings;
-        const ctx = document.getElementById('holdingsChart').getContext('2d');
-        const selectEl = document.getElementById('holdings-type-select');
-        
-        if (holdingsChartInstance) {
-            holdingsChartInstance.destroy();
-        }
-
-        if (!holdings || !holdings.dates || holdings.dates.length === 0) {
-            return;
-        }
-        
-        // Remove existing listener if any to avoid duplicates
-        const newSelect = selectEl.cloneNode(true);
-        selectEl.parentNode.replaceChild(newSelect, selectEl);
-        
-        function updateChart() {
-            const selectedType = newSelect.value;
-            const dataMap = {
-                'promoters': { data: holdings.promoters || [], color: '#3b82f6', label: 'Total Promoter Holding (%)' },
-                'mutual_funds': { data: holdings.mutual_funds || [], color: '#f59e0b', label: 'Mutual Funds (%)' },
-                'fii': { data: holdings.fii || [], color: '#4ade80', label: 'Foreign Institutions (%)' },
-                'retail': { data: holdings.retail || [], color: '#ec4899', label: 'Retail and Others (%)' }
-            };
+        if (fullDesc.length <= maxChars) {
+            textSpan.textContent = fullDesc;
+            readMoreBtn.style.display = 'none';
+        } else {
+            const shortDesc = fullDesc.substring(0, maxChars) + '...';
+            textSpan.textContent = shortDesc;
+            readMoreBtn.style.display = 'inline-block';
+            readMoreBtn.textContent = 'Read More';
             
-            const conf = dataMap[selectedType] || dataMap['fii'];
-
-            if (holdingsChartInstance) {
-                holdingsChartInstance.destroy();
-            }
-
-            holdingsChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: holdings.dates,
-                    datasets: [{
-                        label: conf.label,
-                        data: conf.data,
-                        backgroundColor: conf.color,
-                        borderRadius: 4,
-                        barPercentage: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)'
-                        },
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'top',
-                            color: 'rgba(255,255,255,0.9)',
-                            font: { weight: 'bold' },
-                            formatter: function(value) {
-                                return value.toFixed(2) + '%';
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: 'rgba(255,255,255,0.5)' }
-                        },
-                        y: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: {
-                                color: 'rgba(255,255,255,0.5)',
-                                callback: function(value) { return value + '%' }
-                            },
-                            suggestedMax: Math.max(...conf.data) * 1.2 // give room for label
-                        }
-                    }
+            const newBtn = readMoreBtn.cloneNode(true);
+            readMoreBtn.parentNode.replaceChild(newBtn, readMoreBtn);
+            
+            newBtn.addEventListener('click', () => {
+                if (newBtn.textContent === 'Read More') {
+                    textSpan.textContent = fullDesc;
+                    newBtn.textContent = 'Read Less';
+                } else {
+                    textSpan.textContent = shortDesc;
+                    newBtn.textContent = 'Read More';
                 }
             });
         }
+
+        // Analyst Ratings & Forecast circle
+        const forecast = momData.analyst_forecast || { rating: null, percentage: 0, num_analysts: 0 };
+        const percentEl = document.getElementById('analyst-percentage');
+        const descEl = document.getElementById('analyst-desc');
+        const progressBar = document.getElementById('analyst-progress-bar');
         
-        newSelect.addEventListener('change', updateChart);
-        updateChart(); // Initial render
-    }
-
-    function renderDividends(dividends) {
-        const body = document.getElementById('dividends-body');
-        body.innerHTML = '';
-
-        if (!dividends || dividends.length === 0) {
-            body.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-secondary);">No recent dividend history found.</td></tr>';
-            return;
+        if (forecast.rating && forecast.num_analysts > 0) {
+            percentEl.textContent = `${forecast.percentage}%`;
+            
+            const circumference = 201.06;
+            const offset = circumference - (circumference * forecast.percentage / 100);
+            progressBar.style.strokeDashoffset = offset;
+            
+            let ratingColor = '#22C55E';
+            let actionText = 'buy';
+            if (forecast.rating === 'hold') {
+                ratingColor = '#F59E0B';
+                actionText = 'hold';
+            } else if (forecast.rating === 'sell') {
+                ratingColor = '#EF4444';
+                actionText = 'sell';
+            }
+            
+            progressBar.style.stroke = ratingColor;
+            descEl.innerHTML = `Analysts have suggested that investors can <span style="font-weight: 800; color: ${ratingColor};">${actionText}</span> this stock from <span style="font-weight: 700; color: var(--text-primary);">${forecast.num_analysts}</span> analysts.`;
+        } else {
+            percentEl.textContent = '0%';
+            progressBar.style.strokeDashoffset = 201.06;
+            progressBar.style.stroke = 'rgba(255, 255, 255, 0.1)';
+            descEl.innerHTML = `<span style="color: var(--text-secondary);">No analyst coverage available for this stock.</span>`;
         }
 
-        dividends.forEach(div => {
-            const tr = document.createElement('tr');
+        // checklist rules grid
+        const resChecklistGrid = document.getElementById('res-checklist-grid');
+        resChecklistGrid.innerHTML = '';
+        Object.entries(momData.rules).forEach(([key, rule]) => {
+            const card = document.createElement('div');
+            card.className = 'checklist-item';
             
-            const tdEvent = document.createElement('td');
-            tdEvent.innerHTML = `<i class="fa-solid fa-money-bill" style="color: #f59e0b; margin-right: 0.5rem;"></i> Cash Dividend`;
+            const badgeClass = rule.passed ? 'checklist-status status-pass' : 'checklist-status status-fail';
+            const badgeText = rule.passed ? '✔ PASS' : '✖ FAIL';
             
-            const tdAmount = document.createElement('td');
-            tdAmount.innerHTML = `<strong>₹${div.amount.toFixed(2)}</strong>`;
-            
-            const tdDate = document.createElement('td');
-            tdDate.textContent = div.date;
-            
-            tr.appendChild(tdEvent);
-            tr.appendChild(tdAmount);
-            tr.appendChild(tdDate);
-            body.appendChild(tr);
+            card.innerHTML = `
+                <div class="checklist-row-top">
+                    <span class="checklist-label">${rule.name}</span>
+                    <span class="${badgeClass}">${badgeText}</span>
+                </div>
+                <span class="checklist-value">${rule.val}</span>
+            `;
+            resChecklistGrid.appendChild(card);
         });
-    }
 
+        // 3. Render Shareholding Pattern Table
+        const shHeaders = document.getElementById('holdings-table-headers');
+        shHeaders.innerHTML = '<th style="padding: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-weight: 600;">Sector</th>';
+        
+        const shPattern = momData.shareholding_pattern || { quarters: [], promoters: [], fii: [], dii: [], public: [], shareholders: [] };
+        
+        shPattern.quarters.forEach(q => {
+            const th = document.createElement('th');
+            th.style.padding = '0.75rem';
+            th.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+            th.style.color = 'var(--text-secondary)';
+            th.style.fontWeight = '600';
+            th.textContent = q;
+            shHeaders.appendChild(th);
+        });
+
+        const shBody = document.getElementById('holdings-table-body');
+        shBody.innerHTML = '';
+
+        const rowsData = [
+            { label: 'Promoters +', key: 'promoters', isPercent: true, color: '#FFFFFF' },
+            { label: 'FIIs +', key: 'fii', isPercent: true, color: '#A78BFA' },
+            { label: 'DIIs +', key: 'dii', isPercent: true, color: '#60A5FA' },
+            { label: 'Public +', key: 'public', isPercent: true, color: '#F472B6' },
+            { label: 'No. of Shareholders', key: 'shareholders', isPercent: false, color: '#94A3B8' }
+        ];
+
+        // Track trend notes for bottom display
+        const notes = [];
+
+        rowsData.forEach(rowInfo => {
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
+            
+            const tdLabel = document.createElement('td');
+            tdLabel.style.padding = '0.75rem';
+            tdLabel.style.fontWeight = '700';
+            tdLabel.style.color = rowInfo.color;
+            tdLabel.textContent = rowInfo.label;
+            tr.appendChild(tdLabel);
+
+            const values = shPattern[rowInfo.key] || [];
+            
+            // Calculate promoter/FII/DII quarterly trends
+            const isTrendable = ['promoters', 'fii', 'dii'].includes(rowInfo.key) && values.length >= 2;
+            if (isTrendable) {
+                const oldest = parseFloat(values[0]);
+                const latest = parseFloat(values[values.length - 1]);
+                const diff = latest - oldest;
+                const absDiff = Math.abs(diff).toFixed(2);
+                
+                let trendColor = '';
+                let iconClass = '';
+                let text = '';
+                
+                const labelText = rowInfo.label.replace(' +', '').replace('s', ''); // Promoters -> Promoter, FIIs -> FII
+                
+                if (diff > 0.005) {
+                    trendColor = '#22C55E'; // green
+                    iconClass = 'fa-circle-chevron-up';
+                    text = `${labelText} holdings have increased from ${oldest.toFixed(2)}% to ${latest.toFixed(2)}% (+${absDiff}%) over the last 3 quarters.`;
+                } else if (diff < -0.005) {
+                    trendColor = '#EF4444'; // red
+                    iconClass = 'fa-circle-chevron-down';
+                    text = `${labelText} holdings have decreased from ${oldest.toFixed(2)}% to ${latest.toFixed(2)}% (-${absDiff}%) over the last 3 quarters.`;
+                } else {
+                    trendColor = '#94A3B8'; // gray
+                    iconClass = 'fa-circle';
+                    text = `${labelText} holdings remained stable at ${latest.toFixed(2)}% over the last 3 quarters.`;
+                }
+                
+                notes.push({ color: trendColor, icon: iconClass, text });
+            }
+
+            values.forEach(val => {
+                const td = document.createElement('td');
+                td.style.padding = '0.75rem';
+                td.style.fontWeight = '500';
+                td.style.color = 'var(--text-primary)';
+                
+                if (rowInfo.isPercent) {
+                    td.textContent = `${parseFloat(val).toFixed(2)}%`;
+                } else {
+                    td.textContent = parseInt(val).toLocaleString('en-IN');
+                }
+                tr.appendChild(td);
+            });
+
+            shBody.appendChild(tr);
+        });
+
+        // Render dynamic trend notes
+        const notesContainer = document.getElementById('holdings-trend-notes');
+        notesContainer.innerHTML = '';
+        notes.forEach(n => {
+            const noteEl = document.createElement('div');
+            noteEl.style.fontSize = '0.9rem';
+            noteEl.style.fontWeight = '600';
+            noteEl.style.display = 'flex';
+            noteEl.style.alignItems = 'center';
+            noteEl.style.gap = '0.6rem';
+            noteEl.style.color = n.color;
+            noteEl.innerHTML = `<i class="fa-solid ${n.icon}"></i> <span>${n.text}</span>`;
+            notesContainer.appendChild(noteEl);
+        });
+
+
+    }
 });

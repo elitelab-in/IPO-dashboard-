@@ -3194,3 +3194,14 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/* Nav links responsive spacing adjustment for new 5-link setup */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .nav-links {
+        gap: 1rem !important;
+    }
+    .nav-link {
+        font-size: 0.85rem !important;
+    }
+}
+
+
