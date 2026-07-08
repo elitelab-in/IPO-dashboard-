@@ -1623,7 +1623,296 @@ def analyze_economy_event():
             ]
         })
 
-CRUDE_PRICE_CACHE = {"time": 0, "price": 80.0}
+def ensure_commodities_cached():
+    global COMMODITY_CACHE
+    if not COMMODITY_CACHE["data"]:
+        try:
+            get_commodity_prices()
+        except Exception as e:
+            print(f"Error ensuring commodities cached: {e}")
+
+def get_cached_commodity_price(name):
+    ensure_commodities_cached()
+    if COMMODITY_CACHE["data"]:
+        for item in COMMODITY_CACHE["data"]:
+            if item["name"] == name:
+                return item["price"]
+    return None
+
+def auto_detect_news_factors():
+    active = []
+    triggers = {}
+    
+    # 3 ET RSS feeds
+    urls = [
+        'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms',
+        'https://economictimes.indiatimes.com/news/economy/rssfeeds/1373380680.cms',
+        'https://economictimes.indiatimes.com/rssfeeds/default.cms'
+    ]
+    
+    news_keywords = {
+        "geopolitical_war": ["war", "conflict", "geopolit", "red sea", "military", "tensions", "strike", "middle east", "israel", "iran"],
+        "fii_selling": ["fii sell", "fiss sell", "fii outflow", "foreign outflow", "fii pull out", "institutional selling"],
+        "fii_buying": ["fii buy", "fiss buy", "fii inflow", "foreign inflow", "fii purchase", "institutional buying"],
+        "inflation_spike": ["inflation", "cpi rise", "cpi spike", "wpi rise", "dearness", "price rise", "food price"],
+        "fed_cut": ["fed rate cut", "fed cut", "powell rate cut", "us rate cut", "fed policy ease"],
+        "rate_hike": ["rate hike", "repo rate hike", "rbi hike", "interest rate hike", "fed rate hike"],
+        "pli_scheme": ["pli", "production linked", "incentive scheme", "manufacturing subsidy"],
+        "private_capex": ["private capex", "capex revival", "capital expenditure", "investment revival"],
+        "monsoon_fail": ["monsoon fail", "monsoon deficit", "dry spell", "el nino", "drought", "rain deficit"],
+        "monsoon_good": ["normal monsoon", "good monsoon", "bumper crop", "excess rain", "bumper harvest"]
+    }
+    
+    for url in urls:
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            html = urllib.request.urlopen(req, timeout=2.0).read()
+            root = ET.fromstring(html)
+            
+            for item in root.findall('.//item'):
+                title = item.find('title').text if item.find('title') is not None else ''
+                desc = item.find('description').text if item.find('description') is not None else ''
+                full_text = (title + " " + desc).lower()
+                
+                for factor, keywords in news_keywords.items():
+                    if factor not in active:
+                        for kw in keywords:
+                            if kw in full_text:
+                                active.append(factor)
+                                triggers[factor] = title
+                                break
+        except Exception as e:
+            print(f"Error fetching/parsing feed {url}: {e}")
+            
+    return active, triggers
+
+@app.route('/api/economy/consolidated-sentiment')
+def get_consolidated_sentiment():
+    active_factors = []
+    triggers = {}
+    
+    # 1. Auto detect from commodities
+    brent = get_cached_commodity_price("Brent Crude")
+    usdinr = get_cached_commodity_price("USD/INR")
+    yield10y = get_cached_commodity_price("US 10Y Yield")
+    
+    if brent is not None:
+        if brent > 85.0:
+            active_factors.append("oil_rise")
+            triggers["oil_rise"] = f"Brent Crude spikes to ${brent:.2f}/bbl"
+        elif brent < 73.0:
+            active_factors.append("oil_crash")
+            triggers["oil_crash"] = f"Brent Crude drops to ${brent:.2f}/bbl"
+            
+    if usdinr is not None and usdinr > 84.5:
+        active_factors.append("rupee_fall")
+        triggers["rupee_fall"] = f"Rupee weakens to ₹{usdinr:.2f}/USD"
+        
+    if yield10y is not None and yield10y > 4.3:
+        active_factors.append("us_yield_rise")
+        triggers["us_yield_rise"] = f"US 10Y Treasury Yield spikes to {yield10y:.2f}%"
+        
+    # 2. Auto detect from news RSS headlines (3 feeds)
+    news_factors, news_triggers = auto_detect_news_factors()
+    for nf in news_factors:
+        if nf not in active_factors:
+            active_factors.append(nf)
+            triggers[nf] = f'{news_triggers[nf]}'
+            
+    event_weights = {
+        "oil_rise": -20,
+        "rate_hike": -30,
+        "rupee_fall": 0,
+        "monsoon_fail": -25,
+        "inflation_spike": -20,
+        "us_yield_rise": -20,
+        "geopolitical_war": -25,
+        "tax_cuts": 25,
+        "metal_rise": 0,
+        "gst_hike": -15,
+        "monsoon_good": 20,
+        "fii_buying": 30,
+        "fii_selling": -30,
+        "fed_cut": 25,
+        "oil_crash": 20,
+        "pli_scheme": 20,
+        "private_capex": 25
+    }
+    
+    sentiment_score = 0
+    activated_events = []
+    
+    sector_scores = {}
+    sector_reasons = {}
+    pos_stocks = set()
+    neg_stocks = set()
+    
+    for factor in active_factors:
+        if factor in ECONOMY_EVENTS:
+            event = ECONOMY_EVENTS[factor]
+            activated_events.append({
+                "key": factor,
+                "title": event["title"],
+                "market_impact": event["market_impact"],
+                "trigger": triggers.get(factor, "Active")
+            })
+            sentiment_score += event_weights.get(factor, 0)
+            
+            for sec in event.get("pos_sectors", []):
+                if sec and sec != "None":
+                    sector_scores[sec] = sector_scores.get(sec, 0) + 1
+                    if sec not in sector_reasons:
+                        sector_reasons[sec] = []
+                    sector_reasons[sec].append(f"Benefiting from {event['title']}")
+                    
+            for sec in event.get("neg_sectors", []):
+                if sec and sec != "None":
+                    sector_scores[sec] = sector_scores.get(sec, 0) - 1
+                    if sec not in sector_reasons:
+                        sector_reasons[sec] = []
+                    sector_reasons[sec].append(f"Negatively hit by {event['title']}")
+            
+            for stk in event.get("pos_stocks", []):
+                if stk:
+                    pos_stocks.add(stk)
+            for stk in event.get("neg_stocks", []):
+                if stk:
+                    neg_stocks.add(stk)
+                    
+    sentiment_score = max(-100, min(100, sentiment_score))
+    
+    if sentiment_score <= -60:
+        label = "Extremely Bearish"
+        color = "#EF4444"
+    elif sentiment_score <= -20:
+        label = "Moderately Bearish"
+        color = "#F87171"
+    elif sentiment_score < 20:
+        label = "Neutral"
+        color = "#F59E0B"
+    elif sentiment_score < 60:
+        label = "Moderately Bullish"
+        color = "#34D399"
+    else:
+        label = "Extremely Bullish"
+        color = "#10B981"
+        
+    long_sectors = []
+    short_sectors = []
+    
+    for sec, score in sector_scores.items():
+        reasons = sector_reasons.get(sec, [])
+        reason_text = ". ".join(reasons) + "."
+        if score > 0:
+            long_sectors.append({
+                "name": sec,
+                "score": score,
+                "reason": reason_text
+            })
+        elif score < 0:
+            short_sectors.append({
+                "name": sec,
+                "score": abs(score),
+                "reason": reason_text
+            })
+            
+    long_sectors.sort(key=lambda x: x["score"], reverse=True)
+    short_sectors.sort(key=lambda x: x["score"], reverse=True)
+    
+    # Filter to top 5 sectors only
+    long_sectors = long_sectors[:5]
+    short_sectors = short_sectors[:5]
+    
+    pos_stocks = sorted(list(pos_stocks))
+    neg_stocks = sorted(list(neg_stocks))
+    
+    return jsonify({
+        "status": "success",
+        "sentiment": {
+            "score": sentiment_score,
+            "label": label,
+            "color": color
+        },
+        "activated_events": activated_events,
+        "long_sectors": long_sectors,
+        "short_sectors": short_sectors,
+        "pos_stocks": pos_stocks,
+        "neg_stocks": neg_stocks
+    })
+
+MMI_CACHE = {"time": 0, "data": None}
+
+def get_market_mood_index():
+    global MMI_CACHE
+    now = time.time()
+    # Cache for 10 minutes
+    if MMI_CACHE["data"] is not None and (now - MMI_CACHE["time"]) < 600:
+        return MMI_CACHE["data"]
+        
+    try:
+        url = 'https://www.tickertape.in/market-mood-index'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
+        html = urllib.request.urlopen(req, timeout=3.0).read().decode('utf-8')
+        
+        val_match = re.search(r'"currentValue":([\d\.]+)', html)
+        if val_match:
+            val = float(val_match.group(1))
+            
+            last_day = None
+            last_week = None
+            
+            last_day_match = re.search(r'"lastDay":\{"indicator":([\d\.]+)', html)
+            if last_day_match:
+                last_day = float(last_day_match.group(1))
+                
+            last_week_match = re.search(r'"lastWeek":\{"indicator":([\d\.]+)', html)
+            if last_week_match:
+                last_week = float(last_week_match.group(1))
+                
+            if val < 30:
+                zone = "Extreme Fear"
+                color = "#EF4444"
+            elif val < 50:
+                zone = "Fear"
+                color = "#F87171"
+            elif val < 70:
+                zone = "Greed"
+                color = "#F59E0B"
+            else:
+                zone = "Extreme Greed"
+                color = "#10B981"
+                
+            data = {
+                "value": round(val, 2),
+                "zone": zone,
+                "color": color,
+                "last_day": round(last_day, 2) if last_day else None,
+                "last_week": round(last_week, 2) if last_week else None
+            }
+            MMI_CACHE = {"time": now, "data": data}
+            return data
+    except Exception as e:
+        print(f"Error fetching Tickertape MMI: {e}")
+        
+    # Fallback default value
+    fallback = {
+        "value": 52.4,
+        "zone": "Greed",
+        "color": "#F59E0B",
+        "last_day": 54.1,
+        "last_week": 50.8
+    }
+    return fallback
+
+@app.route('/api/economy/market-mood')
+def get_market_mood_api():
+    data = get_market_mood_index()
+    return jsonify({
+        "status": "success",
+        "data": data
+    })
+
+
 COMMODITY_CACHE = {"time": 0, "data": []}
 
 @app.route('/api/economy/crude-price')

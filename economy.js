@@ -425,6 +425,8 @@ async function fetchCommodities() {
             commoditiesData = result.data;
             renderCommoditiesTable();
             runSimulation();
+            updateLiveFactors();
+            recalculateSentiment();
         }
     } catch (e) {
         console.error('Error fetching commodities:', e);
@@ -452,13 +454,195 @@ function simulateTicks() {
     runSimulation();
 }
 
+// ── Macro Sentiment Engine Controller ──────────────────────────────────────────
+
+async function recalculateSentiment() {
+    try {
+        const response = await fetch('/api/economy/consolidated-sentiment');
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            renderSentimentResult(result);
+        }
+    } catch (e) {
+        console.error('Error fetching consolidated sentiment:', e);
+    }
+}
+
+function renderSentimentResult(data) {
+    const labelEl = document.getElementById('sentiment-label');
+    const scoreBadge = document.getElementById('sentiment-score-badge');
+    const gaugeBar = document.getElementById('sentiment-gauge-bar');
+    const longSectorsList = document.getElementById('long-sectors-list');
+    const shortSectorsList = document.getElementById('short-sectors-list');
+    const posStocksList = document.getElementById('sentiment-pos-stocks');
+    const negStocksList = document.getElementById('sentiment-neg-stocks');
+    const driversContainer = document.getElementById('detected-drivers-list');
+
+    if (!labelEl) return;
+
+    // Update Overall Sentiment Info
+    labelEl.textContent = data.sentiment.label;
+    labelEl.style.color = data.sentiment.color;
+    scoreBadge.textContent = (data.sentiment.score >= 0 ? '+' : '') + data.sentiment.score;
+
+    // Update gauge progress bar
+    const score = data.sentiment.score;
+    if (score >= 0) {
+        gaugeBar.style.left = '50%';
+        gaugeBar.style.width = `${score / 2}%`;
+        gaugeBar.style.background = '#10B981';
+    } else {
+        gaugeBar.style.left = `${50 + (score / 2)}%`;
+        gaugeBar.style.width = `${Math.abs(score) / 2}%`;
+        gaugeBar.style.background = '#EF4444';
+    }
+
+    // Render Detected Live Drivers Feed
+    if (driversContainer) {
+        driversContainer.innerHTML = '';
+        if (data.activated_events.length > 0) {
+            data.activated_events.forEach(evt => {
+                let icon = 'fa-circle-info';
+                let color = '#94A3B8';
+                
+                const k = evt.key.toLowerCase();
+                if (k.includes('oil')) { icon = 'fa-fire'; color = '#EF4444'; }
+                else if (k.includes('rate') || k.includes('yield')) { icon = 'fa-chart-line'; color = '#EF4444'; }
+                else if (k.includes('rupee') || k.includes('dollar') || k.includes('inr')) { icon = 'fa-dollar-sign'; color = '#F59E0B'; }
+                else if (k.includes('war') || k.includes('geopolitical')) { icon = 'fa-shield-halved'; color = '#EF4444'; }
+                else if (k.includes('inflation')) { icon = 'fa-percent'; color = '#EF4444'; }
+                else if (k.includes('monsoon')) { icon = 'fa-cloud-showers-heavy'; color = '#34D399'; }
+                else if (k.includes('fii')) { icon = 'fa-arrow-right-from-bracket'; color = '#34D399'; }
+                else if (k.includes('pli') || k.includes('capex') || k.includes('tax')) { icon = 'fa-industry'; color = '#10B981'; }
+
+                driversContainer.innerHTML += `
+                    <div style="background: rgba(255, 255, 255, 0.015); padding: 0.75rem 0.95rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.04); display: flex; flex-direction: column; gap: 0.25rem;">
+                        <span style="font-size: 0.82rem; font-weight: 700; color: #E2E8F0; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid ${icon}" style="color: ${color}; font-size: 0.8rem;"></i> ${evt.title}
+                        </span>
+                        <span style="font-size: 0.72rem; color: #a78bfa; line-height: 1.35;">
+                            ${evt.trigger}
+                        </span>
+                    </div>
+                `;
+            });
+        } else {
+            driversContainer.innerHTML = '<span style="font-size: 0.82rem; color: var(--text-secondary); text-align: center; padding: 1.5rem 0;">No significant macro drivers detected at this moment.</span>';
+        }
+    }
+
+    // Render Long Sectors (limited to top 3 by backend)
+    longSectorsList.innerHTML = '';
+    if (data.long_sectors.length > 0) {
+        data.long_sectors.forEach(sec => {
+            longSectorsList.innerHTML += `
+                <div style="background: rgba(34, 197, 94, 0.05); padding: 0.65rem 0.85rem; border-radius: 6px; border-left: 3px solid #10B981;">
+                    <div style="font-weight: 700; color: #FFFFFF; font-size: 0.92rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span>${sec.name}</span>
+                        <span style="font-size: 0.75rem; color: #10B981; font-weight: 800; text-transform: uppercase;">Long</span>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.3rem 0 0; line-height: 1.3;">${sec.reason}</p>
+                </div>
+            `;
+        });
+    } else {
+        longSectorsList.innerHTML = '<span style="font-size: 0.85rem; color: var(--text-secondary);">No active factors favoring long sectors.</span>';
+    }
+
+    // Render Short Sectors (limited to top 3 by backend)
+    shortSectorsList.innerHTML = '';
+    if (data.short_sectors.length > 0) {
+        data.short_sectors.forEach(sec => {
+            shortSectorsList.innerHTML += `
+                <div style="background: rgba(239, 68, 68, 0.05); padding: 0.65rem 0.85rem; border-radius: 6px; border-left: 3px solid #EF4444;">
+                    <div style="font-weight: 700; color: #FFFFFF; font-size: 0.92rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span>${sec.name}</span>
+                        <span style="font-size: 0.75rem; color: #EF4444; font-weight: 800; text-transform: uppercase;">Downside</span>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.3rem 0 0; line-height: 1.3;">${sec.reason}</p>
+                </div>
+            `;
+        });
+    } else {
+        shortSectorsList.innerHTML = '<span style="font-size: 0.85rem; color: var(--text-secondary);">No active factors threatening downside sectors.</span>';
+    }
+
+    // Render Tickers (Long)
+    posStocksList.innerHTML = '';
+    if (data.pos_stocks.length > 0) {
+        data.pos_stocks.forEach(stk => {
+            posStocksList.innerHTML += `<a href="/fundamentals?symbol=${stk}" class="stock-link">${stk} <i class="fa-solid fa-arrow-trend-up"></i></a>`;
+        });
+    } else {
+        posStocksList.innerHTML = '<span style="font-size:0.8rem; color:var(--text-secondary);">No active tickers</span>';
+    }
+
+    // Render Tickers (Short)
+    negStocksList.innerHTML = '';
+    if (data.neg_stocks.length > 0) {
+        data.neg_stocks.forEach(stk => {
+            negStocksList.innerHTML += `<a href="/fundamentals?symbol=${stk}" class="stock-link" style="background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.2); color:#f87171;">${stk} <i class="fa-solid fa-arrow-trend-down"></i></a>`;
+        });
+    } else {
+        negStocksList.innerHTML = '<span style="font-size:0.8rem; color:var(--text-secondary);">No active tickers</span>';
+    }
+}
+
+async function fetchMarketMood() {
+    try {
+        const response = await fetch('/api/economy/market-mood');
+        const result = await response.json();
+        
+        if (result.status === 'success' && result.data) {
+            const data = result.data;
+            
+            const valEl = document.getElementById('mmi-value');
+            const zoneEl = document.getElementById('mmi-zone');
+            const needleEl = document.getElementById('mmi-needle');
+            const yesterdayEl = document.getElementById('mmi-yesterday');
+            const weekagoEl = document.getElementById('mmi-weekago');
+            
+            if (valEl) {
+                valEl.textContent = data.value.toFixed(1);
+                valEl.style.color = data.color;
+            }
+            if (zoneEl) {
+                zoneEl.textContent = data.zone;
+                zoneEl.style.color = data.color;
+            }
+            if (needleEl) {
+                // Angle mapping: 0 -> -90deg, 100 -> +90deg
+                const angle = (data.value / 100.0) * 180.0 - 90.0;
+                needleEl.style.transform = `rotate(${angle}deg)`;
+            }
+            if (yesterdayEl) {
+                yesterdayEl.textContent = data.last_day ? data.last_day.toFixed(1) : '--';
+            }
+            if (weekagoEl) {
+                weekagoEl.textContent = data.last_week ? data.last_week.toFixed(1) : '--';
+            }
+        }
+    } catch (e) {
+        console.error('Error fetching market mood index:', e);
+    }
+}
+
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
     // Initial fetch
     fetchCommodities();
+    recalculateSentiment();
+    fetchMarketMood();
     
-    // Poll the backend server every 2 seconds for fresh API data
+    // Poll the backend server every 2 seconds for fresh commodity API data
     setInterval(fetchCommodities, 2000);
+
+    // Poll the sentiment analysis API every 10 seconds for news updates
+    setInterval(recalculateSentiment, 10000);
+
+    // Poll the market mood index API every 15 seconds
+    setInterval(fetchMarketMood, 15000);
 
     // Fluctuate prices on client-side every 1 second to make table active and ticking
     setInterval(simulateTicks, 1000);
