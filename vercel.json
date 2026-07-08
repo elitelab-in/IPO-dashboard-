@@ -16,7 +16,6 @@
     { "src": "/screener", "dest": "server.py" },
     { "src": "/about", "dest": "server.py" },
     { "src": "/contact", "dest": "server.py" },
-    { "src": "/indian-market-news", "dest": "server.py" },
     { "src": "/articles", "dest": "server.py" },
     { "src": "/article", "dest": "server.py" },
     { "src": "/privacy", "dest": "server.py" },

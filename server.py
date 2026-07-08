@@ -41,9 +41,6 @@ def index():
 def screener():
     return send_from_directory(get_file_path('screener.html'), 'screener.html')
 
-@app.route('/indian-market-news')
-def indian_market_news():
-    return send_from_directory(get_file_path('indian-market-news.html'), 'indian-market-news.html')
 
 @app.route('/contact')
 def contact():
