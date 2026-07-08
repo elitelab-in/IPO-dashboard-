@@ -49,6 +49,14 @@
             font-style: italic;
             margin: 0;
         }
+        @media (max-width: 768px) {
+            .hero.text-center {
+                padding-bottom: 0.5rem !important;
+            }
+            .dashboard-container.about-dashboard {
+                padding-top: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -95,7 +103,7 @@
     </header>
 
     <!-- Main Dashboard Section -->
-    <main class="container dashboard-container fade-in-up delay-2" style="display: flex; justify-content: center; padding-bottom: 4rem;">
+    <main class="container dashboard-container about-dashboard fade-in-up delay-2" style="display: flex; justify-content: center; padding-bottom: 4rem;">
         <div class="glass-panel about-panel">
             <div class="about-content">
                 
@@ -104,7 +112,7 @@
                         <img src="abhishek_jalal.png?v=3" alt="Abhishek Jalal" style="width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scale(1.3) translateY(5px);">
                     </div>
                     <div style="flex: 1; min-width: 250px;">
-                        <p>"Hi, I'm <span style="color: var(--accent-primary); font-weight: 700;">Abhishek Jalal</span>, founder of <span style="color: #FFFFFF; font-weight: 700;">Elitelab</span><span style="color: var(--accent-primary); font-weight: 700;">.in</span>. With over 3 years of trading experience, I built this platform to cut through the noise and make profitable trading accessible and easy for everyday retail traders."</p>
+                        <p>"Hi, I'm <span style="color: var(--accent-primary); font-weight: 700;">Abhishek Jalal</span>, founder of <span style="color: #FFFFFF; font-weight: 700;">Elitelab</span><span style="color: var(--accent-primary); font-weight: 700;">.in</span>. With over 5 years of experience in Financial markets, I built this platform to cut through the noise and make profitable trading accessible and easy for everyday retail traders."</p>
                         <div style="margin-top: 1rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
                             <a href="https://www.instagram.com/abhishek.jalal/" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
                                 <i class="fa-brands fa-instagram" style="font-size: 1.2rem;"></i> Instagram
@@ -121,7 +129,12 @@
                 <p>We are a dedicated team of market enthusiasts, data engineers, and algorithmic traders who decided to build the solution we always wanted. By combining live data feeds with proprietary filtering algorithms—like our signature IPO Base screener—we cut through the noise to deliver actionable insights directly to your dashboard.</p>
 
                 <h2>What We Do</h2>
-                <p>We focus on one core philosophy: <strong>Quality over Quantity</strong>. Our algorithms scan thousands of equities across the NSE and BSE to identify unique setups, specifically focusing on newly listed companies forming solid bases. We aim to help you catch the next big breakout before it hits mainstream news.</p>
+                <p>Elitelab gives you a complete suite of tools to trade smarter in the Indian stock market:</p>
+                <ul style="margin-top: 0.75rem; padding-left: 1.25rem;">
+                    <li><strong>AI Auto Screener</strong> — Our algorithm scans thousands of NSE & BSE stocks in real-time and automatically filters the best Intraday and Swing trade setups for you, so you never miss a high-probability entry.</li>
+                    <li style="margin-top: 0.5rem;"><strong>Stocks Ka Search Engine</strong> — Search any stock and instantly get deep fundamental analysis including revenue, profit trends, shareholding patterns, peer comparison, and key financial ratios — all in one clean dashboard.</li>
+                    <li style="margin-top: 0.5rem;"><strong>Macroeconomic Event Analyzer</strong> — Search real-world events like "RBI rate cut" or "crude oil crash" and see exactly which sectors and stocks get impacted, powered by live commodity prices and a dynamic sector heatmap.</li>
+                </ul>
 
                 <h2>Join the Revolution</h2>
                 <p>Whether you're a seasoned professional or a passionate part-time trader, Elitelab is designed to be your edge in the markets. With real-time Top Stories, instant Push Notification alerts, and robust fundamental scans on the horizon, we're just getting started.</p>

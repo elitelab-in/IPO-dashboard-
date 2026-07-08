@@ -392,17 +392,21 @@ function renderCommoditiesTable() {
         const color = isPos ? '#22C55E' : '#EF4444';
         const sign = isPos ? '+' : '';
         
-        let formattedPrice = `$${item.price.toFixed(2)}`;
-        if (item.name === 'USD/INR') {
-            formattedPrice = `₹${item.price.toFixed(2)}`;
-        } else if (item.name === 'US 10Y Yield') {
+        let formattedPrice;
+        const cur = item.currency || '';
+        if (cur.startsWith('₹')) {
+            // INR-based: Gold MCX, Silver MCX, USD/INR
+            formattedPrice = `₹${item.price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        } else if (cur === '%') {
             formattedPrice = `${item.price.toFixed(2)}%`;
+        } else {
+            formattedPrice = `$${item.price.toFixed(2)}`;
         }
 
         tableBody.innerHTML += `
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); transition: background-color 0.2s ease;">
                 <td style="padding: 0.55rem 0.25rem; font-weight: 700; color: #FFFFFF;">${item.name}</td>
-                <td style="padding: 0.55rem 0.25rem; text-align: right; font-weight: 600; font-family: monospace;">${formattedPrice}</td>
+                <td style="padding: 0.55rem 0.25rem; text-align: right; font-weight: 600;">${formattedPrice}</td>
                 <td style="padding: 0.55rem 0.25rem; text-align: right; font-weight: 700; color: ${color}; font-family: monospace;">
                     ${sign}${item.change_pct.toFixed(2)}%
                 </td>

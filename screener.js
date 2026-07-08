@@ -3,17 +3,38 @@
 // ═══════════════════════════════════════════════════════════════
 
 // ── Shared: Chart Tooltip ───────────────────────────────────────
-const tooltip   = document.getElementById('chart-tooltip');
-const chartIframe = document.getElementById('chart-iframe');
+const tooltip      = document.getElementById('chart-tooltip');
+const chartContainer = document.getElementById('chart-container');
 
 if (tooltip) {
     tooltip.addEventListener('mouseenter', () => clearTimeout(window.tooltipHideTimeout));
     tooltip.addEventListener('mouseleave', () => {
         window.tooltipHideTimeout = setTimeout(() => {
             tooltip.classList.remove('visible');
-            if (chartIframe) chartIframe.src = '';
             tooltip.dataset.symbol = '';
         }, 300);
+    });
+}
+
+function loadTVWidget(symbol) {
+    if (!chartContainer) return;
+    chartContainer.innerHTML = '';
+    new TradingView.widget({
+        symbol: symbol,
+        interval: "D",
+        timezone: "Asia/Kolkata",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: false,
+        container_id: "chart-container",
+        autosize: true,
+        studies: [
+            { id: "MAExp@tv-basicstudies", inputs: { length: 9 } },
+            { id: "MAExp@tv-basicstudies", inputs: { length: 20 } }
+        ]
     });
 }
 
@@ -23,8 +44,7 @@ function attachTooltip(target, symbol) {
         clearTimeout(window.tooltipHideTimeout);
         const sym = `BSE:${symbol}`;
         if (tooltip.dataset.symbol !== sym) {
-            const encoded = encodeURIComponent(sym);
-            if (chartIframe) chartIframe.src = `https://s.tradingview.com/widgetembed/?symbol=${encoded}&interval=D&theme=dark&style=1&hide_top_toolbar=0&hide_legend=0&save_image=0&timezone=Asia%2FKolkata`;
+            loadTVWidget(sym);
             tooltip.dataset.symbol = sym;
         }
         if (!tooltip.classList.contains('visible')) {
@@ -42,7 +62,6 @@ function attachTooltip(target, symbol) {
         if (!tooltip) return;
         window.tooltipHideTimeout = setTimeout(() => {
             tooltip.classList.remove('visible');
-            if (chartIframe) chartIframe.src = '';
             tooltip.dataset.symbol = '';
         }, 300);
     });

@@ -51,7 +51,15 @@
         }
         @media (max-width: 992px) {
             .simulator-grid {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column-reverse;
+                gap: 1.5rem;
+            }
+            .section-mobile-center {
+                text-align: center !important;
+            }
+            .section-mobile-center h2 {
+                justify-content: center !important;
             }
         }
         .sim-control-panel {
@@ -311,7 +319,7 @@
                 Macroeconomic <span class="highlight-text">Event Analyzer</span>
             </h1>
             <p class="hero-subtitle" style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 1.75rem; max-width: 600px;">
-                Find out how global events, inflation spikes, monsoon failures, and repo rate fluctuations impact sectors and stock lists in India.
+                Analyze how global news, inflation, and rate changes impact Indian sectors and stocks.
             </p>
             
             <div class="search-box-wrapper" style="position: relative; width: 100%; max-width: 600px; margin-bottom: 1.25rem;">
@@ -375,7 +383,7 @@
 
         <!-- Live Market Sector Heatmap Section -->
         <div style="margin-top: 3rem;">
-            <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+            <div class="section-mobile-center" style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
                 <h2 style="font-size: 1.6rem; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 0.6rem; margin: 0;">
                     <i class="fa-solid fa-chart-simple" style="color: var(--accent-primary);"></i> Live Sector Heatmap
                 </h2>

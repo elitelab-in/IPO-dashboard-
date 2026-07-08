@@ -1651,31 +1651,57 @@ def get_commodity_prices():
     now = time.time()
     # Cache for 10 seconds to prevent API throttling
     if now - COMMODITY_CACHE["time"] > 10 or not COMMODITY_CACHE["data"]:
+        # Fetch USD/INR rate first for Gold & Silver MCX conversion
+        usdinr_rate = 85.0  # fallback
+        try:
+            t_fx = yf.Ticker("INR=X")
+            h_fx = t_fx.history(period="2d")
+            if not h_fx.empty:
+                usdinr_rate = float(h_fx['Close'].iloc[-1])
+        except Exception:
+            pass
+
         tickers = {
-            "Brent Crude": "BZ=F",
-            "Gold": "GC=F",
-            "Silver": "SI=F",
-            "Copper": "HG=F",
-            "Natural Gas": "NG=F",
-            "US 10Y Yield": "^TNX",
-            "USD/INR": "INR=X"
+            "Brent Crude": {"symbol": "BZ=F", "currency": "USD/bbl"},
+            "Gold (MCX)":  {"symbol": "GC=F", "currency": "₹/10g", "convert_mcx_gold": True},
+            "Silver (MCX)": {"symbol": "SI=F", "currency": "₹/kg", "convert_mcx_silver": True},
+            "Copper": {"symbol": "HG=F", "currency": "USD/lb"},
+            "Natural Gas": {"symbol": "NG=F", "currency": "USD/MMBtu"},
+            "US 10Y Yield": {"symbol": "^TNX", "currency": "%"},
+            "USD/INR": {"symbol": "INR=X", "currency": "₹"}
         }
         data = []
-        for name, ticker_symbol in tickers.items():
+        for name, info in tickers.items():
             try:
-                t = yf.Ticker(ticker_symbol)
+                t = yf.Ticker(info["symbol"])
                 hist = t.history(period="2d")
                 if not hist.empty:
                     price = float(hist['Close'].iloc[-1])
                     prev = float(hist['Close'].iloc[-2]) if len(hist) > 1 else price
+
+                    # Convert COMEX Gold (USD/troy oz) -> MCX Gold (INR/10 grams)
+                    # 1 troy oz = 31.1035 grams
+                    # Add India customs duty (~15%) + GST (3%) to match MCX pricing
+                    if info.get("convert_mcx_gold"):
+                        price = (price / 31.1035) * 10 * usdinr_rate * 1.15 * 1.03
+                        prev  = (prev / 31.1035) * 10 * usdinr_rate * 1.15 * 1.03
+
+                    # Convert COMEX Silver (USD/troy oz) -> MCX Silver (INR/kg)
+                    # 1 troy oz = 31.1035 grams, 1 kg = 1000 grams
+                    # Add India customs duty (~7.5%) + GST (3%) to match MCX pricing
+                    if info.get("convert_mcx_silver"):
+                        price = (price / 31.1035) * 1000 * usdinr_rate * 1.075 * 1.03
+                        prev  = (prev / 31.1035) * 1000 * usdinr_rate * 1.075 * 1.03
+
                     change = price - prev
                     change_pct = (change / prev * 100) if prev else 0.0
                     data.append({
                         "name": name,
-                        "symbol": ticker_symbol,
+                        "symbol": info["symbol"],
                         "price": round(price, 2),
                         "change": round(change, 2),
-                        "change_pct": round(change_pct, 2)
+                        "change_pct": round(change_pct, 2),
+                        "currency": info["currency"]
                     })
             except Exception as e:
                 print(f"Error fetching commodity {name}: {e}")
