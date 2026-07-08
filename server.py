@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory, request, redirect
 import json
 import threading
 from flask_cors import CORS
@@ -1318,7 +1318,7 @@ def fetch_chartink_symbols():
 
 @app.route('/intraday-manager')
 def intraday_manager():
-    return send_from_directory(get_file_path('intraday.html'), 'intraday.html')
+    return redirect('/screener')
 
 @app.route('/api/intraday/analyze')
 def analyze_stock():
