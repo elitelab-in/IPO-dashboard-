@@ -21,6 +21,7 @@
     { "src": "/privacy", "dest": "server.py" },
     { "src": "/terms", "dest": "server.py" },
     { "src": "/fundamentals", "dest": "server.py" },
+    { "src": "/economy", "dest": "server.py" },
     { "src": "/intraday-manager", "dest": "server.py" },
     { "src": "/(.*)", "dest": "/$1" }
   ]

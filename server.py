@@ -1390,8 +1390,305 @@ def get_sparkline(symbol):
         return jsonify({"error": str(e)}), 500
 
 
+# ── Economy & Macro-Economic Simulator APIs ────────────────────────────────────
+ECONOMY_EVENTS = {
+    "oil_rise": {
+        "title": "Crude Oil Price Hike",
+        "market_impact": "Bearish",
+        "reason": "India imports over 85% of its crude oil requirements. A spike in oil prices inflates the national import bill, expands the current account deficit, exerts downward pressure on the Rupee, and drives raw material costs up across manufacturing and chemical sectors.",
+        "pos_sectors": ["Oil & Gas Exploration", "Renewable Energy"],
+        "neg_sectors": ["Paints & Chemicals", "Aviation", "Automobile", "Logistics & Transport"],
+        "pos_stocks": ["ONGC", "OIL", "RELIANCE"],
+        "neg_stocks": ["ASIANPAINT", "INDIGO", "BERGEPAINT", "TATAMOTORS"]
+    },
+    "rate_hike": {
+        "title": "RBI / Federal Reserve Interest Rate Hike",
+        "market_impact": "Bearish",
+        "reason": "Central banks raise key interest rates (repo rate) to combat high inflation. This increases borrowing costs for companies, squeezing profit margins. It also increases monthly EMI costs for consumers, leading to reduced discretionary spending.",
+        "pos_sectors": ["Banking & Financial Services", "Insurance"],
+        "neg_sectors": ["Real Estate", "Automobiles & Tractors", "Infrastructure", "High-growth Tech"],
+        "pos_stocks": ["HDFCBANK", "ICICIBANK", "SBIN"],
+        "neg_stocks": ["DLF", "TATAMOTORS", "LT", "GODREJPROP"]
+    },
+    "rupee_fall": {
+        "title": "Indian Rupee (INR) Depreciation",
+        "market_impact": "Neutral / Sector Specific",
+        "reason": "A weaker Rupee benefits export-oriented businesses who earn in foreign currencies (primarily USD). However, it directly harms import-dependent industries (such as oil marketing and electronics) by significantly increasing their import costs.",
+        "pos_sectors": ["IT Services & Software", "Pharmaceuticals & Healthcare", "Textiles & Exports"],
+        "neg_sectors": ["Oil Marketing & Refining", "Chemicals & Plastics", "Consumer Electronics"],
+        "pos_stocks": ["TCS", "INFY", "SUNPHARMA", "CIPLA"],
+        "neg_stocks": ["BPCL", "HPCL", "IOC", "ASIANPAINT"]
+    },
+    "monsoon_fail": {
+        "title": "Monsoon Deficit / El Niño Weather Impact",
+        "market_impact": "Bearish",
+        "reason": "Failure of seasonal monsoon rains severely dampens agricultural output, leading to food inflation. Since agriculture supports over 50% of India's population, a deficit drops rural income levels, heavily affecting rural demand for consumer goods and tractors.",
+        "pos_sectors": ["Irrigation & Water Management", "Power Generation"],
+        "neg_sectors": ["FMCG (Fast Moving Consumer Goods)", "Tractors & Agricultural Equipment", "Fertilizers & Agro-Chemicals"],
+        "pos_stocks": ["FINPIPE", "KSB", "NTPC"],
+        "neg_stocks": ["HINDUNILVR", "M&M", "ESCORT", "COROMANDEL"]
+    },
+    "inflation_spike": {
+        "title": "High Domestic Inflation (CPI Spike)",
+        "market_impact": "Bearish",
+        "reason": "Spikes in consumer price inflation erode purchasing power. Input costs for raw materials rise, forcing FMCG and retail companies to raise product prices. If they cannot pass on the costs, profit margins shrink.",
+        "pos_sectors": ["Commodities & Metals", "Energy & Power"],
+        "neg_sectors": ["FMCG & Consumer Goods", "Consumer Discretionary & Retail", "Automobiles"],
+        "pos_stocks": ["TATASTEEL", "HINDALCO", "COALINDIA"],
+        "neg_stocks": ["HINDUNILVR", "BRITANNIA", "MARUTI"]
+    },
+    "us_yield_rise": {
+        "title": "Rising US Treasury Bond Yields",
+        "market_impact": "Bearish",
+        "reason": "When US bond yields rise, US Treasury debt yields higher risk-free returns. Foreign Institutional Investors (FIIs) pull capital out of riskier emerging markets like India to invest in US bonds, causing heavy institutional selling.",
+        "pos_sectors": ["Defensive Sectors (IT, Pharma)"],
+        "neg_sectors": ["Emerging Markets Financials", "New-age Tech (Growth stocks)", "Midcaps & Smallcaps"],
+        "pos_stocks": ["TCS", "SUNPHARMA"],
+        "neg_stocks": ["PAYTM", "ZOMATO", "L&TFH"]
+    },
+    "geopolitical_war": {
+        "title": "Geopolitical War & Trade Route Disruptions",
+        "market_impact": "Bearish",
+        "reason": "Wars and supply chain disruptions (e.g. Red Sea shipping crisis) spike international shipping freight rates, delay imports of components, and create global oil volatility. Upstream commodities gain while manufacturing and auto suffer.",
+        "pos_sectors": ["Shipping & Logistics", "Defense Equipment", "Oil Exploration"],
+        "neg_sectors": ["Automobile Exporters", "Textiles & Apparel Exporters", "Electronics Assembly"],
+        "pos_stocks": ["GESHIP", "SCI", "ONGC", "HAL"],
+        "neg_stocks": ["TATAMOTORS", "BHARATFORG"]
+    },
+    "tax_cuts": {
+        "title": "Corporate Tax Cuts / Capex Incentives",
+        "market_impact": "Bullish",
+        "reason": "Reductions in corporate tax rates directly boost the net profit margins of companies. Capex incentives encourage capital expenditure and business expansions, driving overall domestic GDP growth.",
+        "pos_sectors": ["Capital Goods & Engineering", "Manufacturing", "Banking & Finance"],
+        "neg_sectors": ["None (Broad market positive)"],
+        "pos_stocks": ["LT", "ICICIBANK", "MARUTI", "SIEMENS"],
+        "neg_stocks": []
+    },
+    "metal_rise": {
+        "title": "Spike in Global Metal & Commodity Prices",
+        "market_impact": "Neutral / Sector Specific",
+        "reason": "A rise in base metals (steel, copper, aluminum) boosts profitability of mining and refining companies. However, it significantly increases input raw material costs for automobiles, construction, and consumer electronics.",
+        "pos_sectors": ["Metals & Mining", "Steel Production"],
+        "neg_sectors": ["Automobiles", "Real Estate & Construction", "Consumer Durables"],
+        "pos_stocks": ["TATASTEEL", "JSWSTEEL", "HINDALCO", "VEDL"],
+        "neg_stocks": ["MARUTI", "DLF", "HAVELLS"]
+    },
+    "gst_hike": {
+        "title": "GST (Goods & Services Tax) Rate Increases",
+        "market_impact": "Bearish",
+        "reason": "Higher indirect tax rates on products increase the final retail cost for consumers, directly impacting disposable income and cooling consumer demand for premium discretionary goods.",
+        "pos_sectors": ["None (Government revenue positive, equity negative)"],
+        "neg_sectors": ["FMCG & Consumer Goods", "Automobiles", "Hospitality & Dining", "Consumer Electronics"],
+        "pos_stocks": [],
+        "neg_stocks": ["HINDUNILVR", "MARUTI", "ITC"]
+    },
+    "monsoon_good": {
+        "title": "Normal to Bumper Monsoon Rainfall",
+        "market_impact": "Bullish",
+        "reason": "Healthy rainfall boosts crop yields, reduces agricultural input costs, lowers food inflation, and increases rural household income. This drives rural demand for automobiles, tractors, and fast-moving consumer goods.",
+        "pos_sectors": ["FMCG & Consumer Goods", "Tractors & Agricultural Equipment", "Fertilizers"],
+        "neg_sectors": ["None (Broadly positive)"],
+        "pos_stocks": ["HINDUNILVR", "M&M", "ESCORT", "COROMANDEL"],
+        "neg_stocks": []
+    },
+    "fii_buying": {
+        "title": "Heavy Foreign Institutional Investors (FII) Buying Inflows",
+        "market_impact": "Bullish",
+        "reason": "Strong FII inflows flood the local equity market with dollar capital. Institutional buying target index heavyweights, leading to a strong rally in large-cap stocks and expanding market valuations.",
+        "pos_sectors": ["Banking & Large-cap Financials", "Index Heavyweights (Energy, IT)"],
+        "neg_sectors": ["None (Overall market bullish)"],
+        "pos_stocks": ["HDFCBANK", "ICICIBANK", "RELIANCE", "TCS"],
+        "neg_stocks": []
+    },
+    "fii_selling": {
+        "title": "Foreign Institutional Investors (FII) Selling Outflows",
+        "market_impact": "Bearish",
+        "reason": "When FIIs pull money out of emerging markets (due to high global rates or risk aversion), heavy institutional block selling creates major supply pressure, particularly in index-heavyweight banking and tech stocks.",
+        "pos_sectors": ["None (Broad market selling pressure)"],
+        "neg_sectors": ["Private Banking & Financials", "Index Heavyweights", "High-Valuation Midcaps"],
+        "pos_stocks": [],
+        "neg_stocks": ["HDFCBANK", "ICICIBANK", "RELIANCE", "TCS"]
+    },
+    "fed_cut": {
+        "title": "US Federal Reserve Interest Rate Cuts",
+        "market_impact": "Bullish",
+        "reason": "Lower interest rates in the US decrease dollar yields, prompting international capital to seek higher returns in emerging markets like India. FII inflows increase, and global borrowing costs decline.",
+        "pos_sectors": ["IT Services (Client spending boost)", "Private Banking", "High-growth Tech"],
+        "neg_sectors": ["None (Highly bullish for equity markets)"],
+        "pos_stocks": ["TCS", "INFY", "HDFCBANK", "RELIANCE"],
+        "neg_stocks": []
+    },
+    "oil_crash": {
+        "title": "Crude Oil Price Crash / Drop in Brent Crude",
+        "market_impact": "Bullish",
+        "reason": "India saves billions in import bills. Low oil prices reduce inflation, strengthen the Rupee, and immediately decrease key raw material inputs for chemical, paint, transport, and manufacturing firms.",
+        "pos_sectors": ["Paints & Chemicals", "Aviation & Logistics", "Automobiles"],
+        "neg_sectors": ["Oil Upstream (ONGC/OIL)"],
+        "pos_stocks": ["ASIANPAINT", "INDIGO", "BERGEPAINT", "TATAMOTORS"],
+        "neg_stocks": ["ONGC", "OIL"]
+    },
+    "pli_scheme": {
+        "title": "Production Linked Incentive (PLI) Scheme Expansion",
+        "market_impact": "Bullish",
+        "reason": "Government subsidies and manufacturing tax incentives encourage high-value domestic production, local component assembly, and imports substitution, directly boosting local manufacturers.",
+        "pos_sectors": ["Electronics Manufacturing", "EV & Automobiles", "Defense Production"],
+        "neg_sectors": ["Import-dependent distributors"],
+        "pos_stocks": ["DIXON", "TATAMOTORS", "AMBER", "HAL"],
+        "neg_stocks": []
+    },
+    "private_capex": {
+        "title": "Private Sector Capex (Capital Expenditure) Revival",
+        "market_impact": "Bullish",
+        "reason": "Renewed private investment in factories, capacity expansions, and real estate signals strong corporate confidence, driving demand for heavy engineering, metals, and construction materials.",
+        "pos_sectors": ["Capital Goods & Engineering", "Metals & Mining", "Cement & Construction"],
+        "neg_sectors": ["None"],
+        "pos_stocks": ["LT", "TATASTEEL", "SIEMENS", "ULTRACEMCO"],
+        "neg_stocks": []
+    }
+}
+
+@app.route('/economy')
+def economy():
+    return send_from_directory(get_file_path('economy.html'), 'economy.html')
+
+@app.route('/api/economy/analyze')
+def analyze_economy_event():
+    query = request.args.get('query', '').strip().lower()
+    if not query:
+        return jsonify({"error": "Query parameter is required"}), 400
+    
+    # Keyword mapping
+    match_key = None
+    if any(k in query for k in ["oil price hike", "rising oil", "oil increase"]):
+        match_key = "oil_rise"
+    elif any(k in query for k in ["fed rate cut", "fed cut", "us rate cut"]):
+        match_key = "fed_cut"
+    elif any(k in query for k in ["oil crash", "oil drop", "cheap oil", "crude crash", "oil price fall", "oil price crash"]):
+        match_key = "oil_crash"
+    elif any(k in query for k in ["oil", "crude", "brent", "petroleum", "fuel"]):
+        # Fallback to rise if general query
+        match_key = "oil_rise"
+    elif any(k in query for k in ["interest", "repo", "rate", "rbi", "fed", "hike"]):
+        match_key = "rate_hike"
+    elif any(k in query for k in ["rupee", "inr", "dollar", "usd", "depreciat", "weak", "exchange"]):
+        match_key = "rupee_fall"
+    elif any(k in query for k in ["good monsoon", "normal rain", "bumper rain", "bumper crop", "excess rain"]):
+        match_key = "monsoon_good"
+    elif any(k in query for k in ["monsoon", "rain", "el nino", "weather", "dry", "deficit"]):
+        match_key = "monsoon_fail"
+    elif any(k in query for k in ["inflation", "cpi", "wpi", "price rise", "dearness"]):
+        match_key = "inflation_spike"
+    elif any(k in query for k in ["yield", "bond", "treasury", "us yield"]):
+        match_key = "us_yield_rise"
+    elif any(k in query for k in ["war", "geopolit", "conflict", "red sea", "disrupt", "tension"]):
+        match_key = "geopolitical_war"
+    elif any(k in query for k in ["tax", "budget", "corporate tax", "incentive"]):
+        match_key = "tax_cuts"
+    elif any(k in query for k in ["metal", "commodity", "steel", "copper", "aluminum", "commodity price"]):
+        match_key = "metal_rise"
+    elif any(k in query for k in ["gst", "tax hike", "goods and services tax"]):
+        match_key = "gst_hike"
+    elif any(k in query for k in ["fii buy", "fii inflow", "capital inflow", "foreign purchase"]):
+        match_key = "fii_buying"
+    elif any(k in query for k in ["fii sell", "fii outflow", "capital outflow", "foreign sell"]):
+        match_key = "fii_selling"
+    elif any(k in query for k in ["pli", "pli scheme", "incentive scheme", "manufacturing subsidy"]):
+        match_key = "pli_scheme"
+    elif any(k in query for k in ["private capex", "capex revival", "factory investment"]):
+        match_key = "private_capex"
+        
+    if match_key and match_key in ECONOMY_EVENTS:
+        event_data = ECONOMY_EVENTS[match_key]
+        return jsonify({
+            "status": "success",
+            "found": True,
+            "key": match_key,
+            "data": event_data
+        })
+    else:
+        # Return list of valid keys for frontend suggestions
+        return jsonify({
+            "status": "success",
+            "found": False,
+            "message": "No specific event match. Try searching for Oil, Inflation, Interest rates, Monsoon, or Rupee.",
+            "suggestions": [
+                {"title": "Crude Oil Price Hike", "query": "oil price hike"},
+                {"title": "RBI Interest Rate Hike", "query": "repo rate hike"},
+                {"title": "Rupee Depreciation", "query": "weak rupee"},
+                {"title": "Monsoon Deficit", "query": "monsoon failure"},
+                {"title": "Inflation Spike", "query": "rising inflation"},
+                {"title": "US Bond Yield Spike", "query": "us bond yield rise"},
+                {"title": "Corporate Tax Cuts", "query": "corporate tax cuts"},
+                {"title": "Commodity Price Rise", "query": "steel price rise"}
+            ]
+        })
+
+CRUDE_PRICE_CACHE = {"time": 0, "price": 80.0}
+COMMODITY_CACHE = {"time": 0, "data": []}
+
+@app.route('/api/economy/crude-price')
+def get_live_crude_price():
+    global CRUDE_PRICE_CACHE
+    now = time.time()
+    # Cache for 10 minutes to prevent API throttling
+    if now - CRUDE_PRICE_CACHE["time"] > 600:
+        try:
+            ticker = yf.Ticker('BZ=F')
+            hist = ticker.history(period='1d')
+            if not hist.empty:
+                val = float(hist['Close'].iloc[-1])
+                CRUDE_PRICE_CACHE = {"time": now, "price": round(val, 2)}
+        except Exception as e:
+            print(f"Error fetching Brent Crude price: {e}")
+    return jsonify({
+        "status": "success",
+        "price": CRUDE_PRICE_CACHE["price"]
+    })
+
+@app.route('/api/economy/commodities')
+def get_commodity_prices():
+    global COMMODITY_CACHE
+    now = time.time()
+    # Cache for 10 seconds to prevent API throttling
+    if now - COMMODITY_CACHE["time"] > 10 or not COMMODITY_CACHE["data"]:
+        tickers = {
+            "Brent Crude": "BZ=F",
+            "Gold": "GC=F",
+            "Silver": "SI=F",
+            "Copper": "HG=F",
+            "Natural Gas": "NG=F",
+            "US 10Y Yield": "^TNX",
+            "USD/INR": "INR=X"
+        }
+        data = []
+        for name, ticker_symbol in tickers.items():
+            try:
+                t = yf.Ticker(ticker_symbol)
+                hist = t.history(period="2d")
+                if not hist.empty:
+                    price = float(hist['Close'].iloc[-1])
+                    prev = float(hist['Close'].iloc[-2]) if len(hist) > 1 else price
+                    change = price - prev
+                    change_pct = (change / prev * 100) if prev else 0.0
+                    data.append({
+                        "name": name,
+                        "symbol": ticker_symbol,
+                        "price": round(price, 2),
+                        "change": round(change, 2),
+                        "change_pct": round(change_pct, 2)
+                    })
+            except Exception as e:
+                print(f"Error fetching commodity {name}: {e}")
+        if data:
+            COMMODITY_CACHE = {"time": now, "data": data}
+            
+    return jsonify({
+        "status": "success",
+        "data": COMMODITY_CACHE["data"]
+    })
+
+
 if __name__ == '__main__':
     import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-
