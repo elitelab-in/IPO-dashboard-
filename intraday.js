@@ -67,10 +67,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Format rating classes
             let ratingClass = 'rating-badge';
-            if (stock.rating === 'Very Strong') ratingClass += ' rating-very-strong';
-            else if (stock.rating === 'Strong') ratingClass += ' rating-strong';
-            else if (stock.rating === 'Moderate') ratingClass += ' rating-moderate';
-            else ratingClass += ' rating-avoid';
+            let ratingContent = stock.rating;
+            if (stock.rating === 'Very Strong') {
+                ratingClass += ' rating-very-strong';
+                ratingContent = '<i class="fa-solid fa-star" style="font-size: 0.8rem;"></i>';
+            } else if (stock.rating === 'Strong') {
+                ratingClass += ' rating-strong';
+            } else if (stock.rating === 'Moderate') {
+                ratingClass += ' rating-moderate';
+            } else {
+                ratingClass += ' rating-avoid';
+            }
 
             const isPositive = stock.change_pct >= 0;
             const chgColor = isPositive ? '#22C55E' : '#EF4444';
@@ -88,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td style="font-family: monospace;">${formatVolume(stock.volume)}</td>
                 <td>${stock.sector}</td>
                 <td><span style="font-weight: 800; color: var(--text-primary);">${stock.score}</span></td>
-                <td><span class="${ratingClass}">${stock.rating}</span></td>
+                <td><span class="${ratingClass}">${ratingContent}</span></td>
             `;
 
             // Hover chart on symbol + name cells (same logic as app.js)
@@ -98,10 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!tooltip) return;
                     clearTimeout(window.tooltipHideTimeout);
 
-                    const symbol = `BSE:${stock.symbol}`;
+                    const symbol = `NSE:${stock.symbol}`;
                     if (tooltip.dataset.symbol !== symbol) {
                         const encoded = encodeURIComponent(symbol);
-                        if (chartIframe) chartIframe.src = `https://s.tradingview.com/widgetembed/?symbol=${encoded}&interval=D&theme=dark&style=1&hide_top_toolbar=0&hide_legend=0&save_image=0&timezone=Asia%2FKolkata`;
+                        if (chartIframe) chartIframe.src = `https://s.tradingview.com/widgetembed/?symbol=${encoded}&interval=D&theme=dark&style=3&hide_top_toolbar=1&hide_side_toolbar=1&hide_legend=1&symboledit=0&save_image=0&timezone=Asia%2FKolkata`;
                         tooltip.dataset.symbol = symbol;
                     }
 

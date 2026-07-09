@@ -4,12 +4,12 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elitelab - Fundamentals Deep Dive</title>
-    <meta name="description" content="Elitelab Stock Fundamentals">
+    <title>Elitelab - Traders Ki Apni Lab</title>
+    <meta name="description" content="Your digital trading lab to scan swing stocks, analyze IPO metrics, and track live macro drivers.">
     
     
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="index.css?v=60">
+    <link rel="stylesheet" href="index.css?v=61">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js for the price chart and bar charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -117,9 +117,9 @@
             display: inline-block;
         }
         .rating-very-strong {
-            background: rgba(239, 68, 68, 0.15);
-            color: #F97316;
-            border: 1px solid rgba(249, 115, 22, 0.3);
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
         .rating-strong {
             background: rgba(34, 197, 94, 0.15);
@@ -363,10 +363,58 @@
         .glass-panel {
             padding: 2.25rem 2rem;
         }
-        @media (max-width: 768px) {
-            .glass-panel {
-                padding: 1.25rem 1rem;
-            }
+        
+        /* Search autocomplete suggestions styles */
+        .suggestion-item {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+        }
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        .suggestion-item:hover {
+            background: rgba(139, 92, 246, 0.15);
+        }
+        .suggestion-symbol {
+            font-weight: 700;
+            color: #8B5CF6;
+        }
+        .suggestion-name {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-left: 0.75rem;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .suggestion-sector {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+        }
+        #loading-state {
+            position: relative !important;
+            display: none;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            width: 100% !important;
+            padding: 6rem 0 !important;
+            background: transparent !important;
+            left: auto !important;
+            right: auto !important;
+            top: auto !important;
+            bottom: auto !important;
+            z-index: 1 !important;
         }
     </style>
 </head>
@@ -387,7 +435,7 @@
                 <a href="/screener" class="nav-link ">AI Screener</a>
                 <a href="/fundamentals" class="nav-link active">Fundamentals</a>
                 <a href="/economy" class="nav-link ">Economy</a>
-                <a href="/about" class="nav-link ">About Us</a>
+                
                 <div class="market-status-widget mobile-only"></div>
             </div>
             <div class="nav-actions">
@@ -412,11 +460,12 @@
             </p>
             
             <div class="search-box-wrapper" style="position: relative; width: 100%; max-width: 650px;">
-                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem;"></i>
-                <input type="text" id="stock-search" placeholder="Type a Company Name or Symbol to Search..." style="width: 100%; padding: 0.9rem 1.5rem 0.9rem 3.2rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.3); color: var(--text-primary); font-size: 1.1rem; outline: none; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
-                <button class="btn btn-primary" id="search-submit" style="position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%); border-radius: 50px; padding: 0.55rem 1.4rem; font-size: 0.95rem; font-weight: 700; border: none; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem; z-index: 10;"></i>
+                <input type="text" id="stock-search" placeholder="Type a Company Name or Symbol to Search..." autocomplete="off" style="width: 100%; padding: 0.9rem 1.5rem 0.9rem 3.2rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.3); color: var(--text-primary); font-size: 1.1rem; outline: none; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 5;">
+                <button class="btn btn-primary" id="search-submit" style="position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%); border-radius: 50px; padding: 0.55rem 1.4rem; font-size: 0.95rem; font-weight: 700; border: none; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); z-index: 10;">
                     Analyze
                 </button>
+                <div id="search-suggestions" style="display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: rgba(17, 12, 28, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100; max-height: 250px; overflow-y: auto; text-align: left; padding: 6px 0;"></div>
             </div>
             
             <!-- Trending Tickers -->
@@ -438,9 +487,9 @@
                 <p>Enter a stock symbol above (e.g. INFY.NS for Infosys) to load its complete financial dashboard.</p>
             </div>
             
-            <div id="loading-state" class="loading-state" style="display: none; padding: 4rem 0;">
+            <div id="loading-state" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 6rem 0; gap: 1rem; width: 100%; text-align: center;">
                 <div class="spinner"></div>
-                <p>Crunching financial data...</p>
+                <p style="font-weight: 500; color: var(--text-secondary); margin: 0;">Crunching financial data...</p>
             </div>
             
             <div id="error-state">
@@ -626,6 +675,7 @@
                 <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
             </div>
             <div class="footer-links">
+                <a href="/about">About Us</a>
                 <a href="/privacy">Privacy Policy</a>
                 <a href="/terms">Terms of Service</a>
                 <a href="/contact">Contact Support</a>
@@ -642,13 +692,13 @@
         <iframe id="chart-iframe" src="" frameborder="0" scrolling="no"></iframe>
     </div>
 
-    <script src="fundamentals.js?v=60"></script>
+    <script src="fundamentals.js?v=61"></script>
     <script>
         // Mobile Menu Toggle
         document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
             document.querySelector('.nav-links').classList.toggle('active');
         });
     </script>
-    <script src="market-status.js?v=60"></script>
+    <script src="market-status.js?v=61"></script>
 </body>
 </html>

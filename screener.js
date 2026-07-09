@@ -125,10 +125,17 @@ function renderIntradayTable() {
         tr.style.cursor = 'pointer';
 
         let ratingClass = 'rating-badge';
-        if      (stock.rating === 'Very Strong') ratingClass += ' rating-very-strong';
-        else if (stock.rating === 'Strong')      ratingClass += ' rating-strong';
-        else if (stock.rating === 'Moderate')    ratingClass += ' rating-moderate';
-        else                                     ratingClass += ' rating-avoid';
+        let ratingContent = stock.rating;
+        if (stock.rating === 'Very Strong') {
+            ratingClass += ' rating-very-strong';
+            ratingContent = '<i class="fa-solid fa-star" style="font-size: 0.8rem;"></i>';
+        } else if (stock.rating === 'Strong') {
+            ratingClass += ' rating-strong';
+        } else if (stock.rating === 'Moderate') {
+            ratingClass += ' rating-moderate';
+        } else {
+            ratingClass += ' rating-avoid';
+        }
 
         const isPos = stock.change_pct >= 0;
         const chgColor = isPos ? '#22C55E' : '#EF4444';
@@ -144,7 +151,7 @@ function renderIntradayTable() {
             <td style="font-family:monospace;">${formatVolume(stock.volume)}</td>
             <td>${stock.sector}</td>
             <td><span style="font-weight:800;">${stock.score}</span></td>
-            <td><span class="${ratingClass}">${stock.rating}</span></td>
+            <td><span class="${ratingClass}">${ratingContent}</span></td>
         `;
 
         tr.querySelectorAll('.hover-target').forEach(t => attachTooltip(t, stock.symbol));
