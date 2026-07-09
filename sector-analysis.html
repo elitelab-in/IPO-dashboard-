@@ -9,6 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="index.css?v=62">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         .dashboard-grid {
             display: grid;
@@ -176,6 +177,93 @@
                 gap: 1.25rem;
             }
         }
+        /* Share Banner Styles */
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-primary);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.02em;
+        }
+        .share-btn:hover {
+            background: rgba(139, 92, 246, 0.25);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+        /* Share modal overlay */
+        #share-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.82);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        #share-modal-overlay.active {
+            display: flex;
+        }
+        #share-modal-box {
+            background: #0f0f1a;
+            border: 1px solid rgba(139,92,246,0.3);
+            border-radius: 20px;
+            padding: 1.5rem;
+            max-width: 420px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            box-shadow: 0 0 60px rgba(139,92,246,0.15);
+        }
+        #share-modal-box h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+        }
+        #share-modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            width: 100%;
+        }
+        #share-modal-actions button {
+            flex: 1;
+            padding: 0.65rem;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: opacity 0.2s;
+        }
+        #share-modal-actions button:hover { opacity: 0.85; }
+        #btn-download-banner { background: var(--accent-primary); color: #fff; }
+        #btn-close-modal { background: rgba(255,255,255,0.08); color: #fff; }
+        /* The actual banner card (hidden, used for rendering) */
+        #fii-share-banner {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 380px;
+            background: #08081a;
+            border-radius: 20px;
+            overflow: hidden;
+            font-family: 'DM Sans', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -293,8 +381,13 @@
                 </div>
                 
                 <div style="margin-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center;">
-                    <span>Flow Trend: <strong id="fpi-trend" style="color: #ffffff;">--</strong></span>
-                    <span id="fpi-date" style="font-size: 0.7rem; opacity: 0.8;">--</span>
+                    <strong id="fpi-trend" style="color: #ffffff; font-size: 0.78rem;">--</strong>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span id="fpi-date" style="font-size: 0.7rem; opacity: 0.8;">--</span>
+                        <button class="share-btn" onclick="openShareModal()" id="share-fiidii-btn">
+                            <i class="fa-solid fa-share-nodes"></i> Share
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -331,10 +424,13 @@
                     </div>
                 </div>
                 
-                <div style="margin-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; font-size: 0.75rem; text-align: right;">
+                <div style="margin-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
                     <a id="nsdl-report-link" href="#" target="_blank" style="color: var(--accent-primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
-                        View Source Report <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem;"></i>
+                        View Source <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem;"></i>
                     </a>
+                    <button class="share-btn" onclick="openFpiShareModal()" id="share-fpi-btn">
+                        <i class="fa-solid fa-share-nodes"></i> Share
+                    </button>
                 </div>
             </div>
         </div>
@@ -521,5 +617,252 @@
     </script>
     <script src="market-status.js?v=62"></script>
     <script src="sector-analysis.js?v=62"></script>
+
+    <!-- ===== SHARE MODAL OVERLAY ===== -->
+    <div id="share-modal-overlay" onclick="if(event.target===this) closeShareModal()">
+        <div id="share-modal-box">
+            <h3><i class="fa-solid fa-share-nodes" style="color:var(--accent-primary);margin-right:0.4rem;"></i> Share FII / DII Card</h3>
+            <div id="share-preview-wrap" style="width:100%;border-radius:14px;overflow:hidden;box-shadow:0 0 40px rgba(139,92,246,0.25);"></div>
+            <div id="share-modal-actions">
+                <button id="btn-download-banner" onclick="downloadBanner()">
+                    <i class="fa-solid fa-download"></i> Download
+                </button>
+                <button id="btn-close-modal" onclick="closeShareModal()">
+                    <i class="fa-solid fa-xmark"></i> Close
+                </button>
+            </div>
+            <p style="font-size:0.72rem;color:var(--text-secondary);margin:0;text-align:center;">
+                Tap Download to save the card, then share it anywhere!
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== HIDDEN FII/DII SHARE BANNER (off-screen, rendered to image) ===== -->
+    <div id="fii-share-banner">
+        <!-- Gradient top bar -->
+        <div style="background:linear-gradient(135deg,#1a0a3a 0%,#0d1a3a 50%,#0a1a1a 100%);padding:28px 28px 20px;">
+            <!-- Header row -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
+                <!-- Logo -->
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="background:#8B5CF6;width:6px;height:32px;border-radius:3px;"></div>
+                    <div style="font-size:22px;font-weight:800;color:#fff;line-height:1;letter-spacing:-0.5px;">Elitelab<span style="color:#8B5CF6;">.</span>in</div>
+                </div>
+                <!-- Date badge -->
+                <div style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);border-radius:8px;padding:5px 12px;font-size:11px;color:#c4b5fd;font-weight:600;" id="banner-date-badge">--</div>
+            </div>
+
+            <!-- Label -->
+            <div style="font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.1em;margin-bottom:6px;">INSTITUTIONAL FLOW · NSE</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.75);font-weight:600;margin-bottom:18px;" id="banner-trend-line">--</div>
+
+            <!-- FII big number -->
+            <div style="margin-bottom:6px;">
+                <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:0.1em;margin-bottom:6px;font-weight:600;">FII / FPI NET</div>
+                <div id="banner-fii-net-big" style="font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px;">--</div>
+            </div>
+
+            <!-- DII big number -->
+            <div style="margin-top:16px;">
+                <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:0.1em;margin-bottom:6px;font-weight:600;">DII NET</div>
+                <div id="banner-dii-net-big" style="font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px;">--</div>
+            </div>
+        </div>
+
+        <!-- Stats grid row -->
+        <div style="background:#0b0b1e;padding:20px 28px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;border-top:1px solid rgba(255,255,255,0.05);">
+            <div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">FII BUY</div>
+                <div id="banner-fii-buy" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+            </div>
+            <div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">FII SELL</div>
+                <div id="banner-fii-sell" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+            </div>
+            <div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">DII BUY</div>
+                <div id="banner-dii-buy" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+            </div>
+            <div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">DII SELL</div>
+                <div id="banner-dii-sell" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+            </div>
+        </div>
+
+        <!-- Footer watermark -->
+        <div style="background:#08081a;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.04);">
+            <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">DATA SOURCE: NSE · NSDL</div>
+            <div style="font-size:9px;color:rgba(139,92,246,0.6);font-weight:700;letter-spacing:0.08em;">elitelab.in</div>
+        </div>
+    </div>
+
+    <script>
+    // Global FII/DII data store for share banner
+    window._fiidiiShareData = {};
+
+    function populateBanner(data) {
+        window._fiidiiShareData = data;
+        const fmt = (v) => v !== undefined ? Math.abs(v).toLocaleString('en-IN', {maximumFractionDigits:0}) + ' Cr' : '--';
+        const sign = (v) => v >= 0 ? '+' : '-';
+        const netColor = (v) => v >= 0 ? '#10b981' : '#ef4444';
+
+        document.getElementById('banner-date-badge').innerText = data.date || '--';
+        document.getElementById('banner-trend-line').innerText = data.trend || '--';
+
+        const fiiNet = data.fii_net;
+        const diiNet = data.dii_net;
+
+        const fiiEl = document.getElementById('banner-fii-net-big');
+        fiiEl.innerText = (fiiNet !== undefined ? sign(fiiNet) : '') + fmt(fiiNet);
+        fiiEl.style.color = netColor(fiiNet);
+
+        const diiEl = document.getElementById('banner-dii-net-big');
+        diiEl.innerText = (diiNet !== undefined ? sign(diiNet) : '') + fmt(diiNet);
+        diiEl.style.color = netColor(diiNet);
+
+        document.getElementById('banner-fii-buy').innerText  = fmt(data.fii_buy);
+        document.getElementById('banner-fii-sell').innerText = fmt(data.fii_sell);
+        document.getElementById('banner-dii-buy').innerText  = fmt(data.dii_buy);
+        document.getElementById('banner-dii-sell').innerText = fmt(data.dii_sell);
+    }
+
+    function openShareModal() {
+        const overlay = document.getElementById('share-modal-overlay');
+        overlay.classList.add('active');
+
+        // Render banner to canvas, put preview inside modal
+        const banner = document.getElementById('fii-share-banner');
+        const wrap   = document.getElementById('share-preview-wrap');
+        wrap.innerHTML = '<div style="color:var(--text-secondary);font-size:0.8rem;text-align:center;padding:1rem;">Generating preview…</div>';
+
+        html2canvas(banner, { scale: 2, backgroundColor: null, useCORS: true, logging: false }).then(canvas => {
+            canvas.id = 'banner-canvas';
+            canvas.style.width  = '100%';
+            canvas.style.height = 'auto';
+            canvas.style.borderRadius = '12px';
+            wrap.innerHTML = '';
+            wrap.appendChild(canvas);
+        });
+    }
+
+    function closeShareModal() {
+        document.getElementById('share-modal-overlay').classList.remove('active');
+    }
+
+    function downloadBanner() {
+        const canvas = document.getElementById('banner-canvas');
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = 'elitelab-fiidii-' + (new Date().toISOString().slice(0,10)) + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+    </script>
+
+    <!-- ===== HIDDEN FPI FLOW SHARE BANNER ===== -->
+    <div id="fpi-share-banner" style="position:fixed;left:-9999px;top:0;width:380px;background:#08081a;border-radius:20px;overflow:hidden;font-family:'DM Sans',sans-serif;">
+        <!-- Gradient top bar -->
+        <div style="background:linear-gradient(135deg,#0a1a2a 0%,#0d1a3a 60%,#0a1a1a 100%);padding:26px 28px 22px;">
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="background:#8B5CF6;width:6px;height:32px;border-radius:3px;"></div>
+                    <div style="font-size:22px;font-weight:800;color:#fff;line-height:1;letter-spacing:-0.5px;">Elitelab<span style="color:#8B5CF6;">.</span>in</div>
+                </div>
+                <div style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);border-radius:8px;padding:5px 12px;font-size:11px;color:#c4b5fd;font-weight:600;" id="fpi-banner-period">--</div>
+            </div>
+
+            <!-- Label -->
+            <div style="font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.1em;margin-bottom:4px;">FPI SECTOR FLOW · NSDL</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:600;margin-bottom:20px;">Fortnightly Institutional Positioning</div>
+
+            <!-- Two columns: Inflows | Outflows -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <!-- Top Inflows -->
+                <div>
+                    <div style="font-size:10px;color:#10b981;font-weight:700;letter-spacing:0.1em;margin-bottom:10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid rgba(16,185,129,0.15);padding-bottom:6px;">
+                        ▲ TOP INFLOWS
+                    </div>
+                    <div id="fpi-banner-inflows" style="display:flex;flex-direction:column;gap:9px;"></div>
+                </div>
+                <!-- Top Outflows -->
+                <div>
+                    <div style="font-size:10px;color:#ef4444;font-weight:700;letter-spacing:0.1em;margin-bottom:10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid rgba(239,68,68,0.15);padding-bottom:6px;">
+                        ▼ TOP OUTFLOWS
+                    </div>
+                    <div id="fpi-banner-outflows" style="display:flex;flex-direction:column;gap:9px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background:#08081a;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.04);">
+            <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">DATA SOURCE: NSDL · NSE</div>
+            <div style="font-size:9px;color:rgba(139,92,246,0.6);font-weight:700;letter-spacing:0.08em;">elitelab.in</div>
+        </div>
+    </div>
+
+    <script>
+    // Store NSDL data for FPI share banner
+    window._fpiShareData = { period: '', inflows: [], outflows: [] };
+
+    function populateFpiBanner(data) {
+        window._fpiShareData = data;
+        document.getElementById('fpi-banner-period').innerText = (data.period || '').toUpperCase();
+
+        const fmt = (v) => {
+            const abs = Math.abs(v);
+            return (v >= 0 ? '+' : '-') + abs.toLocaleString('en-IN', { maximumFractionDigits: 0 }) + ' Cr';
+        };
+
+        const inflowsEl = document.getElementById('fpi-banner-inflows');
+        inflowsEl.innerHTML = '';
+        (data.inflows || []).slice(0, 3).forEach(item => {
+            inflowsEl.innerHTML += `
+                <div style="display:flex;flex-direction:column;gap:1px;">
+                    <div style="font-size:11px;font-weight:600;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${item.sector}">${item.sector}</div>
+                    <div style="font-size:14px;font-weight:800;color:#10b981;letter-spacing:-0.5px;">${fmt(item.net_latest)}</div>
+                </div>`;
+        });
+
+        const outflowsEl = document.getElementById('fpi-banner-outflows');
+        outflowsEl.innerHTML = '';
+        (data.outflows || []).slice(0, 3).forEach(item => {
+            outflowsEl.innerHTML += `
+                <div style="display:flex;flex-direction:column;gap:1px;">
+                    <div style="font-size:11px;font-weight:600;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${item.sector}">${item.sector}</div>
+                    <div style="font-size:14px;font-weight:800;color:#ef4444;letter-spacing:-0.5px;">${fmt(item.net_latest)}</div>
+                </div>`;
+        });
+    }
+
+    function openFpiShareModal() {
+        const overlay = document.getElementById('share-modal-overlay');
+        // Reuse same modal but with FPI banner
+        overlay.classList.add('active');
+        // Update modal title
+        overlay.querySelector('#share-modal-box h3').innerHTML = '<i class="fa-solid fa-share-nodes" style="color:var(--accent-primary);margin-right:0.4rem;"></i> Share FPI Flow Card';
+
+        const wrap = document.getElementById('share-preview-wrap');
+        wrap.innerHTML = '<div style="color:var(--text-secondary);font-size:0.8rem;text-align:center;padding:1rem;">Generating preview…</div>';
+
+        const banner = document.getElementById('fpi-share-banner');
+        html2canvas(banner, { scale: 2, backgroundColor: null, useCORS: true, logging: false }).then(canvas => {
+            canvas.id = 'banner-canvas';
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
+            canvas.style.borderRadius = '12px';
+            wrap.innerHTML = '';
+            wrap.appendChild(canvas);
+            // Override download filename
+            document.getElementById('btn-download-banner').onclick = () => {
+                const link = document.createElement('a');
+                link.download = 'elitelab-fpi-flow-' + (new Date().toISOString().slice(0,10)) + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            };
+        });
+    }
+    </script>
 </body>
 </html>

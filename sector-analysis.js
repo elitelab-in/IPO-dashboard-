@@ -75,6 +75,11 @@ function fetchSectorAnalysis() {
                 const aiSummaryEl = document.getElementById('ai-summary-text');
                 if (aiSummaryEl) aiSummaryEl.innerText = res.data.ai_summary || '';
 
+                // Populate the shareable FII/DII banner with live data
+                if (typeof populateBanner === 'function' && res.data.fpi_dii_summary) {
+                    populateBanner(res.data.fpi_dii_summary);
+                }
+
                 // Render components
                 renderHeatmap();
                 renderRotationQuadrants();
@@ -388,6 +393,15 @@ function fetchNsdlFpiFlows() {
                     } else {
                         outflowsList.innerHTML = '<div style="color: var(--text-secondary);">No outflows</div>';
                     }
+                }
+
+                // Populate the FPI share banner with top 3 inflows/outflows
+                if (typeof populateFpiBanner === 'function') {
+                    populateFpiBanner({
+                        period: nsdlData.period || '',
+                        inflows: nsdlData.top_inflows || [],
+                        outflows: nsdlData.top_outflows || []
+                    });
                 }
             }
         })
