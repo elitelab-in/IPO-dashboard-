@@ -2220,103 +2220,149 @@ def get_commodity_prices():
     })
 
 SECTOR_ANALYSIS_CACHE = {"time": 0, "data": {}}
+SECTOR_ANALYSIS_UPDATING = False
+sector_cache_lock = threading.Lock()
+
+def calculate_sector_analysis_sync():
+    from sector_calc_layer import SectorCalcLayer
+    calc = SectorCalcLayer()
+    sectors = calc.calculate_all()
+    
+    # Generate FPI summary metrics dynamically using nsepython
+    fii_buy, fii_sell, fii_net = 0.0, 0.0, 0.0
+    dii_buy, dii_sell, dii_net = 0.0, 0.0, 0.0
+    flow_date = ""
+    flow_trend = "Mixed Rotation Flow"
+    pos_rating = "Neutral"
+    try:
+        import nsepython
+        fd_data = nsepython.nse_fiidii()
+        if fd_data is not None and not fd_data.empty:
+            dii_row = fd_data[fd_data["category"] == "DII"]
+            fii_row = fd_data[fd_data["category"] == "FII/FPI"]
+            
+            if not dii_row.empty:
+                dii_buy = float(dii_row["buyValue"].iloc[0])
+                dii_sell = float(dii_row["sellValue"].iloc[0])
+                dii_net = float(dii_row["netValue"].iloc[0])
+            if not fii_row.empty:
+                fii_buy = float(fii_row["buyValue"].iloc[0])
+                fii_sell = float(fii_row["sellValue"].iloc[0])
+                fii_net = float(fii_row["netValue"].iloc[0])
+                
+            flow_date = str(fd_data["date"].iloc[0]) if "date" in fd_data.columns else ""
+            net_total = dii_net + fii_net
+            if fii_net < 0 and dii_net > 0:
+                flow_trend = f"FII Net Seller ({fii_net:,.1f} Cr) / DII Net Buyer ({dii_net:,.1f} Cr)"
+            elif fii_net > 0 and dii_net < 0:
+                flow_trend = f"FII Net Buyer ({fii_net:,.1f} Cr) / DII Net Seller ({dii_net:,.1f} Cr)"
+            elif fii_net > 0 and dii_net > 0:
+                flow_trend = "Strong Institutional Co-Buying"
+            else:
+                flow_trend = "Dual Institutional Net Selling"
+                
+            if net_total > 500.0:
+                pos_rating = "Bullish"
+            elif net_total < -500.0:
+                pos_rating = "Bearish"
+            else:
+                pos_rating = "Neutral"
+    except Exception as e:
+        print(f"Error fetching live FII/DII data: {e}")
+        fii_buy, fii_sell, fii_net = 14388.41, 14921.27, -532.86
+        dii_buy, dii_sell, dii_net = 18302.87, 16245.08, 2057.79
+        flow_date = "09-Jul-2026"
+        pos_rating = "Bullish"
+        flow_trend = "Heavy Institutional Buying"
+        
+    # Dynamic AI Summary Generation
+    leading_names = [n for n, s in sectors.items() if s["rotation_phase"] == "Leading"]
+    lagging_names = [n for n, s in sectors.items() if s["rotation_phase"] == "Lagging"]
+    improving_names = [n for n, s in sectors.items() if s["rotation_phase"] == "Improving"]
+    
+    lead_str = ", ".join(leading_names[:2]) if leading_names else "None"
+    lag_str = ", ".join(lagging_names[:2]) if lagging_names else "None"
+    imp_str = ", ".join(improving_names[:2]) if improving_names else "None"
+    
+    ai_summary = f"Sector rotation is favoring {lead_str} as they lead the market outperformance. Smart money is actively accumulating {imp_str} showing early signs of recovery, while it is recommended to avoid or distribute {lag_str} as they continue to lag."
+    
+    fpi_dii_summary = {
+        "fii_buy": fii_buy,
+        "fii_sell": fii_sell,
+        "fii_net": fii_net,
+        "dii_buy": dii_buy,
+        "dii_sell": dii_sell,
+        "dii_net": dii_net,
+        "date": flow_date,
+        "trend": flow_trend,
+        "positioning_rating": pos_rating
+    }
+    
+    return {
+        "sectors": sectors,
+        "fpi_dii_summary": fpi_dii_summary,
+        "ai_summary": ai_summary
+    }
+
+def update_sector_cache_in_background():
+    global SECTOR_ANALYSIS_CACHE, SECTOR_ANALYSIS_UPDATING
+    with sector_cache_lock:
+        if SECTOR_ANALYSIS_UPDATING:
+            return
+        SECTOR_ANALYSIS_UPDATING = True
+        
+    try:
+        print("[SectorCache] Running background cache update...")
+        data = calculate_sector_analysis_sync()
+        SECTOR_ANALYSIS_CACHE = {
+            "time": time.time(),
+            "data": data
+        }
+        print("[SectorCache] Background cache update completed successfully.")
+    except Exception as e:
+        print(f"[SectorCache] Background cache update failed: {e}")
+    finally:
+        with sector_cache_lock:
+            SECTOR_ANALYSIS_UPDATING = False
 
 @app.route('/api/sector-analysis')
 def get_sector_analysis_api():
-    global SECTOR_ANALYSIS_CACHE
+    global SECTOR_ANALYSIS_CACHE, SECTOR_ANALYSIS_UPDATING
     now = time.time()
-    # Cache for 3 minutes to prevent API throttling while matching frontend auto-refresh
-    if now - SECTOR_ANALYSIS_CACHE["time"] > 180 or not SECTOR_ANALYSIS_CACHE["data"]:
+    
+    if not SECTOR_ANALYSIS_CACHE["data"]:
         try:
-            from sector_calc_layer import SectorCalcLayer
-            calc = SectorCalcLayer()
-            sectors = calc.calculate_all()
-            
-            # Generate FPI summary metrics dynamically using nsepython
-            fii_buy, fii_sell, fii_net = 0.0, 0.0, 0.0
-            dii_buy, dii_sell, dii_net = 0.0, 0.0, 0.0
-            flow_date = ""
-            flow_trend = "Mixed Rotation Flow"
-            pos_rating = "Neutral"
-            try:
-                import nsepython
-                fd_data = nsepython.nse_fiidii()
-                if fd_data is not None and not fd_data.empty:
-                    dii_row = fd_data[fd_data["category"] == "DII"]
-                    fii_row = fd_data[fd_data["category"] == "FII/FPI"]
-                    
-                    if not dii_row.empty:
-                        dii_buy = float(dii_row["buyValue"].iloc[0])
-                        dii_sell = float(dii_row["sellValue"].iloc[0])
-                        dii_net = float(dii_row["netValue"].iloc[0])
-                    if not fii_row.empty:
-                        fii_buy = float(fii_row["buyValue"].iloc[0])
-                        fii_sell = float(fii_row["sellValue"].iloc[0])
-                        fii_net = float(fii_row["netValue"].iloc[0])
-                        
-                    flow_date = str(fd_data["date"].iloc[0]) if "date" in fd_data.columns else ""
-                    net_total = dii_net + fii_net
-                    if fii_net < 0 and dii_net > 0:
-                        flow_trend = f"FII Net Seller ({fii_net:,.1f} Cr) / DII Net Buyer ({dii_net:,.1f} Cr)"
-                    elif fii_net > 0 and dii_net < 0:
-                        flow_trend = f"FII Net Buyer ({fii_net:,.1f} Cr) / DII Net Seller ({dii_net:,.1f} Cr)"
-                    elif fii_net > 0 and dii_net > 0:
-                        flow_trend = "Strong Institutional Co-Buying"
-                    else:
-                        flow_trend = "Dual Institutional Net Selling"
-                        
-                    if net_total > 500.0:
-                        pos_rating = "Bullish"
-                    elif net_total < -500.0:
-                        pos_rating = "Bearish"
-                    else:
-                        pos_rating = "Neutral"
-            except Exception as e:
-                print(f"Error fetching live FII/DII data: {e}")
-                fii_buy, fii_sell, fii_net = 14388.41, 14921.27, -532.86
-                dii_buy, dii_sell, dii_net = 18302.87, 16245.08, 2057.79
-                flow_date = "09-Jul-2026"
-                pos_rating = "Bullish"
-                flow_trend = "Heavy Institutional Buying"
-                
-            # Dynamic AI Summary Generation
-            leading_names = [n for n, s in sectors.items() if s["rotation_phase"] == "Leading"]
-            lagging_names = [n for n, s in sectors.items() if s["rotation_phase"] == "Lagging"]
-            improving_names = [n for n, s in sectors.items() if s["rotation_phase"] == "Improving"]
-            
-            lead_str = ", ".join(leading_names[:2]) if leading_names else "None"
-            lag_str = ", ".join(lagging_names[:2]) if lagging_names else "None"
-            imp_str = ", ".join(improving_names[:2]) if improving_names else "None"
-            
-            ai_summary = f"Sector rotation is favoring {lead_str} as they lead the market outperformance. Smart money is actively accumulating {imp_str} showing early signs of recovery, while it is recommended to avoid or distribute {lag_str} as they continue to lag."
-            
-            fpi_dii_summary = {
-                "fii_buy": fii_buy,
-                "fii_sell": fii_sell,
-                "fii_net": fii_net,
-                "dii_buy": dii_buy,
-                "dii_sell": dii_sell,
-                "dii_net": dii_net,
-                "date": flow_date,
-                "trend": flow_trend,
-                "positioning_rating": pos_rating
+            print("[SectorCache] First run: warming up cache synchronously...")
+            data = calculate_sector_analysis_sync()
+            SECTOR_ANALYSIS_CACHE = {
+                "time": now,
+                "data": data
             }
-            
-            data = {
-                "sectors": sectors,
-                "fpi_dii_summary": fpi_dii_summary,
-                "ai_summary": ai_summary
-            }
-            SECTOR_ANALYSIS_CACHE = {"time": now, "data": data}
         except Exception as e:
-            print(f"Error calculating sector analysis: {e}")
-            if not SECTOR_ANALYSIS_CACHE["data"]:
-                return jsonify({"status": "error", "message": str(e)}), 500
-                
+            print(f"[SectorCache] First run sync fetch failed: {e}")
+            return jsonify({"status": "error", "message": str(e)}), 500
+            
+    elif now - SECTOR_ANALYSIS_CACHE["time"] > 180:
+        if not SECTOR_ANALYSIS_UPDATING:
+            threading.Thread(target=update_sector_cache_in_background, daemon=True).start()
+            
     return jsonify({
         "status": "success",
         "data": SECTOR_ANALYSIS_CACHE["data"]
     })
+
+# Prewarm caches on startup in background
+def prewarm_all_caches():
+    print("[Prewarm] Startup: warming up caches in background...")
+    try:
+        from fpi_nsdl_service import FpiNsdlService
+        FpiNsdlService().fetch_latest_data()
+        print("[Prewarm] NSDL FPI cache primed.")
+    except Exception as e:
+        print(f"[Prewarm] NSDL FPI priming failed: {e}")
+    update_sector_cache_in_background()
+
+threading.Thread(target=prewarm_all_caches, daemon=True).start()
 
 
 @app.route('/api/fpi-nsdl')

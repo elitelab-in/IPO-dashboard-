@@ -149,6 +149,17 @@
             border-color: var(--accent-primary);
             color: #ffffff;
         }
+        .nsdl-flows-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 480px) {
+            .nsdl-flows-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -275,12 +286,12 @@
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
                         <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #ffffff;">
-                            <i class="fa-solid fa-earth-americas" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>NSDL Fortnightly FPI Flows
+                            <i class="fa-solid fa-earth-americas" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>FPI Flow
                         </h4>
                         <span id="nsdl-period" style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">Loading...</span>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="nsdl-flows-grid">
                         <!-- Inflows -->
                         <div>
                             <div style="font-size: 0.75rem; color: var(--success); font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(16, 185, 129, 0.1); padding-bottom: 0.25rem;">

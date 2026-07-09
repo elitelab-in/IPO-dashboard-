@@ -358,8 +358,8 @@ function fetchNsdlFpiFlows() {
                             row.style.alignItems = 'center';
                             row.style.padding = '2px 0';
                             row.innerHTML = `
-                                <span style="font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px;" title="${item.sector}">${item.sector}</span>
-                                <span style="color: var(--success); font-weight: 700; font-family: monospace;">${valFormatted}</span>
+                                <span style="font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 0.5rem; flex: 1;" title="${item.sector}">${item.sector}</span>
+                                <span style="color: var(--success); font-weight: 700; font-family: monospace; white-space: nowrap;">${valFormatted}</span>
                             `;
                             inflowsList.appendChild(row);
                         });
@@ -380,8 +380,8 @@ function fetchNsdlFpiFlows() {
                             row.style.alignItems = 'center';
                             row.style.padding = '2px 0';
                             row.innerHTML = `
-                                <span style="font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px;" title="${item.sector}">${item.sector}</span>
-                                <span style="color: var(--danger); font-weight: 700; font-family: monospace;">${valFormatted}</span>
+                                <span style="font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 0.5rem; flex: 1;" title="${item.sector}">${item.sector}</span>
+                                <span style="color: var(--danger); font-weight: 700; font-family: monospace; white-space: nowrap;">${valFormatted}</span>
                             `;
                             outflowsList.appendChild(row);
                         });
