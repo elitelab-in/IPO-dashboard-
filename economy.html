@@ -7,7 +7,7 @@
     <title>Elitelab - Traders Ki Apni Lab</title>
     <meta name="description" content="Your digital trading lab to scan swing stocks, analyze IPO metrics, and track live macro drivers.">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="index.css?v=61">
+    <link rel="stylesheet" href="index.css?v=62">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ── Spacing and Headers ────────────────────────────── */
@@ -313,11 +313,23 @@
                 </svg>
             </a>
             <div class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/screener" class="nav-link">AI Screener</a>
-                <a href="/fundamentals" class="nav-link">Fundamentals</a>
-                <a href="/economy" class="nav-link active">Economy</a>
+                <a href="/" class="nav-link ">Home</a>
+                <a href="/screener" class="nav-link ">AI Screener</a>
                 
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Analysis <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                
+                <a href="/economy" class="nav-link active">Economy</a>
                 <div class="market-status-widget mobile-only"></div>
             </div>
             <div class="nav-actions">
@@ -622,8 +634,8 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="economy.js?v=61"></script>
-    <script src="market-status.js?v=61"></script>
+    <script src="economy.js?v=62"></script>
+    <script src="market-status.js?v=62"></script>
     <script>
         // Mobile Menu Toggle
         document.querySelector('.mobile-menu-btn').addEventListener('click', () => {

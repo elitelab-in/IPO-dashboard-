@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sector Analysis - Traders Ki Apni Lab</title>
+    <meta name="description" content="Track live sectoral momentum, market breadth, relative rotation quadrants, and institutional FPI flows in the Indian stock market.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .sector-tile {
+            padding: 1.25rem 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+        .sector-tile:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+            border-color: var(--accent-primary);
+        }
+        .sector-tile.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+        /* Color themes for sector tiles */
+        .tile-very-bullish { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; }
+        .tile-bullish { background: rgba(34, 197, 94, 0.08); border-left: 4px solid #4ade80; }
+        .tile-neutral { background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; }
+        .tile-weak { background: rgba(239, 68, 68, 0.08); border-left: 4px solid #f87171; }
+        .tile-very-weak { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; }
+
+        .rotation-quadrants {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .quadrant {
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            min-height: 135px;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .quadrant::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+        }
+        .quad-leading { background: rgba(34, 197, 94, 0.05); border-top: 3px solid #22c55e; }
+        .quad-weakening { background: rgba(245, 158, 11, 0.05); border-top: 3px solid #f59e0b; }
+        .quad-lagging { background: rgba(239, 68, 68, 0.05); border-top: 3px solid #ef4444; }
+        .quad-improving { background: rgba(59, 130, 246, 0.05); border-top: 3px solid #3b82f6; }
+
+        .gauge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 1rem auto;
+            width: 140px;
+            height: 70px;
+            overflow: hidden;
+        }
+        .gauge-arc {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 12px solid var(--bg-tertiary);
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+            transform: rotate(-45deg);
+        }
+        .gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 12px solid var(--accent-primary);
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+            transform: rotate(-45deg);
+            transition: transform 0.8s ease;
+        }
+        .gauge-value {
+            position: absolute;
+            bottom: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-align: center;
+            width: 100%;
+        }
+
+        .pill-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .pill-filter {
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .pill-filter.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link ">Home</a>
+                <a href="/screener" class="nav-link ">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown active desktop-only">
+                    <button class="nav-dropbtn" style="color: var(--accent-primary);">Analysis <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis" style="color: var(--accent-primary); font-weight: 700;">Sector Analysis</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link active mobile-only">Sector Analysis</a>
+                
+                <a href="/economy" class="nav-link ">Economy</a>
+                <div class="market-status-widget mobile-only"></div>
+            </div>
+            <div class="nav-actions">
+                <div class="market-status-widget desktop-only"></div>
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container page-container" style="margin-top: 6rem; margin-bottom: 4rem;">
+        
+        <!-- Hero Header -->
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1rem; margin-bottom: 2.5rem; width: 100%;">
+            <div>
+                <h1 class="hero-title" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem; text-align: center;">
+                    Sector <span class="highlight-text">Analysis</span>
+                </h1>
+                <p class="hero-subtitle" style="font-size: 0.95rem; color: var(--text-secondary); text-align: center;">
+                    Track sectoral heatmaps, relative rotation graphs, and institutional positioning.
+                </p>
+            </div>
+            <div class="glass-panel" style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; border-radius: 30px; margin-top: 0.25rem;">
+                <span class="pulse-indicator" style="background: var(--success); width: 8px; height: 8px; border-radius: 50%;"></span>
+                <span id="update-timer" style="color: var(--text-secondary);">Auto-updating...</span>
+            </div>
+        </div>
+
+        <!-- AI Summary Card -->
+        <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem; border-left: 4px solid var(--accent-primary); display: flex; gap: 1rem; align-items: center;">
+            <div style="background: var(--accent-light); padding: 0.75rem; border-radius: 10px; color: var(--accent-primary); font-size: 1.5rem;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <div>
+                <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem;">AI Sector Summary</h4>
+                <p id="ai-summary-text" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+                    Analyzing rotation trends and scanning market metrics...
+                </p>
+            </div>
+        </div>
+
+        <!-- Institutional Flows Split Container -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <!-- FII/DII Institutional flows summary -->
+            <div class="glass-panel" style="padding: 1rem 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                        <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #ffffff;">
+                            <i class="fa-solid fa-building-columns" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>Institutional Flows (Daily Cr)
+                        </h4>
+                        <span id="fpi-rating" class="badge" style="font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 50px;">NEUTRAL</span>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: right;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.8rem;">
+                                    <th style="text-align: left; padding: 0.4rem 0.5rem;">Category</th>
+                                    <th style="padding: 0.4rem 0.5rem;">Buy Value</th>
+                                    <th style="padding: 0.4rem 0.5rem;">Sell Value</th>
+                                    <th style="padding: 0.4rem 0.5rem;">Net Flow</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.02); height: 2.25rem;">
+                                    <td style="text-align: left; padding: 0.4rem 0.5rem; font-weight: 600; color: #ffffff;">FII / FPI</td>
+                                    <td id="fii-buy" style="padding: 0.4rem 0.5rem; color: var(--text-primary);">--</td>
+                                    <td id="fii-sell" style="padding: 0.4rem 0.5rem; color: var(--text-primary);">--</td>
+                                    <td id="fii-net" style="padding: 0.4rem 0.5rem; font-weight: 700;">--</td>
+                                </tr>
+                                <tr style="height: 2.25rem;">
+                                    <td style="text-align: left; padding: 0.4rem 0.5rem; font-weight: 600; color: #ffffff;">DII</td>
+                                    <td id="dii-buy" style="padding: 0.4rem 0.5rem; color: var(--text-primary);">--</td>
+                                    <td id="dii-sell" style="padding: 0.4rem 0.5rem; color: var(--text-primary);">--</td>
+                                    <td id="dii-net" style="padding: 0.4rem 0.5rem; font-weight: 700;">--</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center;">
+                    <span>Flow Trend: <strong id="fpi-trend" style="color: #ffffff;">--</strong></span>
+                    <span id="fpi-date" style="font-size: 0.7rem; opacity: 0.8;">--</span>
+                </div>
+            </div>
+
+            <!-- NSDL FPI Fortnightly Flows Card -->
+            <div class="glass-panel" style="padding: 1rem 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                        <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #ffffff;">
+                            <i class="fa-solid fa-earth-americas" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>NSDL Fortnightly FPI Flows
+                        </h4>
+                        <span id="nsdl-period" style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">Loading...</span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <!-- Inflows -->
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--success); font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(16, 185, 129, 0.1); padding-bottom: 0.25rem;">
+                                <i class="fa-solid fa-circle-arrow-up"></i> TOP INFLOWS
+                            </div>
+                            <div id="nsdl-inflows-list" style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.8rem;">
+                                <div style="color: var(--text-secondary);">Loading flows...</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Outflows -->
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--danger); font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(239, 68, 68, 0.1); padding-bottom: 0.25rem;">
+                                <i class="fa-solid fa-circle-arrow-down"></i> TOP OUTFLOWS
+                            </div>
+                            <div id="nsdl-outflows-list" style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.8rem;">
+                                <div style="color: var(--text-secondary);">Loading flows...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; font-size: 0.75rem; text-align: right;">
+                    <a id="nsdl-report-link" href="#" target="_blank" style="color: var(--accent-primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        View Source Report <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters & Dashboard -->
+        <div>
+            <div class="pill-filters">
+                <button class="pill-filter active" data-filter="all">All Sectors</button>
+                <button class="pill-filter" data-filter="strong">Strongest</button>
+                <button class="pill-filter" data-filter="weak">Weakest</button>
+                <button class="pill-filter" data-filter="bullish">Bullish Momentum</button>
+                <button class="pill-filter" data-filter="bearish">Bearish Momentum</button>
+                <button class="pill-filter" data-filter="high-vol">High Volume Ratio</button>
+            </div>
+
+            <div class="dashboard-grid">
+                
+                <!-- Left panel: Heatmap & Rotation -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    
+                    <!-- Heatmap Grid -->
+                    <div class="glass-panel" style="padding: 1.5rem;">
+                        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">Sector Strength Heatmap</h3>
+                        <div id="heatmap-container" class="heatmap-grid">
+                            <!-- Populated dynamically -->
+                            <div style="text-align: center; grid-column: 1 / -1; padding: 3rem;">
+                                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
+                                <p style="color: var(--text-secondary);">Analyzing indexes and constituents...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sector Rotation Graph quadrants -->
+                    <div class="glass-panel" style="padding: 1.5rem;">
+                        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.2rem;">Sector Rotation Quadrants (RRG)</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Relative Strength (RS-Ratio) vs. Relative Momentum (RS-Momentum) against Nifty 50</p>
+                        
+                        <div class="rotation-quadrants">
+                            <div class="quadrant quad-leading">
+                                <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--success); text-transform: uppercase;"><i class="fa-solid fa-circle-up"></i> Leading</h4>
+                                <div id="quad-leading-list" style="margin-top: 0.5rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem;"></div>
+                            </div>
+                            <div class="quadrant quad-weakening">
+                                <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--warning); text-transform: uppercase;"><i class="fa-solid fa-circle-right"></i> Weakening</h4>
+                                <div id="quad-weakening-list" style="margin-top: 0.5rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem;"></div>
+                            </div>
+                            <div class="quadrant quad-improving">
+                                <h4 style="font-size: 0.85rem; font-weight: 700; color: #3b82f6; text-transform: uppercase;"><i class="fa-solid fa-circle-left"></i> Improving</h4>
+                                <div id="quad-improving-list" style="margin-top: 0.5rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem;"></div>
+                            </div>
+                            <div class="quadrant quad-lagging">
+                                <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--danger); text-transform: uppercase;"><i class="fa-solid fa-circle-down"></i> Lagging</h4>
+                                <div id="quad-lagging-list" style="margin-top: 0.5rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right panel: Selected Sector Details -->
+                <div class="glass-panel" id="sector-details-panel" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-start; align-self: flex-start;">
+                    <!-- Default State -->
+                    <div id="no-sector-selected" style="text-align: center; padding: 4rem 1rem;">
+                        <i class="fa-solid fa-chart-line" style="font-size: 3rem; color: var(--accent-primary); opacity: 0.5; margin-bottom: 1rem;"></i>
+                        <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Select a Sector</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Click on any tile in the heatmap to view live constituent stocks, breadth, and smart money analysis.</p>
+                    </div>
+
+                    <!-- Selected State (Hidden by default) -->
+                    <div id="sector-details-content" style="display: none;">
+                        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+                            <h3 id="detail-sector-name" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.2rem;">Nifty IT</h3>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <span id="detail-sector-price" style="font-size: 1.15rem; font-weight: 700;">27,555.20</span>
+                                <span id="detail-sector-change" style="font-size: 0.85rem; font-weight: 600; color: var(--success);">+1.25%</span>
+                            </div>
+                        </div>
+
+                        <!-- Composite Score -->
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">Sector Strength Score</span>
+                            <div class="gauge-container">
+                                <div class="gauge-arc"></div>
+                                <div class="gauge-fill" id="detail-strength-gauge" style="transform: rotate(45deg);"></div>
+                                <div class="gauge-value" id="detail-strength-val">74</div>
+                            </div>
+                        </div>
+
+                        <!-- Short Metrics Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="glass-panel" style="padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">RSI (14)</span>
+                                <span id="detail-rsi" style="font-weight: 700; font-size: 1rem; color: #ffffff;">62.4</span>
+                            </div>
+                            <div class="glass-panel" style="padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">Volume Ratio</span>
+                                <span id="detail-volume" style="font-weight: 700; font-size: 1rem; color: #ffffff;">1.2x</span>
+                            </div>
+                            <div class="glass-panel" style="padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">Market Breadth</span>
+                                <span id="detail-breadth" style="font-weight: 700; font-size: 1rem; color: var(--success);">5 Adv / 2 Decl</span>
+                            </div>
+                            <div class="glass-panel" style="padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">Rotation Phase</span>
+                                <span id="detail-rotation" style="font-weight: 700; font-size: 1rem; color: var(--success);">Leading</span>
+                            </div>
+                        </div>
+
+                        <!-- Smart Money & Trend Summary -->
+                        <div class="glass-panel" style="padding: 1rem; margin-bottom: 1.5rem; background: rgba(139,92,246,0.05); border: 1px solid rgba(139,92,246,0.15);">
+                            <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--accent-primary); margin-bottom: 0.25rem;"><i class="fa-solid fa-magnifying-glass-dollar"></i> Smart Money Positioning</h4>
+                            <p id="detail-smart-money" style="font-size: 0.85rem; color: var(--text-primary); line-height: 1.4;"></p>
+                        </div>
+
+                        <!-- Constituent Leaderboard -->
+                        <div>
+                            <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem;">Top Sector Stocks</h4>
+                            <div class="table-container" style="overflow-x: auto;">
+                                <table class="financial-table" style="width: 100%; font-size: 0.8rem;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left; padding: 0.4rem;">Symbol</th>
+                                            <th style="text-align: right; padding: 0.4rem;">Price</th>
+                                            <th style="text-align: right; padding: 0.4rem;">Change %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="detail-stocks-list">
+                                        <!-- Dynamic constituents -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+    </script>
+    <script src="market-status.js?v=62"></script>
+    <script src="sector-analysis.js?v=62"></script>
+</body>
+</html>

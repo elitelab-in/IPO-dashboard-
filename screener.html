@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://www.tradingview.com" crossorigin>
     <link rel="dns-prefetch" href="https://s.tradingview.com">
     <link rel="dns-prefetch" href="https://www.tradingview.com">
-    <link rel="stylesheet" href="index.css?v=61">
+    <link rel="stylesheet" href="index.css?v=62">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ── Tab Toggle ─────────────────────────────────────── */
@@ -149,9 +149,21 @@
             <div class="nav-links">
                 <a href="/" class="nav-link ">Home</a>
                 <a href="/screener" class="nav-link active">AI Screener</a>
-                <a href="/fundamentals" class="nav-link ">Fundamentals</a>
-                <a href="/economy" class="nav-link ">Economy</a>
                 
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Analysis <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                
+                <a href="/economy" class="nav-link ">Economy</a>
                 <div class="market-status-widget mobile-only"></div>
             </div>
             <div class="nav-actions">
@@ -366,7 +378,7 @@
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
     <script src="screener.js?v=1"></script>
-    <script src="market-status.js?v=61"></script>
+    <script src="market-status.js?v=62"></script>
     <script>
         // Mobile Menu Toggle
         document.querySelector('.mobile-menu-btn').addEventListener('click', () => {

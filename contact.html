@@ -9,7 +9,7 @@
     
     
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="index.css?v=61">
+    <link rel="stylesheet" href="index.css?v=62">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -27,9 +27,21 @@
             <div class="nav-links">
                 <a href="/" class="nav-link ">Home</a>
                 <a href="/screener" class="nav-link ">AI Screener</a>
-                <a href="/fundamentals" class="nav-link ">Fundamentals</a>
-                <a href="/economy" class="nav-link ">Economy</a>
                 
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Analysis <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                
+                <a href="/economy" class="nav-link ">Economy</a>
                 <div class="market-status-widget mobile-only"></div>
             </div>
             <div class="nav-actions">
@@ -140,8 +152,8 @@
         formspree('initForm', { formElement: '#contact-form', formId: 'mvzjlrda' });
     </script>
     <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
-    <script src="app.js?v=61"></script>
-    <script src="market-status.js?v=61"></script>
+    <script src="app.js?v=62"></script>
+    <script src="market-status.js?v=62"></script>
 </body>
 </html>
 
