@@ -235,9 +235,11 @@
             display: flex;
             gap: 0.75rem;
             width: 100%;
+            flex-wrap: wrap;
         }
         #share-modal-actions button {
             flex: 1;
+            min-width: 80px;
             padding: 0.65rem;
             border-radius: 10px;
             border: none;
@@ -251,6 +253,7 @@
             transition: opacity 0.2s;
         }
         #share-modal-actions button:hover { opacity: 0.85; }
+        #btn-share-direct { background: #10b981; color: #fff; }
         #btn-download-banner { background: var(--accent-primary); color: #fff; }
         #btn-close-modal { background: rgba(255,255,255,0.08); color: #fff; }
         /* The actual banner card (hidden, used for rendering) */
@@ -624,6 +627,9 @@
             <h3><i class="fa-solid fa-share-nodes" style="color:var(--accent-primary);margin-right:0.4rem;"></i> Share FII / DII Card</h3>
             <div id="share-preview-wrap" style="width:100%;border-radius:14px;overflow:hidden;box-shadow:0 0 40px rgba(139,92,246,0.25);"></div>
             <div id="share-modal-actions">
+                <button id="btn-share-direct" onclick="shareBannerDirect()">
+                    <i class="fa-solid fa-share-nodes"></i> Share
+                </button>
                 <button id="btn-download-banner" onclick="downloadBanner()">
                     <i class="fa-solid fa-download"></i> Download
                 </button>
@@ -632,7 +638,7 @@
                 </button>
             </div>
             <p style="font-size:0.72rem;color:var(--text-secondary);margin:0;text-align:center;">
-                Tap Download to save the card, then share it anywhere!
+                Tap <b>Share</b> to post directly or <b>Download</b> to save!
             </p>
         </div>
     </div>
@@ -640,7 +646,7 @@
     <!-- ===== HIDDEN FII/DII SHARE BANNER (off-screen, rendered to image) ===== -->
     <div id="fii-share-banner">
         <!-- Gradient top bar -->
-        <div style="background:linear-gradient(135deg,#1a0a3a 0%,#0d1a3a 50%,#0a1a1a 100%);padding:28px 28px 20px;">
+        <div style="background:linear-gradient(135deg,#1a0a3a 0%,#0d1a3a 50%,#0a1a1a 100%);padding:36px 28px 28px;">
             <!-- Header row -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
                 <!-- Logo -->
@@ -670,22 +676,22 @@
         </div>
 
         <!-- Stats grid row -->
-        <div style="background:#0b0b1e;padding:20px 28px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;border-top:1px solid rgba(255,255,255,0.05);">
+        <div style="background:#0b0b1e;padding:22px 28px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;border-top:1px solid rgba(255,255,255,0.05);">
             <div>
-                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">FII BUY</div>
-                <div id="banner-fii-buy" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+                <div style="font-size:10px;color:#6ee7b7;letter-spacing:0.08em;margin-bottom:5px;font-weight:700;">FII BUY</div>
+                <div id="banner-fii-buy" style="font-size:15px;font-weight:700;color:#a7f3d0;">--</div>
             </div>
             <div>
-                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">FII SELL</div>
-                <div id="banner-fii-sell" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+                <div style="font-size:10px;color:#fca5a5;letter-spacing:0.08em;margin-bottom:5px;font-weight:700;">FII SELL</div>
+                <div id="banner-fii-sell" style="font-size:15px;font-weight:700;color:#fca5a5;">--</div>
             </div>
             <div>
-                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">DII BUY</div>
-                <div id="banner-dii-buy" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+                <div style="font-size:10px;color:#6ee7b7;letter-spacing:0.08em;margin-bottom:5px;font-weight:700;">DII BUY</div>
+                <div id="banner-dii-buy" style="font-size:15px;font-weight:700;color:#a7f3d0;">--</div>
             </div>
             <div>
-                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;margin-bottom:5px;font-weight:600;">DII SELL</div>
-                <div id="banner-dii-sell" style="font-size:15px;font-weight:700;color:#e2e8f0;">--</div>
+                <div style="font-size:10px;color:#fca5a5;letter-spacing:0.08em;margin-bottom:5px;font-weight:700;">DII SELL</div>
+                <div id="banner-dii-sell" style="font-size:15px;font-weight:700;color:#fca5a5;">--</div>
             </div>
         </div>
 
@@ -757,12 +763,38 @@
         link.href = canvas.toDataURL('image/png');
         link.click();
     }
+
+    async function shareBannerDirect() {
+        const canvas = document.getElementById('banner-canvas');
+        if (!canvas) return;
+        if (!navigator.share || !navigator.canShare) {
+            // Fallback to download if Web Share not supported
+            downloadBanner();
+            return;
+        }
+        try {
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], 'elitelab-fiidii-' + (new Date().toISOString().slice(0,10)) + '.png', { type: 'image/png' });
+                if (navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'FII / DII Daily Flow — Elitelab.in',
+                        text: 'Today\'s institutional flow data from NSE. Powered by Elitelab.in',
+                        files: [file]
+                    });
+                } else {
+                    downloadBanner();
+                }
+            }, 'image/png');
+        } catch (err) {
+            if (err.name !== 'AbortError') downloadBanner();
+        }
+    }
     </script>
 
     <!-- ===== HIDDEN FPI FLOW SHARE BANNER ===== -->
     <div id="fpi-share-banner" style="position:fixed;left:-9999px;top:0;width:380px;background:#08081a;border-radius:20px;overflow:hidden;font-family:'DM Sans',sans-serif;">
         <!-- Gradient top bar -->
-        <div style="background:linear-gradient(135deg,#0a1a2a 0%,#0d1a3a 60%,#0a1a1a 100%);padding:26px 28px 22px;">
+        <div style="background:linear-gradient(135deg,#0a1a2a 0%,#0d1a3a 60%,#0a1a1a 100%);padding:36px 28px 28px;">
             <!-- Header -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
                 <div style="display:flex;align-items:center;gap:10px;">
@@ -793,6 +825,12 @@
                     <div id="fpi-banner-outflows" style="display:flex;flex-direction:column;gap:9px;"></div>
                 </div>
             </div>
+        </div>
+
+        <!-- Stats spacer row — matches FII/DII banner height -->
+        <div style="background:#0b0b1e;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.05);">
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.08em;">FORTNIGHTLY · EQUITY FLOWS</div>
+            <div style="font-size:10px;color:rgba(139,92,246,0.5);font-weight:700;letter-spacing:0.08em;">NSDL DATA</div>
         </div>
 
         <!-- Footer -->
@@ -854,12 +892,24 @@
             canvas.style.borderRadius = '12px';
             wrap.innerHTML = '';
             wrap.appendChild(canvas);
-            // Override download filename
+            // Override download filename for FPI
             document.getElementById('btn-download-banner').onclick = () => {
                 const link = document.createElement('a');
                 link.download = 'elitelab-fpi-flow-' + (new Date().toISOString().slice(0,10)) + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+            };
+            // Override direct share for FPI
+            document.getElementById('btn-share-direct').onclick = async () => {
+                if (!navigator.share || !navigator.canShare) { document.getElementById('btn-download-banner').click(); return; }
+                try {
+                    canvas.toBlob(async (blob) => {
+                        const file = new File([blob], 'elitelab-fpi-flow-' + (new Date().toISOString().slice(0,10)) + '.png', { type: 'image/png' });
+                        if (navigator.canShare({ files: [file] })) {
+                            await navigator.share({ title: 'FPI Sector Flow — Elitelab.in', text: 'Fortnightly FPI sector positioning from NSDL. Powered by Elitelab.in', files: [file] });
+                        } else { document.getElementById('btn-download-banner').click(); }
+                    }, 'image/png');
+                } catch(err) { if (err.name !== 'AbortError') document.getElementById('btn-download-banner').click(); }
             };
         });
     }
