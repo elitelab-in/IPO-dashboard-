@@ -82,7 +82,23 @@
         .quad-weakening { background: rgba(245, 158, 11, 0.05); border-top: 3px solid #f59e0b; }
         .quad-lagging { background: rgba(239, 68, 68, 0.05); border-top: 3px solid #ef4444; }
         .quad-improving { background: rgba(59, 130, 246, 0.05); border-top: 3px solid #3b82f6; }
-
+        @media (max-width: 480px) {
+            .rotation-quadrants {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+        }
+        .nsdl-flows-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 480px) {
+            .nsdl-flows-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+        }
         .gauge-container {
             display: flex;
             justify-content: center;
@@ -175,6 +191,8 @@
                 </svg>
             </a>
             <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+
                 <a href="/" class="nav-link ">Home</a>
                 <a href="/screener" class="nav-link ">AI Screener</a>
                 
@@ -192,7 +210,6 @@
                 <a href="/sector-analysis" class="nav-link active mobile-only">Sector Analysis</a>
                 
                 <a href="/economy" class="nav-link ">Economy</a>
-                <div class="market-status-widget mobile-only"></div>
             </div>
             <div class="nav-actions">
                 <div class="market-status-widget desktop-only"></div>
@@ -242,7 +259,7 @@
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
                         <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #ffffff;">
-                            <i class="fa-solid fa-building-columns" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>Institutional Flows (Daily Cr)
+                            <i class="fa-solid fa-building-columns" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>FII DII Data
                         </h4>
                         <span id="fpi-rating" class="badge" style="font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 50px;">NEUTRAL</span>
                     </div>

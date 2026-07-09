@@ -54,9 +54,15 @@ function updateMarketStatus() {
         `;
     }
     
-    // Inject into all widgets on the page
+    // Inject into all standard widgets on the page
     const widgets = document.querySelectorAll('.market-status-widget');
     widgets.forEach(widget => {
+        widget.innerHTML = html;
+    });
+
+    // Also inject into the mobile menu top status block
+    const mobileMenuWidgets = document.querySelectorAll('.mobile-menu-market-status');
+    mobileMenuWidgets.forEach(widget => {
         widget.innerHTML = html;
     });
 }
