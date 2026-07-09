@@ -416,6 +416,50 @@
             bottom: auto !important;
             z-index: 1 !important;
         }
+        @media (max-width: 768px) {
+            .glass-panel {
+                padding: 1.25rem 1rem !important;
+            }
+            .stock-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0.75rem !important;
+                margin-bottom: 1.5rem !important;
+                padding-bottom: 0.75rem !important;
+            }
+            .stock-title h2 {
+                font-size: 1.4rem !important;
+                flex-wrap: wrap !important;
+                gap: 0.5rem !important;
+            }
+            .stock-price {
+                text-align: left !important;
+            }
+            .stock-price .price {
+                font-size: 1.5rem !important;
+            }
+            .score-gauge-wrapper {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 1.5rem !important;
+                padding: 1.25rem 1rem !important;
+            }
+            #analyst-forecast-container {
+                min-width: 100% !important;
+                align-items: flex-start !important;
+            }
+            .tickertape-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            .checklist-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+            }
+            .financial-table {
+                min-width: 550px !important;
+            }
+        }
     </style>
 </head>
 <body>
