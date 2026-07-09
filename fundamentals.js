@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initialState.style.display = 'none';
         errorState.style.display = 'none';
         dashboardData.style.display = 'none';
-        loadingState.style.display = 'block';
+        loadingState.style.display = 'flex';
 
         try {
             // Fetch momentum checklist scorecard
@@ -51,10 +51,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const suggestionsBox = document.getElementById('search-suggestions');
+    let debounceTimer;
+
     searchBtn.addEventListener('click', fetchFundamentals);
     searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') fetchFundamentals();
+        if (e.key === 'Enter') {
+            if (suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+            fetchFundamentals();
+        }
     });
+
+    if (suggestionsBox) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const query = searchInput.value.trim();
+            if (query.length < 1) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`);
+                    if (!response.ok) return;
+                    const suggestions = await response.json();
+                    
+                    if (suggestions.length === 0) {
+                        suggestionsBox.style.display = 'none';
+                        return;
+                    }
+
+                    suggestionsBox.innerHTML = suggestions.map(s => `
+                        <div class="suggestion-item" data-symbol="${s.symbol}">
+                            <div style="display: flex; align-items: center;">
+                                <span class="suggestion-symbol">${s.symbol}</span>
+                                <span class="suggestion-name">${s.name}</span>
+                            </div>
+                            <span class="suggestion-sector">${s.sector}</span>
+                        </div>
+                    `).join('');
+                    
+                    suggestionsBox.style.display = 'block';
+
+                    suggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            searchInput.value = item.getAttribute('data-symbol');
+                            suggestionsBox.style.display = 'none';
+                            fetchFundamentals();
+                        });
+                    });
+                } catch (err) {
+                    console.error('Error fetching suggestions:', err);
+                }
+            }, 150);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    }
 
     // Bind trending stock pills click
     document.querySelectorAll('.trend-pill').forEach(pill => {
@@ -97,22 +157,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('res-score').textContent = momData.score;
         
         const resRating = document.getElementById('res-rating');
-        resRating.textContent = momData.rating;
         resRating.className = 'rating-badge';
         
         const scoreCircle = document.getElementById('res-score');
         if (momData.rating === 'Very Strong') {
+            resRating.innerHTML = '<i class="fa-solid fa-star" style="font-size: 0.85rem;"></i>';
             resRating.classList.add('rating-very-strong');
-            scoreCircle.style.borderColor = '#F97316';
-        } else if (momData.rating === 'Strong') {
-            resRating.classList.add('rating-strong');
             scoreCircle.style.borderColor = '#22C55E';
-        } else if (momData.rating === 'Moderate') {
-            resRating.classList.add('rating-moderate');
-            scoreCircle.style.borderColor = '#F59E0B';
         } else {
-            resRating.classList.add('rating-avoid');
-            scoreCircle.style.borderColor = '#EF4444';
+            resRating.textContent = momData.rating;
+            if (momData.rating === 'Strong') {
+                resRating.classList.add('rating-strong');
+                scoreCircle.style.borderColor = '#22C55E';
+            } else if (momData.rating === 'Moderate') {
+                resRating.classList.add('rating-moderate');
+                scoreCircle.style.borderColor = '#F59E0B';
+            } else {
+                resRating.classList.add('rating-avoid');
+                scoreCircle.style.borderColor = '#EF4444';
+            }
         }
 
         document.getElementById('res-updated').textContent = `Synced: ${momData.last_updated}`;

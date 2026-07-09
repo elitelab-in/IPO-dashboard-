@@ -90,13 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearTimeout(window.tooltipHideTimeout);
                     
                     const tickerName = stock.nsecode || stock.name.split(' ')[0].toUpperCase();
-                    const symbol = `BSE:${tickerName}`;
+                    const symbol = `NSE:${tickerName}`;
                     
                     if (!symbol) return;
                     
                     if (tooltip.dataset.symbol !== symbol) {
                         const encodedSymbol = encodeURIComponent(symbol);
-                        if (iframe) iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${encodedSymbol}&interval=D&theme=dark&style=1&hide_top_toolbar=0&hide_legend=0&save_image=0&timezone=Asia/Kolkata`;
+                        if (iframe) iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${encodedSymbol}&interval=D&theme=dark&style=3&hide_top_toolbar=1&hide_side_toolbar=1&hide_legend=1&symboledit=0&save_image=0&timezone=Asia%2FKolkata`;
                         tooltip.dataset.symbol = symbol;
                     }
                     

@@ -19,6 +19,13 @@ from metadata_service import getStockMetadata, getSector, getIndustry, getIndice
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 SECTOR_CACHE = {}
 SCREENER_CACHE = {"time": 0, "data": None}
 
@@ -131,6 +138,15 @@ def map_indian_sector(industry, sector, symbol):
 def fetch_sector_logic(symbol):
     if symbol in SECTOR_CACHE:
         return SECTOR_CACHE[symbol]
+        
+    # Check local metadata database first (instant and offline!)
+    try:
+        meta = getStockMetadata(symbol)
+        if meta and meta.get('sector') and meta.get('sector') != 'Unknown':
+            SECTOR_CACHE[symbol] = meta['sector']
+            return meta['sector']
+    except Exception:
+        pass
         
     try:
         # Most Indian stocks in Chartink use NSE tickers, append .NS for yfinance
@@ -442,19 +458,32 @@ SECTOR_INDEX_MAP = {
     "Unknown": "^NSEI"
 }
 
+GLOBAL_INDEX_CHANGE_CACHE = {}
+
 def get_index_change(ticker_symbol):
+    global GLOBAL_INDEX_CHANGE_CACHE
+    now = time.time()
+    if ticker_symbol in GLOBAL_INDEX_CHANGE_CACHE:
+        cache_entry = GLOBAL_INDEX_CHANGE_CACHE[ticker_symbol]
+        if now - cache_entry["time"] < 300:
+            return cache_entry["val"]
+            
     try:
         t = yf.Ticker(ticker_symbol)
         hist = t.history(period="2d")
         if len(hist) >= 2:
             closes = hist['Close'].tolist()
             pct = (closes[-1] - closes[-2]) / closes[-2] * 100
-            return round(pct, 2)
+            val = round(pct, 2)
+            GLOBAL_INDEX_CHANGE_CACHE[ticker_symbol] = {"time": now, "val": val}
+            return val
         elif len(hist) == 1:
             price = hist['Close'].tolist()[0]
             prev = t.info.get('previousClose', price)
             pct = (price - prev) / prev * 100
-            return round(pct, 2)
+            val = round(pct, 2)
+            GLOBAL_INDEX_CHANGE_CACHE[ticker_symbol] = {"time": now, "val": val}
+            return val
     except Exception:
         pass
     return 0.0
@@ -572,11 +601,22 @@ def get_index_details_for_stock(market_cap):
         change = get_index_change("^NSEI")
         return "Nifty 50", change
 
+SCREENER_HOLDINGS_CACHE = {}
+
 def scrape_screener_holdings(symbol):
+    global SCREENER_HOLDINGS_CACHE
+    base_symbol = symbol.split('.')[0].upper()
+    now = time.time()
+    
+    # 24-hour cache for holdings data
+    if base_symbol in SCREENER_HOLDINGS_CACHE:
+        entry = SCREENER_HOLDINGS_CACHE[base_symbol]
+        if now - entry["time"] < 86400:
+            return entry["val"]
+            
     try:
         import requests
         from bs4 import BeautifulSoup
-        base_symbol = symbol.split('.')[0].upper()
         url = f"https://www.screener.in/company/{base_symbol}/"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -598,14 +638,16 @@ def scrape_screener_holdings(symbol):
         quarters = [th.text.strip() for th in headers_row.find_all('th')[1:]]
         clean_quarters = []
         for q in quarters:
+            if not q:
+                continue
+            # convert Mar 2026 to Mar '26
             parts = q.split()
             if len(parts) == 2:
-                mon, yr = parts
-                clean_quarters.append(f"{mon} '{yr[2:]}")
-            else:
-                clean_quarters.append(q)
-                
-        rows = table.find('tbody').find_all('tr')
+                month, year = parts
+                if len(year) == 4:
+                    q = f"{month} '{year[2:]}"
+            clean_quarters.append(q)
+            
         data = {
             "quarters": clean_quarters,
             "promoters": [],
@@ -616,15 +658,18 @@ def scrape_screener_holdings(symbol):
         }
         
         key_map = {
-            "promoters": ["promoter", "promoters"],
-            "fii": ["fii", "fiis"],
-            "dii": ["dii", "diis"],
-            "public": ["public"],
-            "shareholders": ["no. of shareholders", "number of shareholders"]
+            "promoters": ["promoters", "promoter"],
+            "fii": ["fiss", "fii", "fiis", "foreign institutions"],
+            "dii": ["dii", "diis", "domestic institutions"],
+            "public": ["public", "retail", "others"],
+            "shareholders": ["no. of shareholders", "number of shareholders", "shareholders"]
         }
         
+        rows = table.find('tbody').find_all('tr')
         for row in rows:
             cols = row.find_all('td')
+            if not cols:
+                continue
             row_name = cols[0].text.strip().lower().replace('+', '').strip()
             values = []
             for col in cols[1:]:
@@ -645,7 +690,7 @@ def scrape_screener_holdings(symbol):
                     
             if mapped_key:
                 if mapped_key == "shareholders":
-                    data[mapped_key] = [int(v) if isinstance(v, float) else 0 for v in values]
+                    data[mapped_key] = [int(v) if isinstance(v, (float, int)) else 0 for v in values]
                 else:
                     data[mapped_key] = values
                     
@@ -660,17 +705,19 @@ def scrape_screener_holdings(symbol):
         elif num_quarters < 3:
             return None # Fallback if table doesn't have enough quarters data
             
+        SCREENER_HOLDINGS_CACHE[base_symbol] = {"time": now, "val": data}
         return data
     except Exception:
         return None
 
-def get_deterministic_holdings(symbol, ticker):
+def get_deterministic_holdings(symbol, ticker, fast=False):
     # 1. Try to scrape real screener.in data first
-    scraped = scrape_screener_holdings(symbol)
-    if scraped and scraped["promoters"] and scraped["fii"] and scraped["dii"]:
-        return scraped
+    if not fast:
+        scraped = scrape_screener_holdings(symbol)
+        if scraped and scraped["promoters"] and scraped["fii"] and scraped["dii"]:
+            return scraped
         
-    # 2. Fallback to yfinance / hash generator if scraping fails
+    # 2. Fallback to yfinance / hash generator if scraping fails or in fast mode
     import hashlib
     base_symbol = symbol.split('.')[0].upper()
     h = int(hashlib.md5(base_symbol.encode('utf-8')).hexdigest(), 16)
@@ -680,14 +727,15 @@ def get_deterministic_holdings(symbol, ticker):
     
     real_prom = None
     real_inst = None
-    try:
-        info = ticker.info
-        if 'heldPercentInsiders' in info and info['heldPercentInsiders'] is not None:
-            real_prom = info['heldPercentInsiders'] * 100.0
-        if 'heldPercentInstitutions' in info and info['heldPercentInstitutions'] is not None:
-            real_inst = info['heldPercentInstitutions'] * 100.0
-    except Exception:
-        pass
+    if not fast:
+        try:
+            info = ticker.info
+            if 'heldPercentInsiders' in info and info['heldPercentInsiders'] is not None:
+                real_prom = info['heldPercentInsiders'] * 100.0
+            if 'heldPercentInstitutions' in info and info['heldPercentInstitutions'] is not None:
+                real_inst = info['heldPercentInstitutions'] * 100.0
+        except Exception:
+            pass
     
     # 1. Promoter holding (typically 35% to 75%)
     if real_prom is not None and real_prom > 0:
@@ -752,14 +800,23 @@ def get_deterministic_holdings(symbol, ticker):
 SCREENER_SYMBOL_MAP = {
     "ITCH": "ITCHOTELS"
 }
+SCREENER_QUARTERS_CACHE = {}
 
 def scrape_screener_quarters(symbol):
+    global SCREENER_QUARTERS_CACHE
+    base_symbol = symbol.split('.')[0].upper()
+    base_symbol = SCREENER_SYMBOL_MAP.get(base_symbol, base_symbol)
+    now = time.time()
+    
+    # 24-hour cache for quarterly earnings
+    if base_symbol in SCREENER_QUARTERS_CACHE:
+        entry = SCREENER_QUARTERS_CACHE[base_symbol]
+        if now - entry["time"] < 86400:
+            return entry["val"]
+            
     try:
         import requests
         from bs4 import BeautifulSoup
-        base_symbol = symbol.split('.')[0].upper()
-        base_symbol = SCREENER_SYMBOL_MAP.get(base_symbol, base_symbol)
-        
         url = f"https://www.screener.in/company/{base_symbol}/"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -794,47 +851,55 @@ def scrape_screener_quarters(symbol):
                 continue
             row_name = cols[0].text.strip().lower()
             if any(x in row_name for x in ["sales", "revenue", "interest"]):
-                sales_row = [col.text.strip().replace(',', '').strip() for col in cols[1:]]
-            elif "eps in rs" in row_name:
-                eps_row = [col.text.strip().replace(',', '').strip() for col in cols[1:]]
+                sales_row = [c.text.strip().replace(',', '').strip() for c in cols[1:]]
+            if "eps" in row_name:
+                eps_row = [c.text.strip().strip() for c in cols[1:]]
                 
-        if not sales_row or not eps_row:
+        if not sales_row:
             return None
             
-        sales_vals = []
+        eps_row_vals = []
+        if eps_row:
+            for val in eps_row:
+                try:
+                    eps_row_vals.append(float(val))
+                except ValueError:
+                    eps_row_vals.append(0.0)
+        else:
+            eps_row_vals = [0.0] * len(sales_row)
+            
+        sales_row_vals = []
         for val in sales_row:
             try:
-                sales_vals.append(float(val))
+                sales_row_vals.append(float(val))
             except ValueError:
-                sales_vals.append(0.0)
-                
-        eps_vals = []
-        for val in eps_row:
-            try:
-                eps_vals.append(float(val))
-            except ValueError:
-                eps_vals.append(0.0)
+                sales_row_vals.append(0.0)
                 
         quarterly_data = []
-        limit = min(len(quarters), len(sales_vals), len(eps_vals))
-        for i in range(limit):
-            q_name = quarters[i]
+        for i in range(len(sales_row_vals)):
+            q_name = quarters[i] if i < len(quarters) else f"Q{i}"
+            
+            # format Mar 2026 -> Mar-26
             parts = q_name.split()
             if len(parts) == 2:
-                mon, yr = parts
-                q_formatted = f"{mon}-{yr[2:]}"
+                m, y = parts
+                if len(y) == 4:
+                    q_formatted = f"{m}-{y[2:]}"
+                else:
+                    q_formatted = f"{m}-{y}"
             else:
                 q_formatted = q_name
                 
-            curr_sales = sales_vals[i]
-            curr_eps = eps_vals[i]
+            curr_sales = sales_row_vals[i]
+            curr_eps = eps_row_vals[i]
             
-            sales_chg = None
-            eps_chg = None
+            sales_chg = 0
+            eps_chg = 0
             
             if i >= 4:
-                prev_sales = sales_vals[i - 4]
-                prev_eps = eps_vals[i - 4]
+                prev_sales = sales_row_vals[i-4]
+                prev_eps = eps_row_vals[i-4]
+                
                 if prev_sales != 0:
                     sales_chg = int(round(((curr_sales - prev_sales) / abs(prev_sales)) * 100))
                 if prev_eps != 0:
@@ -849,7 +914,9 @@ def scrape_screener_quarters(symbol):
             })
             
         quarterly_data.reverse()
-        return quarterly_data[:8]
+        data = quarterly_data[:8]
+        SCREENER_QUARTERS_CACHE[base_symbol] = {"time": now, "val": data}
+        return data
     except Exception:
         return None
 
@@ -903,12 +970,51 @@ def get_fallback_quarters(symbol, price):
     except Exception:
         return []
 
-def run_stock_analysis_internal(symbol):
+TICKER_INFO_CACHE = {}
+
+def get_cached_ticker_info(symbol, ticker):
+    global TICKER_INFO_CACHE
+    sym = symbol.strip().upper()
+    now = time.time()
+    if sym in TICKER_INFO_CACHE:
+        entry = TICKER_INFO_CACHE[sym]
+        if now - entry["time"] < 86400:
+            return entry["val"]
+    try:
+        info = ticker.info
+        TICKER_INFO_CACHE[sym] = {"time": now, "val": info}
+        return info
+    except Exception:
+        return {}
+
+NEWS_SENTIMENT_CACHE = {}
+
+def get_cached_news_sentiment(symbol, ticker):
+    global NEWS_SENTIMENT_CACHE
+    sym = symbol.strip().upper()
+    now = time.time()
+    if sym in NEWS_SENTIMENT_CACHE:
+        entry = NEWS_SENTIMENT_CACHE[sym]
+        if now - entry["time"] < 3600:
+            return entry["val"]
+    val = check_news_sentiment(ticker)
+    NEWS_SENTIMENT_CACHE[sym] = {"time": now, "val": val}
+    return val
+
+def run_stock_analysis_internal(symbol, fast=False, nifty_closes=None):
     try:
         yf_sym = f"{symbol}.NS" if "." not in symbol else symbol
         ticker = yf.Ticker(yf_sym)
         
-        hist_daily = ticker.history(period="1mo", interval="1d").dropna(subset=['Close', 'High', 'Low', 'Volume'])
+        # Parallel fetch daily and 15m histories to cut latency in half
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_daily = executor.submit(ticker.history, period="1mo", interval="1d")
+            future_15m = executor.submit(ticker.history, period="2d", interval="15m")
+            hist_daily = future_daily.result()
+            hist_15m = future_15m.result()
+            
+        hist_daily = hist_daily.dropna(subset=['Close', 'High', 'Low', 'Volume'])
         if hist_daily.empty or len(hist_daily) < 10:
             return None
             
@@ -917,7 +1023,7 @@ def run_stock_analysis_internal(symbol):
         daily_lows = hist_daily['Low'].tolist()
         daily_volumes = hist_daily['Volume'].tolist()
         
-        hist_15m = ticker.history(period="5d", interval="15m").dropna(subset=['Close', 'High', 'Low', 'Volume'])
+        hist_15m = hist_15m.dropna(subset=['Close', 'High', 'Low', 'Volume'])
         if hist_15m.empty:
             return None
             
@@ -926,24 +1032,33 @@ def run_stock_analysis_internal(symbol):
         lows_15m = hist_15m['Low'].tolist()
         
         price = closes_15m[-1]
-        info = ticker.info
-        name = info.get('longName', info.get('shortName', symbol))
-        prev_close = info.get('previousClose', price)
-        change_pct = ((price - prev_close) / prev_close * 100) if prev_close else 0.0
         
-        summary = info.get('longBusinessSummary', 'No description available.')
-        market_cap = info.get('marketCap')
+        if not fast:
+            info = get_cached_ticker_info(symbol, ticker)
+            name = info.get('longName', info.get('shortName', symbol))
+            prev_close = info.get('previousClose', price)
+            summary = info.get('longBusinessSummary', 'No description available.')
+            market_cap = info.get('marketCap')
+            recommendation_mean = info.get('recommendationMean')
+            num_analysts = info.get('numberOfAnalystOpinions')
+        else:
+            stock_meta = getStockMetadata(symbol)
+            name = stock_meta.get('companyName', symbol)
+            prev_close = daily_closes[-2] if len(daily_closes) >= 2 else price
+            summary = 'Description not loaded in fast mode.'
+            market_cap = None
+            recommendation_mean = None
+            num_analysts = None
+            
+        change_pct = ((price - prev_close) / prev_close * 100) if prev_close else 0.0
         index_name, index_change_pct = get_index_details_for_stock(market_cap)
 
         # Analyst Ratings & Forecast
-        recommendation_mean = info.get('recommendationMean')
-        num_analysts = info.get('numberOfAnalystOpinions')
-        
         analyst_rating = None
         analyst_percentage = 0
         num_analysts_val = 0
         
-        if num_analysts and recommendation_mean is not None:
+        if not fast and num_analysts and recommendation_mean is not None:
             num_analysts_val = int(num_analysts)
             try:
                 mean_val = float(recommendation_mean)
@@ -967,7 +1082,6 @@ def run_stock_analysis_internal(symbol):
             "mean": recommendation_mean
         }
 
-
         # ── Stock Metadata Service (authoritative sector/industry/index) ──────
         stock_meta = getStockMetadata(symbol)
         sector   = stock_meta.get('sector', 'Unknown')
@@ -982,12 +1096,13 @@ def run_stock_analysis_internal(symbol):
         # ─────────────────────────────────────────────────────────────────────
 
         # Load Nifty closes to calculate stock Beta (volatility factor)
-        try:
-            nifty_ticker = yf.Ticker("^NSEI")
-            nifty_hist = nifty_ticker.history(period="1mo", interval="1d").dropna(subset=['Close'])
-            nifty_closes = nifty_hist['Close'].tolist()
-        except Exception:
-            nifty_closes = []
+        if nifty_closes is None:
+            try:
+                nifty_ticker = yf.Ticker("^NSEI")
+                nifty_hist = nifty_ticker.history(period="1mo", interval="1d").dropna(subset=['Close'])
+                nifty_closes = nifty_hist['Close'].tolist()
+            except Exception:
+                nifty_closes = []
             
         raw_beta = calculate_beta_vs_nifty(daily_closes, nifty_closes)
         
@@ -1065,7 +1180,10 @@ def run_stock_analysis_internal(symbol):
         avg_atr_14d = sum(tr_list[-14:]) / 14 if len(tr_list) >= 14 else 2.5
         today_tr = daily_highs[-1] - daily_lows[-1]
         
-        has_pos_news, news_desc = check_news_sentiment(ticker)
+        if not fast:
+            has_pos_news, news_desc = get_cached_news_sentiment(symbol, ticker)
+        else:
+            has_pos_news, news_desc = False, "News analysis skipped in fast mode."
         
         rules = {}
         score = 0
@@ -1147,7 +1265,7 @@ def run_stock_analysis_internal(symbol):
         if r8_passed: score += 10
         
         # Get holdings data to check trends
-        holdings = get_deterministic_holdings(symbol, ticker)
+        holdings = get_deterministic_holdings(symbol, ticker, fast=fast)
         prom_trend = holdings["promoters"]
         fii_trend = holdings["fii"]
         dii_trend = holdings["dii"]
@@ -1310,8 +1428,7 @@ def fetch_chartink_symbols():
         post_res = scraper.post("https://chartink.com/screener/process", data=payload, headers=headers, timeout=10)
         if post_res.status_code == 200:
             data = post_res.json()
-            stocks = data.get('data', [])
-            return [s.get('nsecode') for s in stocks if s.get('nsecode')]
+            return data.get('data', [])
     except Exception as e:
         print(f"Error fetching symbols from Chartink: {e}")
     return []
@@ -1320,39 +1437,135 @@ def fetch_chartink_symbols():
 def intraday_manager():
     return redirect('/screener')
 
+STOCK_ANALYSIS_CACHE = {}
+
+@app.route('/api/search/suggestions')
+def get_search_suggestions():
+    q = request.args.get('q', '').strip().upper()
+    if not q:
+        return jsonify([])
+        
+    from metadata_service import _service
+    results = []
+    
+    with _service._lock:
+        for sym, entry in _service.master_db.items():
+            comp_name = entry.get('companyName', '').upper()
+            
+            match = False
+            priority = 99
+            
+            if sym.startswith(q):
+                match = True
+                priority = 1
+            elif comp_name.startswith(q):
+                match = True
+                priority = 2
+            elif q in sym:
+                match = True
+                priority = 3
+            elif q in comp_name:
+                match = True
+                priority = 4
+                
+            if match:
+                results.append({
+                    "symbol": sym,
+                    "name": entry.get('companyName', sym),
+                    "sector": entry.get('sector', 'Equities'),
+                    "priority": priority
+                })
+                
+    results.sort(key=lambda x: (x["priority"], x["symbol"]))
+    return jsonify(results[:8])
+
 @app.route('/api/intraday/analyze')
 def analyze_stock():
     symbol = request.args.get('symbol', '').strip().upper()
     if not symbol:
         return jsonify({"error": "Symbol parameter is required"}), 400
+        
+    now = time.time()
+    # 10-minute cache for detailed stock analysis
+    if symbol in STOCK_ANALYSIS_CACHE:
+        entry = STOCK_ANALYSIS_CACHE[symbol]
+        if now - entry["time"] < 600:
+            return jsonify(entry["val"])
+            
     res = run_stock_analysis_internal(symbol)
     if res:
+        STOCK_ANALYSIS_CACHE[symbol] = {"time": now, "val": res}
         return jsonify(res)
     return jsonify({"error": f"Failed to analyze symbol {symbol}. Verify it is active on NSE."}), 500
 
+INTRADAY_SCREENER_CACHE = {"time": 0, "data": None}
+
 @app.route('/api/intraday/screener')
 def get_intraday_screener():
-    from concurrent.futures import ThreadPoolExecutor
-    symbols = fetch_chartink_symbols()
+    global INTRADAY_SCREENER_CACHE
+    now = time.time()
+    
+    # 120 seconds cache for real-time responsiveness during trading hours
+    if INTRADAY_SCREENER_CACHE["data"] is not None and (now - INTRADAY_SCREENER_CACHE["time"]) < 120:
+        return jsonify(INTRADAY_SCREENER_CACHE["data"])
+        
+    stocks = fetch_chartink_symbols()
     
     # Cap to 50 symbols for safety
-    symbols = symbols[:50]
+    stocks = stocks[:50]
     
     results = []
-    if symbols:
-        with ThreadPoolExecutor(max_workers=12) as executor:
-            futures = {executor.submit(run_stock_analysis_internal, sym): sym for sym in symbols}
-            for future in futures:
-                res = future.result()
-                if res:
-                    results.append(res)
+    
+    def enrich_intraday_stock(stock):
+        symbol = stock.get('nsecode') or stock.get('bsecode')
+        if not symbol:
+            return None
+        symbol = symbol.strip().upper()
+        
+        price = float(stock.get('close', 0.0))
+        change_pct = float(stock.get('per_chg', 0.0))
+        volume = int(stock.get('volume', 0))
+        
+        # Calculate dynamic score & rating locally (no yfinance calls!)
+        score = int(min(100, max(60, 75 + int(change_pct * 2.5))))
+        if score >= 90:
+            rating = "Very Strong"
+        elif score >= 75:
+            rating = "Strong"
+        elif score >= 60:
+            rating = "Moderate"
+        else:
+            rating = "Avoid"
+            
+        return {
+            "symbol": symbol,
+            "name": stock.get('name', symbol),
+            "price": price,
+            "change_pct": change_pct,
+            "volume": volume,
+            "sector": fetch_sector_logic(symbol),
+            "score": score,
+            "rating": rating
+        }
+
+    if stocks:
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            enriched = list(executor.map(enrich_intraday_stock, stocks))
+            results = [e for e in enriched if e is not None]
                     
     results.sort(key=lambda x: x["change_pct"], reverse=True)
-    return jsonify({
+    
+    data = {
         "status": "success",
         "stocks": results,
         "last_updated": time.strftime("%Y-%m-%d %H:%M:%S")
-    })
+    }
+    
+    INTRADAY_SCREENER_CACHE["time"] = now
+    INTRADAY_SCREENER_CACHE["data"] = data
+    
+    return jsonify(data)
 
 # ── Sparkline API ─────────────────────────────────────────────────────────────
 @app.route('/api/sparkline/<symbol>')
