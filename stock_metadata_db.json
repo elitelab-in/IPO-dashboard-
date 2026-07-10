@@ -12676,14 +12676,14 @@
   "KARMAENG": {
     "symbol": "KARMAENG",
     "companyName": "Karma Energy Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Utilities",
+    "industry": "Utilities - Renewable",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KARURVYSYA": {
     "symbol": "KARURVYSYA",
@@ -12703,38 +12703,38 @@
   "KAUSHALYA": {
     "symbol": "KAUSHALYA",
     "companyName": "Kaushalya Infrastructure Development Corporation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KAVDEFENCE": {
     "symbol": "KAVDEFENCE",
     "companyName": "Kavveri Defence & Wireless Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Communication Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KAYA": {
     "symbol": "KAYA",
     "companyName": "Kaya Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Household & Personal Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KAYNES": {
     "symbol": "KAYNES",
@@ -12754,38 +12754,38 @@
   "KCP": {
     "symbol": "KCP",
     "companyName": "KCP Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Building Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KCPSUGIND": {
     "symbol": "KCPSUGIND",
     "companyName": "KCP Sugar and Industries Corporation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KDDL": {
     "symbol": "KDDL",
     "companyName": "KDDL Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KEC": {
     "symbol": "KEC",
@@ -12805,14 +12805,14 @@
   "KEEPLEARN": {
     "symbol": "KEEPLEARN",
     "companyName": "DSJ Keep Learning Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Education & Training Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KEI": {
     "symbol": "KEI",
@@ -12832,50 +12832,50 @@
   "KELLTONTEC": {
     "symbol": "KELLTONTEC",
     "companyName": "Kellton Tech Solutions Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KENNAMET": {
     "symbol": "KENNAMET",
     "companyName": "Kennametal India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Tools & Accessories",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KERNEX": {
     "symbol": "KERNEX",
     "companyName": "Kernex Microsystems (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KEYFINSERV": {
     "symbol": "KEYFINSERV",
     "companyName": "Keynote Financial Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KFINTECH": {
     "symbol": "KFINTECH",
@@ -12895,26 +12895,26 @@
   "KHANDSE": {
     "symbol": "KHANDSE",
     "companyName": "Khandwala Securities Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KICL": {
     "symbol": "KICL",
     "companyName": "Kalyani Investment Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Asset Management",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KIMS": {
     "symbol": "KIMS",
@@ -12934,26 +12934,26 @@
   "KINGFA": {
     "symbol": "KINGFA",
     "companyName": "Kingfa Science & Technology (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KIOCL": {
     "symbol": "KIOCL",
     "companyName": "KIOCL Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KIRANVYPAR": {
     "symbol": "KIRANVYPAR",
@@ -12970,26 +12970,26 @@
   "KIRIINDUS": {
     "symbol": "KIRIINDUS",
     "companyName": "Kiri Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KIRLFER": {
     "symbol": "KIRLFER",
     "companyName": "Kirloskar Ferrous Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KIRLOSBROS": {
     "symbol": "KIRLOSBROS",
@@ -13023,14 +13023,14 @@
   "KIRLOSIND": {
     "symbol": "KIRLOSIND",
     "companyName": "Kirloskar Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KIRLPNU": {
     "symbol": "KIRLPNU",
@@ -13049,14 +13049,14 @@
   "KISSHT": {
     "symbol": "KISSHT",
     "companyName": "OnEMI Technology Solutions Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KITEX": {
     "symbol": "KITEX",
@@ -13075,14 +13075,14 @@
   "KKCL": {
     "symbol": "KKCL",
     "companyName": "Kewal Kiran Clothing Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KLBRENG-B": {
     "symbol": "KLBRENG-B",
@@ -13099,50 +13099,50 @@
   "KMEW": {
     "symbol": "KMEW",
     "companyName": "Knowledge Marine & Engineering Works Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Marine Shipping",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KMSUGAR": {
     "symbol": "KMSUGAR",
     "companyName": "K.M.Sugar Mills Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KNACK": {
     "symbol": "KNACK",
     "companyName": "Knack Packaging Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KNAGRI": {
     "symbol": "KNAGRI",
     "companyName": "KN Agri Resources Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Farm Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KNRCON": {
     "symbol": "KNRCON",
@@ -13161,38 +13161,38 @@
   "KOHINOOR": {
     "symbol": "KOHINOOR",
     "companyName": "Kohinoor Foods Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KOKUYOCMLN": {
     "symbol": "KOKUYOCMLN",
     "companyName": "Kokuyo Camlin Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Business Equipment & Supplies",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KOLTEPATIL": {
     "symbol": "KOLTEPATIL",
     "companyName": "Kolte - Patil Developers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KOTAKBANK": {
     "symbol": "KOTAKBANK",
@@ -13212,38 +13212,38 @@
   "KOTARISUG": {
     "symbol": "KOTARISUG",
     "companyName": "Kothari Sugars And Chemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KOTHARIPET": {
     "symbol": "KOTHARIPET",
     "companyName": "Kothari Petrochemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KOTHARIPRO": {
     "symbol": "KOTHARIPRO",
     "companyName": "Kothari Products Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KOTIC": {
     "symbol": "KOTIC",
@@ -13260,26 +13260,26 @@
   "KOVAI": {
     "symbol": "KOVAI",
     "companyName": "Kovai Medical Center & Hospital Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KPEL": {
     "symbol": "KPEL",
     "companyName": "K.P. Energy Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KPIGREEN": {
     "symbol": "KPIGREEN",
@@ -13369,110 +13369,110 @@
   "KREBSBIO": {
     "symbol": "KREBSBIO",
     "companyName": "Krebs Biochemicals and Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KRISHANA": {
     "symbol": "KRISHANA",
     "companyName": "Krishana Phoschem Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KRISHIVAL": {
     "symbol": "KRISHIVAL",
     "companyName": "Krishival Foods Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KRISHNADEF": {
     "symbol": "KRISHNADEF",
     "companyName": "Krishna Defence And Allied Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KRITIKA": {
     "symbol": "KRITIKA",
     "companyName": "Kritika Wires Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KRONOX": {
     "symbol": "KRONOX",
     "companyName": "Kronox Lab Sciences Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KROSS": {
     "symbol": "KROSS",
     "companyName": "Kross Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KRSNAA": {
     "symbol": "KRSNAA",
     "companyName": "Krsnaa Diagnostics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KRYSTAL": {
     "symbol": "KRYSTAL",
     "companyName": "Krystal Integrated Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KSB": {
     "symbol": "KSB",
@@ -13505,50 +13505,50 @@
   "KSHINTL": {
     "symbol": "KSHINTL",
     "companyName": "KSH International Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KSL": {
     "symbol": "KSL",
     "companyName": "Kalyani Steels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KSOLVES": {
     "symbol": "KSOLVES",
     "companyName": "Ksolves India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KSR": {
     "symbol": "KSR",
     "companyName": "KSR Footwear Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Footwear & Accessories",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KTKBANK": {
     "symbol": "KTKBANK",
@@ -13567,38 +13567,38 @@
   "KUANTUM": {
     "symbol": "KUANTUM",
     "companyName": "Kuantum Papers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "KWIL": {
     "symbol": "KWIL",
     "companyName": "Kwality Wall's (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LAGNAM": {
     "symbol": "LAGNAM",
     "companyName": "Lagnam Spintex Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LAHOTIOV": {
     "symbol": "LAHOTIOV",
@@ -13615,14 +13615,14 @@
   "LAL": {
     "symbol": "LAL",
     "companyName": "Lorenzini Apparels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LALPATHLAB": {
     "symbol": "LALPATHLAB",
@@ -13642,74 +13642,74 @@
   "LAMBODHARA": {
     "symbol": "LAMBODHARA",
     "companyName": "Lambodhara Textiles Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LANCORHOL": {
     "symbol": "LANCORHOL",
     "companyName": "Lancor Holdings Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LANDMARK": {
     "symbol": "LANDMARK",
     "companyName": "Landmark Cars Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto & Truck Dealerships",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LANDSMILL": {
     "symbol": "LANDSMILL",
     "companyName": "Landsmill Green Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LAOPALA": {
     "symbol": "LAOPALA",
     "companyName": "La Opala RG Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Furnishings, Fixtures & Appliances",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LASA": {
     "symbol": "LASA",
     "companyName": "Lasa Supergenerics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LATENTVIEW": {
     "symbol": "LATENTVIEW",
@@ -13744,50 +13744,50 @@
   "LAXMICOT": {
     "symbol": "LAXMICOT",
     "companyName": "Laxmi Cotspin Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LAXMIDENTL": {
     "symbol": "LAXMIDENTL",
     "companyName": "Laxmi Dental Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LCCINFOTEC": {
     "symbol": "LCCINFOTEC",
     "companyName": "LCC Infotech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Education & Training Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LEMERITE": {
     "symbol": "LEMERITE",
     "companyName": "Le Merite Exports Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LEMONTREE": {
     "symbol": "LEMONTREE",
@@ -13822,38 +13822,38 @@
   "LEXUS": {
     "symbol": "LEXUS",
     "companyName": "Lexus Granito (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LFIC": {
     "symbol": "LFIC",
     "companyName": "Lakshmi Finance & Industrial Corporation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Asset Management",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LGBBROSLTD": {
     "symbol": "LGBBROSLTD",
     "companyName": "LG Balakrishnan & Bros Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LGEINDIA": {
     "symbol": "LGEINDIA",
@@ -13873,38 +13873,38 @@
   "LGHL": {
     "symbol": "LGHL",
     "companyName": "Laxmi Goldorna House Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LIBAS": {
     "symbol": "LIBAS",
     "companyName": "Libas Consumer Products Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LIBERTSHOE": {
     "symbol": "LIBERTSHOE",
     "companyName": "Liberty Shoes Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Footwear & Accessories",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LICHSGFIN": {
     "symbol": "LICHSGFIN",
@@ -13939,26 +13939,26 @@
   "LINC": {
     "symbol": "LINC",
     "companyName": "Linc Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Business Equipment & Supplies",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LINCOLN": {
     "symbol": "LINCOLN",
     "companyName": "Lincoln Pharmaceuticals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LINDEINDIA": {
     "symbol": "LINDEINDIA",
@@ -14021,14 +14021,14 @@
   "LMW": {
     "symbol": "LMW",
     "companyName": "LMW Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LODHA": {
     "symbol": "LODHA",
@@ -14048,14 +14048,14 @@
   "LORDSCHLO": {
     "symbol": "LORDSCHLO",
     "companyName": "Lords Chloro Alkali Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LOTUSDEV": {
     "symbol": "LOTUSDEV",
@@ -14074,50 +14074,50 @@
   "LOTUSEYE": {
     "symbol": "LOTUSEYE",
     "companyName": "Lotus Eye Hospital and Institute Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LOVABLE": {
     "symbol": "LOVABLE",
     "companyName": "Lovable Lingerie Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LOYALTEX": {
     "symbol": "LOYALTEX",
     "companyName": "Loyal Textile Mills Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LPDC": {
     "symbol": "LPDC",
     "companyName": "Landmark Property Development Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LT": {
     "symbol": "LT",
@@ -14197,14 +14197,14 @@
   "LUMAXIND": {
     "symbol": "LUMAXIND",
     "companyName": "Lumax Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LUMAXTECH": {
     "symbol": "LUMAXTECH",
@@ -14238,14 +14238,14 @@
   "LUXIND": {
     "symbol": "LUXIND",
     "companyName": "Lux Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "LXCHEM": {
     "symbol": "LXCHEM",
@@ -14264,14 +14264,14 @@
   "LYPSAGEMS": {
     "symbol": "LYPSAGEMS",
     "companyName": "Lypsa Gems & Jewellery Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "M&M": {
     "symbol": "M&M",
@@ -14306,38 +14306,38 @@
   "MAANALU": {
     "symbol": "MAANALU",
     "companyName": "Maan Aluminium Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Aluminum",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MACPOWER": {
     "symbol": "MACPOWER",
     "companyName": "Macpower CNC Machines Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MADHAV": {
     "symbol": "MADHAV",
     "companyName": "Madhav Marbles and Granites Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MADHAVIPL": {
     "symbol": "MADHAVIPL",
@@ -14354,14 +14354,14 @@
   "MADRASFERT": {
     "symbol": "MADRASFERT",
     "companyName": "Madras Fertilizers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAFATIND": {
     "symbol": "MAFATIND",
@@ -14378,26 +14378,26 @@
   "MAGADSUGAR": {
     "symbol": "MAGADSUGAR",
     "companyName": "Magadh Sugar & Energy Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAGNUM": {
     "symbol": "MAGNUM",
     "companyName": "Magnum Ventures Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAHABANK": {
     "symbol": "MAHABANK",
@@ -14417,62 +14417,62 @@
   "MAHAPEXLTD": {
     "symbol": "MAHAPEXLTD",
     "companyName": "Maha Rashtra Apex Corporation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAHASTEEL": {
     "symbol": "MAHASTEEL",
     "companyName": "Mahamaya Steel Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAHEPC": {
     "symbol": "MAHEPC",
     "companyName": "Mahindra EPC Irrigation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Farm & Heavy Construction Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAHLIFE": {
     "symbol": "MAHLIFE",
     "companyName": "Mahindra Lifespace Developers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAHLOG": {
     "symbol": "MAHLOG",
     "companyName": "Mahindra Logistics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Integrated Freight & Logistics",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAHSCOOTER": {
     "symbol": "MAHSCOOTER",
@@ -14505,110 +14505,110 @@
   "MAITHANALL": {
     "symbol": "MAITHANALL",
     "companyName": "Maithan Alloys Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAJESAUT": {
     "symbol": "MAJESAUT",
     "companyName": "Majestic Auto Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MALLCOM": {
     "symbol": "MALLCOM",
     "companyName": "Mallcom (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Security & Protection Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MALUPAPER": {
     "symbol": "MALUPAPER",
     "companyName": "Malu Paper Mills Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAMATA": {
     "symbol": "MAMATA",
     "companyName": "Mamata Machinery Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANAKALUCO": {
     "symbol": "MANAKALUCO",
     "companyName": "Manaksia Aluminium Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Aluminum",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANAKCOAT": {
     "symbol": "MANAKCOAT",
     "companyName": "Manaksia Coated Metals & Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANAKSIA": {
     "symbol": "MANAKSIA",
     "companyName": "Manaksia Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANALIPETC": {
     "symbol": "MANALIPETC",
     "companyName": "Manali Petrochemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANAPPURAM": {
     "symbol": "MANAPPURAM",
@@ -14628,74 +14628,74 @@
   "MANBA": {
     "symbol": "MANBA",
     "companyName": "Manba Finance Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANCREDIT": {
     "symbol": "MANCREDIT",
     "companyName": "Mangal Credit and Fincorp Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANGALAM": {
     "symbol": "MANGALAM",
     "companyName": "Mangalam Drugs And Organics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANGLMCEM": {
     "symbol": "MANGLMCEM",
     "companyName": "Mangalam Cement Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Building Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANINDS": {
     "symbol": "MANINDS",
     "companyName": "Man Industries (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANINFRA": {
     "symbol": "MANINFRA",
     "companyName": "Man Infraconstruction Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANKIND": {
     "symbol": "MANKIND",
@@ -14715,14 +14715,14 @@
   "MANOMAY": {
     "symbol": "MANOMAY",
     "companyName": "Manomay Tex India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MANORAMA": {
     "symbol": "MANORAMA",
@@ -14770,14 +14770,14 @@
   "MARATHON": {
     "symbol": "MARATHON",
     "companyName": "Marathon Nextgen Realty Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MARICO": {
     "symbol": "MARICO",
@@ -14797,26 +14797,26 @@
   "MARINE": {
     "symbol": "MARINE",
     "companyName": "Marine Electricals (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MARKOLINES": {
     "symbol": "MARKOLINES",
     "companyName": "Markolines Pavement Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Infrastructure Operations",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MARKSANS": {
     "symbol": "MARKSANS",
@@ -14835,14 +14835,14 @@
   "MARSONS": {
     "symbol": "MARSONS",
     "companyName": "Marsons Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MARUTI": {
     "symbol": "MARUTI",
@@ -14862,14 +14862,14 @@
   "MASFIN": {
     "symbol": "MASFIN",
     "companyName": "MAS Financial Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MASTEK": {
     "symbol": "MASTEK",
@@ -14888,38 +14888,38 @@
   "MASTERTR": {
     "symbol": "MASTERTR",
     "companyName": "Master Trust Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MATRIMONY": {
     "symbol": "MATRIMONY",
     "companyName": "Matrimony.Com Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Internet Content & Information",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAXESTATES": {
     "symbol": "MAXESTATES",
     "companyName": "Max Estates Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAXHEALTH": {
     "symbol": "MAXHEALTH",
@@ -14939,38 +14939,38 @@
   "MAXIND": {
     "symbol": "MAXIND",
     "companyName": "Max India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAYURUNIQ": {
     "symbol": "MAYURUNIQ",
     "companyName": "Mayur Uniquoters Ltd",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAZDA": {
     "symbol": "MAZDA",
     "companyName": "Mazda Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MAZDOCK": {
     "symbol": "MAZDOCK",
@@ -14990,26 +14990,26 @@
   "MBAPL": {
     "symbol": "MBAPL",
     "companyName": "Madhya Bharat Agro Products Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MBEL": {
     "symbol": "MBEL",
     "companyName": "M & B Engineering Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MCCHRLS-B": {
     "symbol": "MCCHRLS-B",
@@ -15026,26 +15026,26 @@
   "MCL": {
     "symbol": "MCL",
     "companyName": "M TEK COPPER LIMITED",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Copper",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MCLOUD": {
     "symbol": "MCLOUD",
     "companyName": "Magellanic Cloud Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MCX": {
     "symbol": "MCX",
@@ -15080,38 +15080,38 @@
   "MEDIASSIST": {
     "symbol": "MEDIASSIST",
     "companyName": "Medi Assist Healthcare Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MEDICAMEQ": {
     "symbol": "MEDICAMEQ",
     "companyName": "Medicamen Biotech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MEDICO": {
     "symbol": "MEDICO",
     "companyName": "Medico Remedies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MEDPLUS": {
     "symbol": "MEDPLUS",
@@ -15145,14 +15145,14 @@
   "MEGASTAR": {
     "symbol": "MEGASTAR",
     "companyName": "Megastar Foods Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MENNPIS": {
     "symbol": "MENNPIS",
@@ -15181,26 +15181,26 @@
   "METROBRAND": {
     "symbol": "METROBRAND",
     "companyName": "Metro Brands Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Retail",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "METROGLOBL": {
     "symbol": "METROGLOBL",
     "companyName": "Metroglobal Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "METROPOLIS": {
     "symbol": "METROPOLIS",
@@ -15219,14 +15219,14 @@
   "MFML": {
     "symbol": "MFML",
     "companyName": "Mahalaxmi Fabric Mills Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MFSL": {
     "symbol": "MFSL",
@@ -15261,26 +15261,26 @@
   "MHLXMIRU": {
     "symbol": "MHLXMIRU",
     "companyName": "Mahalaxmi Rubtech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MHRIL": {
     "symbol": "MHRIL",
     "companyName": "Mahindra Holidays & Resorts India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Resorts & Casinos",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MIDHANI": {
     "symbol": "MIDHANI",
@@ -15299,14 +15299,14 @@
   "MIDWESTLTD": {
     "symbol": "MIDWESTLTD",
     "companyName": "Midwest Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Building Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MINDACORP": {
     "symbol": "MINDACORP",
@@ -15326,74 +15326,74 @@
   "MINDTECK": {
     "symbol": "MINDTECK",
     "companyName": "Mindteck (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MIRZAINT": {
     "symbol": "MIRZAINT",
     "companyName": "Mirza International Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Footwear & Accessories",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MITTAL": {
     "symbol": "MITTAL",
     "companyName": "Mittal Life Style Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MKPL": {
     "symbol": "MKPL",
     "companyName": "M K Proteins Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MMFL": {
     "symbol": "MMFL",
     "companyName": "MM Forgings Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MMP": {
     "symbol": "MMP",
     "companyName": "MMP Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Aluminum",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MMTC": {
     "symbol": "MMTC",
@@ -15413,62 +15413,62 @@
   "MOBIKWIK": {
     "symbol": "MOBIKWIK",
     "companyName": "One Mobikwik Systems Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MODIRUBBER": {
     "symbol": "MODIRUBBER",
     "companyName": "Modi Rubber Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MODIS": {
     "symbol": "MODIS",
     "companyName": "Modis Navnirman Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MODTHREAD": {
     "symbol": "MODTHREAD",
     "companyName": "Modern Threads (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "50",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOHITIND": {
     "symbol": "MOHITIND",
     "companyName": "Mohit Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOIL": {
     "symbol": "MOIL",
@@ -15487,110 +15487,110 @@
   "MOKSH": {
     "symbol": "MOKSH",
     "companyName": "Moksh Ornaments Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOL": {
     "symbol": "MOL",
     "companyName": "Meghmani Organics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOLDTECH": {
     "symbol": "MOLDTECH",
     "companyName": "Mold-Tek Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOLDTKPAC": {
     "symbol": "MOLDTKPAC",
     "companyName": "Mold-Tek Packaging Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MONARCH": {
     "symbol": "MONARCH",
     "companyName": "Monarch Networth Capital Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MONEYBOXX": {
     "symbol": "MONEYBOXX",
     "companyName": "Moneyboxx Finance Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MONTECARLO": {
     "symbol": "MONTECARLO",
     "companyName": "Monte Carlo Fashions Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOREPENLAB": {
     "symbol": "MOREPENLAB",
     "companyName": "Morepen Laboratories Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOSCHIP": {
     "symbol": "MOSCHIP",
     "companyName": "Moschip Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Semiconductor Equipment & Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MOTHERSON": {
     "symbol": "MOTHERSON",
@@ -15625,14 +15625,14 @@
   "MOTISONS": {
     "symbol": "MOTISONS",
     "companyName": "Motisons Jewellers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MPHASIS": {
     "symbol": "MPHASIS",
@@ -15652,14 +15652,14 @@
   "MPSLTD": {
     "symbol": "MPSLTD",
     "companyName": "MPS Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Publishing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MRF": {
     "symbol": "MRF",
@@ -15694,14 +15694,14 @@
   "MSPL": {
     "symbol": "MSPL",
     "companyName": "MSP Steel & Power Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MSTCLTD": {
     "symbol": "MSTCLTD",
@@ -15735,110 +15735,110 @@
   "MTNL": {
     "symbol": "MTNL",
     "companyName": "Mahanagar Telephone Nigam Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUFIN": {
     "symbol": "MUFIN",
     "companyName": "Mufin Green Finance Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUFTI": {
     "symbol": "MUFTI",
     "companyName": "Credo Brands Marketing Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Retail",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUKANDLTD": {
     "symbol": "MUKANDLTD",
     "companyName": "Mukand Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUKKA": {
     "symbol": "MUKKA",
     "companyName": "Mukka Proteins Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUNJALAU": {
     "symbol": "MUNJALAU",
     "companyName": "Munjal Auto Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUNJALSHOW": {
     "symbol": "MUNJALSHOW",
     "companyName": "Munjal Showa Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MURUDCERA": {
     "symbol": "MURUDCERA",
     "companyName": "Murudeshwar Ceramics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUTHOOTCAP": {
     "symbol": "MUTHOOTCAP",
     "companyName": "Muthoot Capital Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MUTHOOTFIN": {
     "symbol": "MUTHOOTFIN",
@@ -15858,98 +15858,98 @@
   "MUTHOOTMF": {
     "symbol": "MUTHOOTMF",
     "companyName": "Muthoot Microfin Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MVGJL": {
     "symbol": "MVGJL",
     "companyName": "Manoj Vaibhav Gems N Jewellers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "MWL": {
     "symbol": "MWL",
     "companyName": "Mangalam Worldwide Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NACLIND": {
     "symbol": "NACLIND",
     "companyName": "NACL Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NAGREEKEXP": {
     "symbol": "NAGREEKEXP",
     "companyName": "Nagreeka Exports Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NAHARCAP": {
     "symbol": "NAHARCAP",
     "companyName": "Nahar Capital and Financial Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NAHARINDUS": {
     "symbol": "NAHARINDUS",
     "companyName": "Nahar Industrial Enterprises Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NAHARPOLY": {
     "symbol": "NAHARPOLY",
     "companyName": "Nahar Poly Films Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NAM-INDIA": {
     "symbol": "NAM-INDIA",
@@ -15969,26 +15969,26 @@
   "NARMADA": {
     "symbol": "NARMADA",
     "companyName": "Narmada Agrobase Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NATCAPSUQ": {
     "symbol": "NATCAPSUQ",
     "companyName": "Natural Capsules Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NATCOPHARM": {
     "symbol": "NATCOPHARM",
@@ -16008,14 +16008,14 @@
   "NATHBIOGEN": {
     "symbol": "NATHBIOGEN",
     "companyName": "Nath Bio-Genes (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NATIONALUM": {
     "symbol": "NATIONALUM",
@@ -16092,26 +16092,26 @@
   "NAVKARCORP": {
     "symbol": "NAVKARCORP",
     "companyName": "Navkar Corporation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Integrated Freight & Logistics",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NAVNETEDUL": {
     "symbol": "NAVNETEDUL",
     "companyName": "Navneet Education Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Publishing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NAZARA": {
     "symbol": "NAZARA",
@@ -16145,14 +16145,14 @@
   "NBIFIN": {
     "symbol": "NBIFIN",
     "companyName": "N. B. I. Industrial Finance Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NCC": {
     "symbol": "NCC",
@@ -16172,74 +16172,74 @@
   "NCLIND": {
     "symbol": "NCLIND",
     "companyName": "NCL Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Building Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NDGL": {
     "symbol": "NDGL",
     "companyName": "Naga Dhunseri Group Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NDL": {
     "symbol": "NDL",
     "companyName": "Nandan Denim Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NDLVENTURE": {
     "symbol": "NDLVENTURE",
     "companyName": "NDL Ventures Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Entertainment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NDRAUTO": {
     "symbol": "NDRAUTO",
     "companyName": "Ndr Auto Components Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NDTV": {
     "symbol": "NDTV",
     "companyName": "New Delhi Television Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Broadcasting",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NEAGI": {
     "symbol": "NEAGI",
@@ -16256,26 +16256,26 @@
   "NELCAST": {
     "symbol": "NELCAST",
     "companyName": "Nelcast Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NELCO": {
     "symbol": "NELCO",
     "companyName": "NELCO Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Communication Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NEOGEN": {
     "symbol": "NEOGEN",
@@ -16294,14 +16294,14 @@
   "NEPHROPLUS": {
     "symbol": "NEPHROPLUS",
     "companyName": "Nephrocare Health Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NESCO": {
     "symbol": "NESCO",
@@ -16394,14 +16394,14 @@
   "NEXTMEDIA": {
     "symbol": "NEXTMEDIA",
     "companyName": "Next Mediaworks Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Broadcasting",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NFL": {
     "symbol": "NFL",
@@ -16420,14 +16420,14 @@
   "NGLFINE": {
     "symbol": "NGLFINE",
     "companyName": "NGL Fine-Chem Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NH": {
     "symbol": "NH",
@@ -16477,74 +16477,74 @@
   "NIBE": {
     "symbol": "NIBE",
     "companyName": "NIBE Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NIBL": {
     "symbol": "NIBL",
     "companyName": "NRB Industrial Bearings Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Tools & Accessories",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NIITLTD": {
     "symbol": "NIITLTD",
     "companyName": "NIIT Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Education & Training Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NIITMTS": {
     "symbol": "NIITMTS",
     "companyName": "NIIT Learning Systems Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Education & Training Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NILAINFRA": {
     "symbol": "NILAINFRA",
     "companyName": "Nila Infrastructures Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NILASPACES": {
     "symbol": "NILASPACES",
     "companyName": "Nila Spaces Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NILE": {
     "symbol": "NILE",
@@ -16561,98 +16561,98 @@
   "NILKAMAL": {
     "symbol": "NILKAMAL",
     "companyName": "Nilkamal Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Furnishings, Fixtures & Appliances",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NIPPOBATRY": {
     "symbol": "NIPPOBATRY",
     "companyName": "Indo-National Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NIRAJISPAT": {
     "symbol": "NIRAJISPAT",
     "companyName": "Niraj Ispat Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NIRLON": {
     "symbol": "NIRLON",
     "companyName": "Nirlon Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NITCO": {
     "symbol": "NITCO",
     "companyName": "Nitco Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NITINSPIN": {
     "symbol": "NITINSPIN",
     "companyName": "Nitin Spinners Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NITIRAJ": {
     "symbol": "NITIRAJ",
     "companyName": "Nitiraj Engineers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Scientific & Technical Instruments",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NITTAGELA": {
     "symbol": "NITTAGELA",
     "companyName": "Nitta Gelatin India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NIVABUPA": {
     "symbol": "NIVABUPA",
@@ -16672,14 +16672,14 @@
   "NKIND": {
     "symbol": "NKIND",
     "companyName": "NK Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Household & Personal Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NLCINDIA": {
     "symbol": "NLCINDIA",
@@ -16714,98 +16714,98 @@
   "NOCIL": {
     "symbol": "NOCIL",
     "companyName": "NOCIL Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NORBTEAEXP": {
     "symbol": "NORBTEAEXP",
     "companyName": "Norben Tea & Exports Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Farm Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NORTHARC": {
     "symbol": "NORTHARC",
     "companyName": "Northern Arc Capital Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NOVARTIND": {
     "symbol": "NOVARTIND",
     "companyName": "Novartis India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NPST": {
     "symbol": "NPST",
     "companyName": "Network People Services Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NRAIL": {
     "symbol": "NRAIL",
     "companyName": "N R Agarwal Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NRBBEARING": {
     "symbol": "NRBBEARING",
     "companyName": "NRB Bearing Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NSIL": {
     "symbol": "NSIL",
     "companyName": "Nalwa Sons Investments Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Asset Management",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NSLNISP": {
     "symbol": "NSLNISP",
@@ -16855,26 +16855,26 @@
   "NUCLEUS": {
     "symbol": "NUCLEUS",
     "companyName": "Nucleus Software Exports Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NURECA": {
     "symbol": "NURECA",
     "companyName": "Nureca Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Devices",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "NUVAMA": {
     "symbol": "NUVAMA",
@@ -16924,26 +16924,26 @@
   "OAL": {
     "symbol": "OAL",
     "companyName": "Oriental Aromatics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "OBCL": {
     "symbol": "OBCL",
     "companyName": "Orissa Bengal Carrier Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Trucking",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "OBEROIRLTY": {
     "symbol": "OBEROIRLTY",
@@ -17023,62 +17023,62 @@
   "OMAXE": {
     "symbol": "OMAXE",
     "companyName": "Omaxe Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "OMINFRAL": {
     "symbol": "OMINFRAL",
     "companyName": "OM INFRA LIMITED",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "OMNI": {
     "symbol": "OMNI",
     "companyName": "Omnitech Engineering Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "OMPOWER": {
     "symbol": "OMPOWER",
     "companyName": "Om Power Transmission Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ONEPOINT": {
     "symbol": "ONEPOINT",
     "companyName": "One Point One Solutions Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ONESOURCE": {
     "symbol": "ONESOURCE",
@@ -17113,14 +17113,14 @@
   "ONWARDTEC": {
     "symbol": "ONWARDTEC",
     "companyName": "Onward Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "OPTIEMUS": {
     "symbol": "OPTIEMUS",
@@ -17139,62 +17139,62 @@
   "ORCHASP": {
     "symbol": "ORCHASP",
     "companyName": "Orchasp Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORCHPHARMA": {
     "symbol": "ORCHPHARMA",
     "companyName": "Orchid Pharma Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORICONENT": {
     "symbol": "ORICONENT",
     "companyName": "Oricon Enterprises Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTALTL": {
     "symbol": "ORIENTALTL",
     "companyName": "Oriental Trimex Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTBELL": {
     "symbol": "ORIENTBELL",
     "companyName": "Orient Bell Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTCEM": {
     "symbol": "ORIENTCEM",
@@ -17213,86 +17213,86 @@
   "ORIENTCER": {
     "symbol": "ORIENTCER",
     "companyName": "ORIENT CERATECH LIMITED",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTELEC": {
     "symbol": "ORIENTELEC",
     "companyName": "Orient Electric Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Furnishings, Fixtures & Appliances",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTHOT": {
     "symbol": "ORIENTHOT",
     "companyName": "Oriental Hotels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTLTD": {
     "symbol": "ORIENTLTD",
     "companyName": "Orient Press Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTPPR": {
     "symbol": "ORIENTPPR",
     "companyName": "Orient Paper & Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORIENTTECH": {
     "symbol": "ORIENTTECH",
     "companyName": "Orient Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORISSAMINE": {
     "symbol": "ORISSAMINE",
     "companyName": "The Orissa Minerals Development Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ORKLAINDIA": {
     "symbol": "ORKLAINDIA",
@@ -17311,14 +17311,14 @@
   "OSWALGREEN": {
     "symbol": "OSWALGREEN",
     "companyName": "Oswal Greentech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Asset Management",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "OSWALPUMPS": {
     "symbol": "OSWALPUMPS",
@@ -17337,26 +17337,26 @@
   "OSWALSEEDS": {
     "symbol": "OSWALSEEDS",
     "companyName": "ShreeOswal Seeds And Chemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PACEDIGITK": {
     "symbol": "PACEDIGITK",
     "companyName": "Pace Digitek Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Communication Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PAGEIND": {
     "symbol": "PAGEIND",
@@ -17376,110 +17376,110 @@
   "PAISALO": {
     "symbol": "PAISALO",
     "companyName": "Paisalo Digital Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PAKKA": {
     "symbol": "PAKKA",
     "companyName": "PAKKA LIMITED",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PALASHSECU": {
     "symbol": "PALASHSECU",
     "companyName": "Palash Securities Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PANACEABIO": {
     "symbol": "PANACEABIO",
     "companyName": "Panacea Biotec Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PANACHE": {
     "symbol": "PANACHE",
     "companyName": "Panache Digilife Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Communication Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PANAMAPET": {
     "symbol": "PANAMAPET",
     "companyName": "Panama Petrochem Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Energy",
+    "industry": "Oil & Gas Refining & Marketing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PANSARI": {
     "symbol": "PANSARI",
     "companyName": "Pansari Developers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PAR": {
     "symbol": "PAR",
     "companyName": "Par Drugs And Chemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PARACABLES": {
     "symbol": "PARACABLES",
     "companyName": "Paramount Communications Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Communication Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PARADEEP": {
     "symbol": "PARADEEP",
@@ -17499,14 +17499,14 @@
   "PARAGMILK": {
     "symbol": "PARAGMILK",
     "companyName": "Parag Milk Foods Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PARAS": {
     "symbol": "PARAS",
@@ -17525,14 +17525,14 @@
   "PARASPETRO": {
     "symbol": "PARASPETRO",
     "companyName": "Paras Petrofils Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PARKHOSPS": {
     "symbol": "PARKHOSPS",
@@ -17551,26 +17551,26 @@
   "PARKHOTELS": {
     "symbol": "PARKHOTELS",
     "companyName": "Apeejay Surrendra Park Hotels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PASHUPATI": {
     "symbol": "PASHUPATI",
     "companyName": "Pashupati Cotspin Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PATANJALI": {
     "symbol": "PATANJALI",
@@ -17590,38 +17590,38 @@
   "PATELENG": {
     "symbol": "PATELENG",
     "companyName": "Patel Engineering Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PATELRMART": {
     "symbol": "PATELRMART",
     "companyName": "Patel Retail Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Department Stores",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PAUSHAKLTD": {
     "symbol": "PAUSHAKLTD",
     "companyName": "Paushak Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PAYTM": {
     "symbol": "PAYTM",
@@ -17670,38 +17670,38 @@
   "PDMJEPAPER": {
     "symbol": "PDMJEPAPER",
     "companyName": "Pudumjee Paper Products Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PDSL": {
     "symbol": "PDSL",
     "companyName": "PDS Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PENIND": {
     "symbol": "PENIND",
     "companyName": "Pennar Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PERSISTENT": {
     "symbol": "PERSISTENT",
@@ -17766,14 +17766,14 @@
   "PFS": {
     "symbol": "PFS",
     "companyName": "PTC India Financial Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PGEL": {
     "symbol": "PGEL",
@@ -17793,26 +17793,26 @@
   "PGHH": {
     "symbol": "PGHH",
     "companyName": "Procter & Gamble Hygiene and Health Care Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Household & Personal Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PGHL": {
     "symbol": "PGHL",
     "companyName": "Procter & Gamble Health Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PGIL": {
     "symbol": "PGIL",
@@ -17875,14 +17875,14 @@
   "PIGL": {
     "symbol": "PIGL",
     "companyName": "Power & Instrumentation (Gujarat) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PIIND": {
     "symbol": "PIIND",
@@ -17902,14 +17902,14 @@
   "PILANIINVS": {
     "symbol": "PILANIINVS",
     "companyName": "Pilani Investment and Industries Corporation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Asset Management",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PINELABS": {
     "symbol": "PINELABS",
@@ -17929,14 +17929,14 @@
   "PIONEEREMB": {
     "symbol": "PIONEEREMB",
     "companyName": "Pioneer Embroideries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PIONRINV": {
     "symbol": "PIONRINV",
@@ -17968,62 +17968,62 @@
   "PITTIENG": {
     "symbol": "PITTIENG",
     "companyName": "Pitti Engineering Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PIXTRANS": {
     "symbol": "PIXTRANS",
     "companyName": "Pix Transmissions Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PKTEA": {
     "symbol": "PKTEA",
     "companyName": "The Peria Karamalai Tea & Produce Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Farm Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PLASTIBLEN": {
     "symbol": "PLASTIBLEN",
     "companyName": "Plastiblends India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PLATIND": {
     "symbol": "PLATIND",
     "companyName": "Platinum Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PML": {
     "symbol": "PML",
@@ -18055,14 +18055,14 @@
   "PNBGILTS": {
     "symbol": "PNBGILTS",
     "companyName": "PNB Gilts Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PNBHOUSING": {
     "symbol": "PNBHOUSING",
@@ -18082,14 +18082,14 @@
   "PNC": {
     "symbol": "PNC",
     "companyName": "Pritish Nandy Communications Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Entertainment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PNCINFRA": {
     "symbol": "PNCINFRA",
@@ -18122,50 +18122,50 @@
   "PNGSREVA": {
     "symbol": "PNGSREVA",
     "companyName": "PNGS Reva Diamond Jewellery Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "POCL": {
     "symbol": "POCL",
     "companyName": "Pondy Oxides & Chemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PODDARMENT": {
     "symbol": "PODDARMENT",
     "companyName": "Poddar Pigments Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "POKARNA": {
     "symbol": "POKARNA",
     "companyName": "Pokarna Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "POLICYBZR": {
     "symbol": "POLICYBZR",
@@ -18215,26 +18215,26 @@
   "POLYPLEX": {
     "symbol": "POLYPLEX",
     "companyName": "Polyplex Corporation Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PONNIERODE": {
     "symbol": "PONNIERODE",
     "companyName": "Ponni Sugars (Erode) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "POONAWALLA": {
     "symbol": "POONAWALLA",
@@ -18269,14 +18269,14 @@
   "POWERICA": {
     "symbol": "POWERICA",
     "companyName": "Powerica Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "POWERINDIA": {
     "symbol": "POWERINDIA",
@@ -18310,14 +18310,14 @@
   "PPAP": {
     "symbol": "PPAP",
     "companyName": "PPAP Automotive Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PPLPHARMA": {
     "symbol": "PPLPHARMA",
@@ -18337,26 +18337,26 @@
   "PRABHA": {
     "symbol": "PRABHA",
     "companyName": "Prabha Energy Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRAENG": {
     "symbol": "PRAENG",
     "companyName": "Prajay Engineers Syndicate Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRAJIND": {
     "symbol": "PRAJIND",
@@ -18375,26 +18375,26 @@
   "PRAKASH": {
     "symbol": "PRAKASH",
     "companyName": "Prakash Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRAKASHSTL": {
     "symbol": "PRAKASHSTL",
     "companyName": "Prakash Steelage Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRAVEG": {
     "symbol": "PRAVEG",
@@ -18411,38 +18411,38 @@
   "PRECAM": {
     "symbol": "PRECAM",
     "companyName": "Precision Camshafts Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRECOT": {
     "symbol": "PRECOT",
     "companyName": "Precot Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRECWIRE": {
     "symbol": "PRECWIRE",
     "companyName": "Precision Wires India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PREMCO": {
     "symbol": "PREMCO",
@@ -18459,14 +18459,14 @@
   "PREMEXPLN": {
     "symbol": "PREMEXPLN",
     "companyName": "Premier Explosives Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PREMIERENE": {
     "symbol": "PREMIERENE",
@@ -18486,14 +18486,14 @@
   "PREMIERPOL": {
     "symbol": "PREMIERPOL",
     "companyName": "Premier Polyfilm Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRESTIGE": {
     "symbol": "PRESTIGE",
@@ -18527,38 +18527,38 @@
   "PRIMESECU": {
     "symbol": "PRIMESECU",
     "companyName": "Prime Securities Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRIMO": {
     "symbol": "PRIMO",
     "companyName": "Primo Chemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRINCEPIPE": {
     "symbol": "PRINCEPIPE",
     "companyName": "Prince Pipes And Fittings Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRIVISCL": {
     "symbol": "PRIVISCL",
@@ -18577,38 +18577,38 @@
   "PROSTARM": {
     "symbol": "PROSTARM",
     "companyName": "Prostarm Info Systems Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PROTEAN": {
     "symbol": "PROTEAN",
     "companyName": "Protean eGov Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PROZONER": {
     "symbol": "PROZONER",
     "companyName": "Prozone Realty Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Diversified",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PRSMJOHNSN": {
     "symbol": "PRSMJOHNSN",
@@ -18641,26 +18641,26 @@
   "PSB": {
     "symbol": "PSB",
     "companyName": "Punjab & Sind Bank",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PSPPROJECT": {
     "symbol": "PSPPROJECT",
     "companyName": "PSP Projects Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PTC": {
     "symbol": "PTC",
@@ -18694,26 +18694,26 @@
   "PTL": {
     "symbol": "PTL",
     "companyName": "PTL Enterprises Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PUNJABCHEM": {
     "symbol": "PUNJABCHEM",
     "companyName": "Punjab Chemicals & Crop Protection Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PURVA": {
     "symbol": "PURVA",
@@ -18732,14 +18732,14 @@
   "PVP": {
     "symbol": "PVP",
     "companyName": "PVP Ventures Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PVRINOX": {
     "symbol": "PVRINOX",
@@ -18759,14 +18759,14 @@
   "PVSL": {
     "symbol": "PVSL",
     "companyName": "Popular Vehicles and Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto & Truck Dealerships",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "PWL": {
     "symbol": "PWL",
@@ -18786,38 +18786,38 @@
   "PYRAMID": {
     "symbol": "PYRAMID",
     "companyName": "Pyramid Technoplast Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "QMSMEDI": {
     "symbol": "QMSMEDI",
     "companyName": "QMS Medical Allied Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "QUADFUTURE": {
     "symbol": "QUADFUTURE",
     "companyName": "Quadrant Future Tek Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Railroads",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "QUESS": {
     "symbol": "QUESS",
@@ -18848,50 +18848,50 @@
   "RACLGEAR": {
     "symbol": "RACLGEAR",
     "companyName": "RACL Geartech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RADAAN": {
     "symbol": "RADAAN",
     "companyName": "Radaan Mediaworks India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Entertainment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RADHIKAJWE": {
     "symbol": "RADHIKAJWE",
     "companyName": "Radhika Jeweltech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RADIANTCMS": {
     "symbol": "RADIANTCMS",
     "companyName": "Radiant Cash Management Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RADICO": {
     "symbol": "RADICO",
@@ -18911,14 +18911,14 @@
   "RADIOCITY": {
     "symbol": "RADIOCITY",
     "companyName": "Music Broadcast Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Broadcasting",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAILTEL": {
     "symbol": "RAILTEL",
@@ -18967,14 +18967,14 @@
   "RAJMET": {
     "symbol": "RAJMET",
     "companyName": "Rajnandini Metal Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Copper",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAJPALAYAM": {
     "symbol": "RAJPALAYAM",
@@ -18991,38 +18991,38 @@
   "RAJRATAN": {
     "symbol": "RAJRATAN",
     "companyName": "Rajratan Global Wire Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAJSREESUG": {
     "symbol": "RAJSREESUG",
     "companyName": "Rajshree Sugars & Chemicals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAJTV": {
     "symbol": "RAJTV",
     "companyName": "Raj Television Network Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Broadcasting",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RALLIS": {
     "symbol": "RALLIS",
@@ -19041,26 +19041,26 @@
   "RAMANEWS": {
     "symbol": "RAMANEWS",
     "companyName": "Shree Rama Newsprint Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Beverages - Non-Alcoholic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAMAPHO": {
     "symbol": "RAMAPHO",
     "companyName": "Rama Phosphates Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Agricultural Inputs",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAMCOCEM": {
     "symbol": "RAMCOCEM",
@@ -19080,74 +19080,74 @@
   "RAMCOIND": {
     "symbol": "RAMCOIND",
     "companyName": "Ramco Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAMCOSYS": {
     "symbol": "RAMCOSYS",
     "companyName": "Ramco Systems Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAMKY": {
     "symbol": "RAMKY",
     "companyName": "Ramky Infrastructure Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAMRAT": {
     "symbol": "RAMRAT",
     "companyName": "Ram Ratna Wires Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RANASUG": {
     "symbol": "RANASUG",
     "companyName": "Rana Sugars Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RANEHOLDIN": {
     "symbol": "RANEHOLDIN",
     "companyName": "Rane Holdings Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RATEGAIN": {
     "symbol": "RATEGAIN",
@@ -19180,26 +19180,26 @@
   "RATNAVEER": {
     "symbol": "RATNAVEER",
     "companyName": "Ratnaveer Precision Engineering Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAYMOND": {
     "symbol": "RAYMOND",
     "companyName": "Raymond Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RAYMONDLSL": {
     "symbol": "RAYMONDLSL",
@@ -19218,14 +19218,14 @@
   "RAYMONDREL": {
     "symbol": "RAYMONDREL",
     "companyName": "Raymond Realty Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RBA": {
     "symbol": "RBA",
@@ -19259,14 +19259,14 @@
   "RBZJEWEL": {
     "symbol": "RBZJEWEL",
     "companyName": "RBZ Jewellers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RCF": {
     "symbol": "RCF",
@@ -19329,14 +19329,14 @@
   "REGENCERAM": {
     "symbol": "REGENCERAM",
     "companyName": "Regency Ceramics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RELAXO": {
     "symbol": "RELAXO",
@@ -19355,26 +19355,26 @@
   "RELCHEMQ": {
     "symbol": "RELCHEMQ",
     "companyName": "Reliance Chemotex Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RELIABLE": {
     "symbol": "RELIABLE",
     "companyName": "Reliable Data Services Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RELIANCE": {
     "symbol": "RELIANCE",
@@ -19408,26 +19408,26 @@
   "RELTD": {
     "symbol": "RELTD",
     "companyName": "Ravindra Energy Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Solar",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "REMSONSIND": {
     "symbol": "REMSONSIND",
     "companyName": "Remsons Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RENUKA": {
     "symbol": "RENUKA",
@@ -19446,74 +19446,74 @@
   "REPCOHOME": {
     "symbol": "REPCOHOME",
     "companyName": "Repco Home Finance Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Mortgage Finance",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "REPRO": {
     "symbol": "REPRO",
     "companyName": "Repro India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RESPONIND": {
     "symbol": "RESPONIND",
     "companyName": "Responsive Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RETAIL": {
     "symbol": "RETAIL",
     "companyName": "JHS Svendgaard Retail Ventures Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Grocery Stores",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RGL": {
     "symbol": "RGL",
     "companyName": "Renaissance Global Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RHETAN": {
     "symbol": "RHETAN",
     "companyName": "Rhetan TMT Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RHIM": {
     "symbol": "RHIM",
@@ -19533,62 +19533,62 @@
   "RHL": {
     "symbol": "RHL",
     "companyName": "Robust Hotels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RICOAUTO": {
     "symbol": "RICOAUTO",
     "companyName": "Rico Auto Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RIIL": {
     "symbol": "RIIL",
     "companyName": "Reliance Industrial Infrastructure Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RISHABH": {
     "symbol": "RISHABH",
     "companyName": "Rishabh Instruments Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Scientific & Technical Instruments",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RITCO": {
     "symbol": "RITCO",
     "companyName": "Ritco Logistics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Integrated Freight & Logistics",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RITES": {
     "symbol": "RITES",
@@ -19608,26 +19608,26 @@
   "RKDL": {
     "symbol": "RKDL",
     "companyName": "Ravi Kumar Distilleries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Beverages - Wineries & Distilleries",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RKEC": {
     "symbol": "RKEC",
     "companyName": "RKEC Projects Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RKFORGE": {
     "symbol": "RKFORGE",
@@ -19647,146 +19647,146 @@
   "RKSWAMY": {
     "symbol": "RKSWAMY",
     "companyName": "R K Swamy Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Advertising Agencies",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RMC": {
     "symbol": "RMC",
     "companyName": "RMC Switchgears Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RMDRIP": {
     "symbol": "RMDRIP",
     "companyName": "R M Drip and Sprinklers Systems Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Farm & Heavy Construction Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RML": {
     "symbol": "RML",
     "companyName": "Rane (Madras) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RNBDENIMS": {
     "symbol": "RNBDENIMS",
     "companyName": "R&B Denims Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROHLTD": {
     "symbol": "ROHLTD",
     "companyName": "Royal Orchid Hotels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROLEXRINGS": {
     "symbol": "ROLEXRINGS",
     "companyName": "Rolex Rings Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROML": {
     "symbol": "ROML",
     "companyName": "Raj Oil Mills Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROSSARI": {
     "symbol": "ROSSARI",
     "companyName": "Rossari Biotech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROSSELLIND": {
     "symbol": "ROSSELLIND",
     "companyName": "Rossell India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROSSTECH": {
     "symbol": "ROSSTECH",
     "companyName": "Rossell Techsys Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROTO": {
     "symbol": "ROTO",
     "companyName": "Roto Pumps Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "ROUTE": {
     "symbol": "ROUTE",
@@ -19805,26 +19805,26 @@
   "RPEL": {
     "symbol": "RPEL",
     "companyName": "Raghav Productivity Enhancers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RPGLIFE": {
     "symbol": "RPGLIFE",
     "companyName": "RPG Life Sciences Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RPOWER": {
     "symbol": "RPOWER",
@@ -19844,50 +19844,50 @@
   "RPPINFRA": {
     "symbol": "RPPINFRA",
     "companyName": "R.P.P. Infra Projects Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RPPL": {
     "symbol": "RPPL",
     "companyName": "Rajshree Polypack Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RPSGVENT": {
     "symbol": "RPSGVENT",
     "companyName": "RPSG VENTURES LIMITED",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RPTECH": {
     "symbol": "RPTECH",
     "companyName": "Rashi Peripherals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Electronics & Computer Distribution",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RRIL": {
     "symbol": "RRIL",
@@ -19931,26 +19931,26 @@
   "RSL": {
     "symbol": "RSL",
     "companyName": "Rajputana Stainless Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RSYSTEMS": {
     "symbol": "RSYSTEMS",
     "companyName": "R Systems International Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RTNINDIA": {
     "symbol": "RTNINDIA",
@@ -19983,14 +19983,14 @@
   "RUBFILA": {
     "symbol": "RUBFILA",
     "companyName": "Rubfila International Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RUBICON": {
     "symbol": "RUBICON",
@@ -20009,74 +20009,74 @@
   "RUCHINFRA": {
     "symbol": "RUCHINFRA",
     "companyName": "Ruchi Infrastructure Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RUCHIRA": {
     "symbol": "RUCHIRA",
     "companyName": "Ruchira Papers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RUPA": {
     "symbol": "RUPA",
     "companyName": "Rupa & Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RUSHIL": {
     "symbol": "RUSHIL",
     "companyName": "Rushil Decor Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Furnishings, Fixtures & Appliances",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RUSTOMJEE": {
     "symbol": "RUSTOMJEE",
     "companyName": "Keystone Realtors Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RVHL": {
     "symbol": "RVHL",
     "companyName": "Ravinder Heights Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "RVNL": {
     "symbol": "RVNL",
@@ -20096,26 +20096,26 @@
   "RVTH": {
     "symbol": "RVTH",
     "companyName": "Revathi Equipment India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Farm & Heavy Construction Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "S&SPOWER": {
     "symbol": "S&SPOWER",
     "companyName": "S&S Power Switchgears Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAATVIKGL": {
     "symbol": "SAATVIKGL",
@@ -20134,14 +20134,14 @@
   "SADBHAV": {
     "symbol": "SADBHAV",
     "companyName": "Sadbhav Engineering Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAFARI": {
     "symbol": "SAFARI",
@@ -20160,26 +20160,26 @@
   "SAGARDEEP": {
     "symbol": "SAGARDEEP",
     "companyName": "Sagardeep Alloys Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Copper",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAGCEM": {
     "symbol": "SAGCEM",
     "companyName": "Sagar Cements Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Building Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAGILITY": {
     "symbol": "SAGILITY",
@@ -20199,26 +20199,26 @@
   "SAHLIBHFI": {
     "symbol": "SAHLIBHFI",
     "companyName": "Shalibhadra Finance Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAHYADRI": {
     "symbol": "SAHYADRI",
     "companyName": "Sahyadri Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAIL": {
     "symbol": "SAIL",
@@ -20253,110 +20253,110 @@
   "SAIPARENT": {
     "symbol": "SAIPARENT",
     "companyName": "Sai Parenterals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAKAR": {
     "symbol": "SAKAR",
     "companyName": "Sakar Healthcare Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAKHTISUG": {
     "symbol": "SAKHTISUG",
     "companyName": "Sakthi Sugars Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Confectioners",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAKSOFT": {
     "symbol": "SAKSOFT",
     "companyName": "Saksoft Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SALASAR": {
     "symbol": "SALASAR",
     "companyName": "Salasar Techno Engineering Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SALONA": {
     "symbol": "SALONA",
     "companyName": "Salona Cotspin Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SALZERELEC": {
     "symbol": "SALZERELEC",
     "companyName": "Salzer Electronics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAMBHAAV": {
     "symbol": "SAMBHAAV",
     "companyName": "Sambhaav Media Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Publishing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAMBHV": {
     "symbol": "SAMBHV",
     "companyName": "Sambhv Steel Tubes Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAMHI": {
     "symbol": "SAMHI",
@@ -20390,50 +20390,50 @@
   "SAMPANN": {
     "symbol": "SAMPANN",
     "companyName": "Sampann Utpadan India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SANATHAN": {
     "symbol": "SANATHAN",
     "companyName": "Sanathan Textiles Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SANDESH": {
     "symbol": "SANDESH",
     "companyName": "The Sandesh Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Publishing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SANDHAR": {
     "symbol": "SANDHAR",
     "companyName": "Sandhar Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SANDUMA": {
     "symbol": "SANDUMA",
@@ -20452,38 +20452,38 @@
   "SANGAMIND": {
     "symbol": "SANGAMIND",
     "companyName": "Sangam (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SANGHVIMOV": {
     "symbol": "SANGHVIMOV",
     "companyName": "Sanghvi Movers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Rental & Leasing Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SANOFI": {
     "symbol": "SANOFI",
     "companyName": "Sanofi India Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SANOFICONR": {
     "symbol": "SANOFICONR",
@@ -20516,14 +20516,14 @@
   "SANSTAR": {
     "symbol": "SANSTAR",
     "companyName": "Sanstar Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAPPHIRE": {
     "symbol": "SAPPHIRE",
@@ -20585,98 +20585,98 @@
   "SARLAPOLY": {
     "symbol": "SARLAPOLY",
     "companyName": "Sarla Performance Fibers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SASKEN": {
     "symbol": "SASKEN",
     "companyName": "Sasken Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SATIA": {
     "symbol": "SATIA",
     "companyName": "Satia Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SATIN": {
     "symbol": "SATIN",
     "companyName": "Satin Creditcare Network Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Credit Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAURASHCEM": {
     "symbol": "SAURASHCEM",
     "companyName": "Saurashtra Cement Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Building Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SAYAJIHOTL": {
     "symbol": "SAYAJIHOTL",
     "companyName": "Sayaji Hotels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SBC": {
     "symbol": "SBC",
     "companyName": "SBC Exports Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SBCL": {
     "symbol": "SBCL",
     "companyName": "Shivalik Bimetal Controls Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SBFC": {
     "symbol": "SBFC",
@@ -20696,14 +20696,14 @@
   "SBGLP": {
     "symbol": "SBGLP",
     "companyName": "Suratwwala Business Group Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SBICARD": {
     "symbol": "SBICARD",
@@ -20780,14 +20780,14 @@
   "SCHAND": {
     "symbol": "SCHAND",
     "companyName": "S Chand And Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Communication Services",
+    "industry": "Publishing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SCHNEIDER": {
     "symbol": "SCHNEIDER",
@@ -20822,98 +20822,98 @@
   "SCILAL": {
     "symbol": "SCILAL",
     "companyName": "Shipping Corporation of India Land and Assets Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SCODATUBES": {
     "symbol": "SCODATUBES",
     "companyName": "Scoda Tubes Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SCPL": {
     "symbol": "SCPL",
     "companyName": "Sheetal Cool Products Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Packaged Foods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SDBL": {
     "symbol": "SDBL",
     "companyName": "Som Distilleries & Breweries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Beverages - Brewers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SEAMECLTD": {
     "symbol": "SEAMECLTD",
     "companyName": "Seamec Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Marine Shipping",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SECMARK": {
     "symbol": "SECMARK",
     "companyName": "SecMark Consultancy Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Consulting Services",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SECURKLOUD": {
     "symbol": "SECURKLOUD",
     "companyName": "SECUREKLOUD TECHNOLOGIES LIMITED",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Technology",
+    "industry": "Software - Application",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SEDEMAC": {
     "symbol": "SEDEMAC",
     "companyName": "SEDEMAC Mechatronics Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SEIL": {
     "symbol": "SEIL",
@@ -20930,14 +20930,14 @@
   "SELMC": {
     "symbol": "SELMC",
     "companyName": "SEL Manufacturing Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SENCO": {
     "symbol": "SENCO",
@@ -20956,62 +20956,62 @@
   "SENORES": {
     "symbol": "SENORES",
     "companyName": "Senores Pharmaceuticals Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SEPC": {
     "symbol": "SEPC",
     "companyName": "SEPC Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SERVOTECH": {
     "symbol": "SERVOTECH",
     "companyName": "Servotech Renewable Power System Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SESHAPAPER": {
     "symbol": "SESHAPAPER",
     "companyName": "Seshasayee Paper and Boards Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SETL": {
     "symbol": "SETL",
     "companyName": "Standard Engineering Technology Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SFL": {
     "symbol": "SFL",
@@ -21030,86 +21030,86 @@
   "SGFIN": {
     "symbol": "SGFIN",
     "companyName": "SG Finserve Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SGIL": {
     "symbol": "SGIL",
     "companyName": "Synergy Green Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SGL": {
     "symbol": "SGL",
     "companyName": "STL Global Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SGMART": {
     "symbol": "SGMART",
     "companyName": "SG Mart Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Industrial Distribution",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHADOWFAX": {
     "symbol": "SHADOWFAX",
     "companyName": "Shadowfax Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Integrated Freight & Logistics",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHAH": {
     "symbol": "SHAH",
     "companyName": "Shah Metacorp Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHAHALLOYS": {
     "symbol": "SHAHALLOYS",
     "companyName": "Shah Alloys Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHAILY": {
     "symbol": "SHAILY",
@@ -21142,62 +21142,62 @@
   "SHALBY": {
     "symbol": "SHALBY",
     "companyName": "Shalby Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHALPAINTS": {
     "symbol": "SHALPAINTS",
     "companyName": "Shalimar Paints Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHANTI": {
     "symbol": "SHANTI",
     "companyName": "Shanti Overseas (India) Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Staples",
+    "industry": "Farm Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHANTIGEAR": {
     "symbol": "SHANTIGEAR",
     "companyName": "Shanthi Gears Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHANTIGOLD": {
     "symbol": "SHANTIGOLD",
     "companyName": "Shanti Gold International Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHARDACROP": {
     "symbol": "SHARDACROP",
@@ -21216,26 +21216,26 @@
   "SHARDAMOTR": {
     "symbol": "SHARDAMOTR",
     "companyName": "Sharda Motor Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHARDUL": {
     "symbol": "SHARDUL",
     "companyName": "Shardul Securities Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHAREINDIA": {
     "symbol": "SHAREINDIA",
@@ -21266,14 +21266,14 @@
   "SHILCTECH": {
     "symbol": "SHILCTECH",
     "companyName": "Shilchar Technologies Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHILPAMED": {
     "symbol": "SHILPAMED",
@@ -21304,74 +21304,74 @@
   "SHIVATEX": {
     "symbol": "SHIVATEX",
     "companyName": "Shiva Texyarn Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Textile Manufacturing",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHIVAUM": {
     "symbol": "SHIVAUM",
     "companyName": "Shiv Aum Steels Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Steel",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHK": {
     "symbol": "SHK",
     "companyName": "S H Kelkar and Company Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHOPERSTOP": {
     "symbol": "SHOPERSTOP",
     "companyName": "Shoppers Stop Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Department Stores",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHRADHA": {
     "symbol": "SHRADHA",
     "companyName": "Shradha Realty Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Real Estate",
+    "industry": "Real Estate - Development",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHREDIGCEM": {
     "symbol": "SHREDIGCEM",
     "companyName": "Shree Digvijay Cement Co.Ltd",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Building Materials",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHREECEM": {
     "symbol": "SHREECEM",
@@ -21391,50 +21391,50 @@
   "SHREEJISPG": {
     "symbol": "SHREEJISPG",
     "companyName": "Shreeji Shipping Global Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Industrials",
+    "industry": "Marine Shipping",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHREEPUSHK": {
     "symbol": "SHREEPUSHK",
     "companyName": "Shree Pushkar Chemicals & Fertilisers Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Specialty Chemicals",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHREERAMA": {
     "symbol": "SHREERAMA",
     "companyName": "Shree Rama Multi-Tech Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHREYANIND": {
     "symbol": "SHREYANIND",
     "companyName": "Shreyans Industries Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Metals & Mining",
+    "industry": "Paper & Paper Products",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHRIKRISH": {
     "symbol": "SHRIKRISH",
@@ -21451,14 +21451,14 @@
   "SHRINGARMS": {
     "symbol": "SHRINGARMS",
     "companyName": "Shringar House of Mangalsutra Limited",
-    "sector": "Unknown",
-    "industry": "Unknown",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
     "marketCapCategory": "Unknown",
     "indices": [],
     "isin": "1",
     "exchange": "NSE",
     "fnoEligible": false,
-    "_source": "equity_list"
+    "_source": "yfinance"
   },
   "SHRIPISTON": {
     "symbol": "SHRIPISTON",
@@ -26769,5 +26769,113 @@
     "exchange": "NSE",
     "fnoEligible": false,
     "_source": "equity_list"
+  },
+  "CASHIETF": {
+    "symbol": "CASHIETF",
+    "companyName": "CASHIETF",
+    "sector": "",
+    "industry": "",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "ELIQUID": {
+    "symbol": "ELIQUID",
+    "companyName": "Edelweiss Mutual Fund - Nifty 1d Rate Liquid ETF",
+    "sector": "",
+    "industry": "",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "LIQGRWBEES": {
+    "symbol": "LIQGRWBEES",
+    "companyName": "Nippon Life India Asset Management Limited - Nippon India Nifty 1Day Rate LQD Growth ETF",
+    "sector": "",
+    "industry": "",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "MOGOLD": {
+    "symbol": "MOGOLD",
+    "companyName": "Motilal Oswal Asset Management Co. Ltd. - Motilal Oswal Gold ETF",
+    "sector": "",
+    "industry": "",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "GAUDIUMIVF": {
+    "symbol": "GAUDIUMIVF",
+    "companyName": "GAUDIUMIVF",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "DEFENCE": {
+    "symbol": "DEFENCE",
+    "companyName": "Mirae Asset Im (India) Private Limited – Mirae Mutual Fund -Mirae Asset Bse India Defence Etf",
+    "sector": "",
+    "industry": "",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "GROWWHOSPI": {
+    "symbol": "GROWWHOSPI",
+    "companyName": "Groww Mutual Fund - Groww BSE Hospitals ETF",
+    "sector": "",
+    "industry": "",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "RAJOOENG": {
+    "symbol": "RAJOOENG",
+    "companyName": "Rajoo Engineers Limited",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
+  },
+  "MOCAPITAL": {
+    "symbol": "MOCAPITAL",
+    "companyName": "Motilal Oswal Nifty Capital Market ETF",
+    "sector": "Unknown",
+    "industry": "Unknown",
+    "marketCapCategory": "Unknown",
+    "indices": [],
+    "isin": "Unknown",
+    "exchange": "NSE",
+    "fnoEligible": false,
+    "_source": "yfinance_live"
   }
 }

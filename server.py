@@ -2389,30 +2389,33 @@ def calculate_sector_analysis_sync():
     pos_rating = "Neutral"
     fetched = False
 
-    # Stage 1: nsepython wrapper
-    try:
-        import nsepython
-        fd_data = nsepython.nse_fiidii()
-        if fd_data is not None and not fd_data.empty:
-            dii_row = fd_data[fd_data["category"] == "DII"]
-            fii_row = fd_data[fd_data["category"] == "FII/FPI"]
-            
-            dii_buy = float(dii_row["buyValue"].iloc[0]) if not dii_row.empty else 0.0
-            dii_sell = float(dii_row["sellValue"].iloc[0]) if not dii_row.empty else 0.0
-            dii_net = float(dii_row["netValue"].iloc[0]) if not dii_row.empty else 0.0
-            
-            fii_buy = float(fii_row["buyValue"].iloc[0]) if not fii_row.empty else 0.0
-            fii_sell = float(fii_row["sellValue"].iloc[0]) if not fii_row.empty else 0.0
-            fii_net = float(fii_row["netValue"].iloc[0]) if not fii_row.empty else 0.0
-            
-            flow_date = str(fd_data["date"].iloc[0]) if "date" in fd_data.columns else ""
-            fetched = True
-            print("[FiiDii] Stage 1 (nsepython) success.")
-    except Exception as e:
-        print(f"[FiiDii] Stage 1 failed: {e}")
+    is_vercel = os.environ.get('VERCEL') == '1' or 'VERCEL_ENV' in os.environ
 
-    # Stage 2: Direct NSE API with full cookie priming
-    if not fetched:
+    # Stage 1: nsepython wrapper (skip on Vercel)
+    if not fetched and not is_vercel:
+        try:
+            import nsepython
+            fd_data = nsepython.nse_fiidii()
+            if fd_data is not None and not fd_data.empty:
+                dii_row = fd_data[fd_data["category"] == "DII"]
+                fii_row = fd_data[fd_data["category"] == "FII/FPI"]
+                
+                dii_buy = float(dii_row["buyValue"].iloc[0]) if not dii_row.empty else 0.0
+                dii_sell = float(dii_row["sellValue"].iloc[0]) if not dii_row.empty else 0.0
+                dii_net = float(dii_row["netValue"].iloc[0]) if not dii_row.empty else 0.0
+                
+                fii_buy = float(fii_row["buyValue"].iloc[0]) if not fii_row.empty else 0.0
+                fii_sell = float(fii_row["sellValue"].iloc[0]) if not fii_row.empty else 0.0
+                fii_net = float(fii_row["netValue"].iloc[0]) if not fii_row.empty else 0.0
+                
+                flow_date = str(fd_data["date"].iloc[0]) if "date" in fd_data.columns else ""
+                fetched = True
+                print("[FiiDii] Stage 1 (nsepython) success.")
+        except Exception as e:
+            print(f"[FiiDii] Stage 1 failed: {e}")
+
+    # Stage 2: Direct NSE API with full cookie priming (skip on Vercel)
+    if not fetched and not is_vercel:
         try:
             import requests as _req
             nse_s = _req.Session()
@@ -2487,8 +2490,8 @@ def calculate_sector_analysis_sync():
         except Exception as e:
             print(f"[FiiDii] Stage 3 failed: {e}")
 
-    # Stage 3.5: NSE downloadable CSV (reliable, no cookie needed)
-    if not fetched:
+    # Stage 3.5: NSE downloadable CSV (reliable, no cookie needed) (skip on Vercel)
+    if not fetched and not is_vercel:
         try:
             import requests as _req
             import csv, io

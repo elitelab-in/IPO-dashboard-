@@ -580,6 +580,7 @@ function renderSwingTable() {
         const tickerName = stock.nsecode || (stock.name || '').split(' ')[0].toUpperCase();
 
         const tr = document.createElement('tr');
+        tr.style.cursor = 'pointer';
         tr.innerHTML = `
             <td class="hover-target" style="cursor:pointer;">
                 <div class="symbol">${tickerName}</div>
@@ -602,6 +603,7 @@ function renderSwingTable() {
         `;
 
         tr.querySelectorAll('.hover-target').forEach(t => attachTooltip(t, tickerName));
+        tr.addEventListener('click', () => { window.location.href = `/fundamentals?symbol=${tickerName}`; });
         tableBody.appendChild(tr);
     });
 
