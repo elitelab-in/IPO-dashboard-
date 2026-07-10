@@ -50,14 +50,13 @@ function fetchSectorAnalysis() {
                 if (fpiData) {
                     const fiiNet = fpiData.fii_net !== undefined ? fpiData.fii_net : 0.0;
                     const diiNet = fpiData.dii_net !== undefined ? fpiData.dii_net : 0.0;
-                    
-                    const fiiBuyEl = document.getElementById('fii-buy');
+                                       const fiiBuyEl = document.getElementById('fii-buy');
                     if (fiiBuyEl) fiiBuyEl.innerText = fpiData.fii_buy ? fpiData.fii_buy.toLocaleString('en-IN', { maximumFractionDigits: 1 }) : '0';
                     const fiiSellEl = document.getElementById('fii-sell');
                     if (fiiSellEl) fiiSellEl.innerText = fpiData.fii_sell ? fpiData.fii_sell.toLocaleString('en-IN', { maximumFractionDigits: 1 }) : '0';
                     const fiiNetEl = document.getElementById('fii-net');
                     if (fiiNetEl) {
-                        fiiNetEl.innerText = `${fiiNet >= 0 ? '+' : ''}${fiiNet.toLocaleString('en-IN', { maximumFractionDigits: 1 })}`;
+                        fiiNetEl.innerText = `${fiiNet >= 0 ? '+' : ''}${fiiNet.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`;
                         fiiNetEl.style.color = fiiNet >= 0 ? 'var(--success)' : 'var(--danger)';
                     }
                     
@@ -67,25 +66,40 @@ function fetchSectorAnalysis() {
                     if (diiSellEl) diiSellEl.innerText = fpiData.dii_sell ? fpiData.dii_sell.toLocaleString('en-IN', { maximumFractionDigits: 1 }) : '0';
                     const diiNetEl = document.getElementById('dii-net');
                     if (diiNetEl) {
-                        diiNetEl.innerText = `${diiNet >= 0 ? '+' : ''}${diiNet.toLocaleString('en-IN', { maximumFractionDigits: 1 })}`;
+                        diiNetEl.innerText = `${diiNet >= 0 ? '+' : ''}${diiNet.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`;
                         diiNetEl.style.color = diiNet >= 0 ? 'var(--success)' : 'var(--danger)';
                     }
 
+                    const fiiRatioBar = document.getElementById('fii-ratio-bar');
+                    if (fiiRatioBar) {
+                        const totalFii = (fpiData.fii_buy || 0) + (fpiData.fii_sell || 0);
+                        const fiiPct = totalFii > 0 ? ((fpiData.fii_buy || 0) / totalFii) * 100 : 50;
+                        fiiRatioBar.style.width = `${fiiPct}%`;
+                        fiiRatioBar.style.backgroundColor = fiiNet >= 0 ? '#22c55e' : '#ef4444';
+                    }
+                    const diiRatioBar = document.getElementById('dii-ratio-bar');
+                    if (diiRatioBar) {
+                        const totalDii = (fpiData.dii_buy || 0) + (fpiData.dii_sell || 0);
+                        const diiPct = totalDii > 0 ? ((fpiData.dii_buy || 0) / totalDii) * 100 : 50;
+                        diiRatioBar.style.width = `${diiPct}%`;
+                        diiRatioBar.style.backgroundColor = diiNet >= 0 ? '#22c55e' : '#ef4444';
+                    }
+ 
                     const fpiTrendEl = document.getElementById('fpi-trend');
                     if (fpiTrendEl) fpiTrendEl.innerText = fpiData.trend || 'Mixed Rotation Flow';
                     
                     const fpiDateEl = document.getElementById('fpi-date');
                     if (fpiDateEl) fpiDateEl.innerText = fpiData.date ? `As of ${fpiData.date}` : '';
-
+ 
                     const ratingBadge = document.getElementById('fpi-rating');
                     if (ratingBadge && fpiData.positioning_rating) {
                         ratingBadge.innerText = fpiData.positioning_rating.toUpperCase();
                         if (fpiData.positioning_rating === 'Bullish') {
-                            ratingBadge.style.background = 'var(--success-bg)';
-                            ratingBadge.style.color = 'var(--success)';
+                            ratingBadge.style.background = 'rgba(34, 197, 94, 0.15)';
+                            ratingBadge.style.color = '#22c55e';
                         } else if (fpiData.positioning_rating === 'Bearish') {
-                            ratingBadge.style.background = 'var(--danger-bg)';
-                            ratingBadge.style.color = 'var(--danger)';
+                            ratingBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+                            ratingBadge.style.color = '#ef4444';
                         } else {
                             ratingBadge.style.background = 'rgba(245, 158, 11, 0.15)';
                             ratingBadge.style.color = '#f59e0b';

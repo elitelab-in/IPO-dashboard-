@@ -216,8 +216,11 @@ def refund_policy():
 @app.route('/api/test-fii-dii')
 def test_fii_dii():
     try:
+        global SECTOR_ANALYSIS_CACHE
+        if SECTOR_ANALYSIS_CACHE and SECTOR_ANALYSIS_CACHE.get("data"):
+            return jsonify({"status": "success", "fpi_dii_summary": SECTOR_ANALYSIS_CACHE["data"].get("fpi_dii_summary")})
         res = calculate_sector_analysis_sync()
-        return jsonify({"status": "success", "data": res})
+        return jsonify({"status": "success", "fpi_dii_summary": res.get("fpi_dii_summary")})
     except Exception as e:
         import traceback
         return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()})
@@ -2447,6 +2450,26 @@ def calculate_sector_analysis_sync():
                         print("[FiiDii] Stage 2 (NSE API with cookie priming) success.")
         except Exception as e:
             print(f"[FiiDii] Stage 2 failed: {e}")
+
+    # Stage 2.5: Mr. Chartist public API (reliable, cloud-friendly fallback)
+    if not fetched:
+        try:
+            import requests as _req
+            res25 = _req.get("https://fii-diidata.mrchartist.com/api/data", timeout=8)
+            if res25.status_code == 200:
+                raw_data = res25.json()
+                if raw_data and "fii_net" in raw_data:
+                    fii_buy = float(raw_data.get("fii_buy") or 0.0)
+                    fii_sell = float(raw_data.get("fii_sell") or 0.0)
+                    fii_net = float(raw_data.get("fii_net") or 0.0)
+                    dii_buy = float(raw_data.get("dii_buy") or 0.0)
+                    dii_sell = float(raw_data.get("dii_sell") or 0.0)
+                    dii_net = float(raw_data.get("dii_net") or 0.0)
+                    flow_date = raw_data.get("date", "")
+                    fetched = True
+                    print("[FiiDii] Stage 2.5 (Mr. Chartist API) success.")
+        except Exception as e:
+            print(f"[FiiDii] Stage 2.5 failed: {e}")
 
     # Stage 3: Moneycontrol via cloudscraper (handles anti-bot)
     if not fetched:

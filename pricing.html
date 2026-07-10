@@ -425,10 +425,10 @@
             <div id="payment-status-message" class="alert-error" style="display: none; margin-bottom: 1.5rem;"></div>
 
             <div style="display: flex; flex-direction: column; gap: 0.8rem;">
-                <button class="btn-submit" id="btn-pay-success" onclick="executeMockPayment(true)" style="background: #10B981; margin: 0; height: 46px;">
+                <button class="btn btn-primary" id="btn-pay-success" onclick="executeMockPayment(true)" style="background: #10B981; margin: 0; height: 46px; border-radius: 9999px; border: none; box-shadow: none;">
                     <i class="fa-solid fa-circle-check"></i> Simulate Payment Success
                 </button>
-                <button class="btn-choose" onclick="executeMockPayment(false)" style="height: 46px; border-color: rgba(239, 68, 68, 0.2); color: var(--danger); background: rgba(239, 68, 68, 0.05);">
+                <button class="btn" onclick="executeMockPayment(false)" style="height: 46px; border-radius: 9999px; border: 1px solid rgba(239, 68, 68, 0.2); color: var(--danger); background: rgba(239, 68, 68, 0.05);">
                     <i class="fa-solid fa-circle-xmark"></i> Simulate Payment Failure
                 </button>
             </div>
