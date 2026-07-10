@@ -3,7 +3,7 @@ let selectedSectorName = null;
 let currentFilter = 'all';
 let autoRefreshTimer = null;
 let heatmapLiveTimer = null;
-let countdownSeconds = 180; // 3 minutes
+let countdownSeconds = 180; // 3 minutes — matches server cache refresh
 let lastSectorSnapshot = {}; // for diff-based tile updates
 
 // Check if NSE market is currently open (IST 09:15 - 15:30, Mon-Fri)
@@ -97,6 +97,11 @@ function fetchSectorAnalysis() {
                 // Render components
                 renderHeatmap();
                 renderRotationQuadrants();
+
+                // Seed the snapshot so first live-poll diff works correctly
+                Object.entries(allSectors).forEach(([k, v]) => {
+                    lastSectorSnapshot[k] = { ...v };
+                });
                 
                 // Select first sector if none selected
                 if (!selectedSectorName && Object.keys(allSectors).length > 0) {
@@ -203,10 +208,11 @@ function fetchHeatmapOnly() {
 
             Object.entries(newSectors).forEach(([key, s]) => {
                 const old = lastSectorSnapshot[key];
+                // Round to 2dp before comparing to avoid float drift false-misses
                 const changed = !old
-                    || old.pct_change !== s.pct_change
+                    || parseFloat((old.pct_change || 0).toFixed(2)) !== parseFloat((s.pct_change || 0).toFixed(2))
                     || old.strength_score !== s.strength_score
-                    || old.pts_change !== s.pts_change;
+                    || parseFloat((old.pts_change || 0).toFixed(1)) !== parseFloat((s.pts_change || 0).toFixed(1));
 
                 if (changed) {
                     anyChanged = true;
@@ -214,9 +220,10 @@ function fetchHeatmapOnly() {
                     lastSectorSnapshot[key] = { ...s };
 
                     // Find the tile for this sector and update in-place
+                    // Use .trim() — browser adds whitespace to innerText
                     document.querySelectorAll('.sector-tile').forEach(tile => {
                         const h4 = tile.querySelector('h4');
-                        if (!h4 || h4.innerText !== s.name) return;
+                        if (!h4 || h4.innerText.trim() !== (s.name || '').trim()) return;
 
                         // Update change color class
                         tile.classList.remove('tile-very-bullish','tile-bullish','tile-neutral','tile-weak','tile-very-weak');
@@ -362,30 +369,71 @@ function selectSector(name) {
     const stocksTable = document.getElementById('detail-stocks-list');
     if (stocksTable) {
         stocksTable.innerHTML = '';
-        const allStocks = [...sector.top_gainers, ...sector.top_losers];
+        
+        // Use full constituents array returned by backend if available; fallback to top_gainers + top_losers
+        const sourceStocks = sector.constituents || [...sector.top_gainers, ...sector.top_losers];
         const uniqueStocks = [];
         const seen = new Set();
-        allStocks.forEach(st => {
+        sourceStocks.forEach(st => {
             if (!seen.has(st.symbol)) {
                 seen.add(st.symbol);
                 uniqueStocks.push(st);
             }
         });
 
-        uniqueStocks.sort((a, b) => b.change - a.change);
+        // Group by market capitalization
+        const largeCap = [];
+        const midCap = [];
+        const smallCap = [];
 
         uniqueStocks.forEach(st => {
-            const row = document.createElement('tr');
-            row.style.borderBottom = '1px solid var(--border-color)';
-            row.innerHTML = `
-                <td style="padding: 0.5rem 0.4rem; text-align: left; font-weight: 600; color: #ffffff;">${st.symbol}</td>
-                <td style="padding: 0.5rem 0.4rem; text-align: right; color: var(--text-primary);">${st.close.toFixed(2)}</td>
-                <td style="padding: 0.5rem 0.4rem; text-align: right; font-weight: 700; color: ${st.change >= 0 ? 'var(--success)' : 'var(--danger)'};">
-                    ${st.change >= 0 ? '+' : ''}${st.change.toFixed(2)}%
+            const cap = (st.cap_category || 'Unknown').toLowerCase();
+            if (cap === 'largecap') {
+                largeCap.push(st);
+            } else if (cap === 'midcap') {
+                midCap.push(st);
+            } else {
+                // Smallcap, Microcap, or Unknown
+                smallCap.push(st);
+            }
+        });
+
+        // Sort each category by daily change percent descending
+        const sortByChange = (list) => list.sort((a, b) => b.change - a.change);
+        sortByChange(largeCap);
+        sortByChange(midCap);
+        sortByChange(smallCap);
+
+        const renderCategory = (title, list) => {
+            if (list.length === 0) return;
+
+            // Cap header row
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `
+                <td colspan="3" style="padding: 0.5rem 0.4rem; text-align: left; font-weight: 700; color: var(--accent-primary); background: rgba(139, 92, 246, 0.08); font-size: 0.78rem; letter-spacing: 0.05em; border-bottom: 1px solid rgba(139, 92, 246, 0.25);">
+                    <i class="fa-solid fa-layer-group" style="margin-right: 0.35rem;"></i> ${title.toUpperCase()}
                 </td>
             `;
-            stocksTable.appendChild(row);
-        });
+            stocksTable.appendChild(headerRow);
+
+            // Stock rows
+            list.forEach(st => {
+                const row = document.createElement('tr');
+                row.style.borderBottom = '1px solid var(--border-color)';
+                row.innerHTML = `
+                    <td style="padding: 0.5rem 0.4rem; text-align: left; font-weight: 600; color: #ffffff;">${st.symbol}</td>
+                    <td style="padding: 0.5rem 0.4rem; text-align: right; color: var(--text-primary);">${st.close.toFixed(2)}</td>
+                    <td style="padding: 0.5rem 0.4rem; text-align: right; font-weight: 700; color: ${st.change >= 0 ? 'var(--success)' : 'var(--danger)'};">
+                        ${st.change >= 0 ? '+' : ''}${st.change.toFixed(2)}%
+                    </td>
+                `;
+                stocksTable.appendChild(row);
+            });
+        };
+
+        renderCategory('Large Cap', largeCap);
+        renderCategory('Mid Cap', midCap);
+        renderCategory('Small Cap', smallCap);
     }
 }
 

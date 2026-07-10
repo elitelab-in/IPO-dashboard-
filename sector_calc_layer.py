@@ -3,6 +3,7 @@ import numpy as np
 import yfinance as yf
 import concurrent.futures
 from sector_data_layer import SectorDataLayer, SECTORS_CONFIG
+from metadata_service import getStockMetadata
 
 def calculate_rsi(series, period=14):
     if len(series) < period + 1:
@@ -53,11 +54,45 @@ class SectorCalcLayer:
                 return name, None
                 
             close_series = hist["Close"]
-            
-            # Calculate Performance Metrics first
+
+            # --- Correct % change: always vs actual previous trading day close ---
+            # iloc[-2] is WRONG after weekends/holidays (3mo data gaps).
+            # For real index tickers: fetch 2-day data to get true prev close.
+            # For SYNTHETIC tickers: find correct prev row by checking date gaps.
             last_price = float(close_series.iloc[-1])
-            prev_price = float(close_series.iloc[-2]) if len(close_series) >= 2 else last_price
-            pct_change = ((last_price - prev_price) / prev_price * 100)
+            prev_price = last_price  # safe fallback
+            try:
+                ticker_sym = sector_res.get("_ticker_symbol", "")
+                is_synthetic = (
+                    not ticker_sym
+                    or "SYNTHETIC" in ticker_sym
+                    or ticker_sym.startswith("NIFTY_")
+                )
+                if not is_synthetic:
+                    # Real index ticker — get true prev close via 2d fetch
+                    t2 = yf.Ticker(ticker_sym)
+                    h2d = t2.history(period="2d", interval="1d")
+                    if h2d is not None and len(h2d) >= 2:
+                        prev_price = float(h2d["Close"].iloc[-2])
+                    elif h2d is not None and len(h2d) == 1:
+                        prev_price = float(t2.info.get("previousClose", last_price))
+                    else:
+                        prev_price = float(t2.info.get("previousClose", last_price))
+                else:
+                    # Synthetic/derived index — find the most recent DIFFERENT trading day
+                    # in the 3mo history (handles weekend/holiday gaps correctly)
+                    import datetime
+                    today = close_series.index[-1].date() if hasattr(close_series.index[-1], "date") else close_series.index[-1]
+                    for i in range(2, min(len(close_series) + 1, 10)):
+                        cand_idx = close_series.index[-i]
+                        cand_date = cand_idx.date() if hasattr(cand_idx, "date") else cand_idx
+                        if cand_date < today:
+                            prev_price = float(close_series.iloc[-i])
+                            break
+            except Exception:
+                if len(close_series) >= 2:
+                    prev_price = float(close_series.iloc[-2])
+            pct_change = ((last_price - prev_price) / prev_price * 100) if prev_price else 0.0
             pts_change = last_price - prev_price
             
             # Fetch constituent updates to calculate breadth in real-time
@@ -81,11 +116,15 @@ class SectorCalcLayer:
                             s_change = ((s_close.iloc[-1] - s_close.iloc[-2]) / s_close.iloc[-2] * 100) if len(s_close) >= 2 else 0.0
                             s_volume = s_hist["Volume"].iloc[-1] if "Volume" in s_hist else 0.0
                             
+                            meta = getStockMetadata(sym)
+                            cap_cat = meta.get("marketCapCategory", "Unknown")
+                            
                             constituents_data.append({
                                 "symbol": sym,
                                 "close": float(s_close.iloc[-1]),
                                 "change": float(s_change),
-                                "volume": float(s_volume)
+                                "volume": float(s_volume),
+                                "cap_category": cap_cat
                             })
                             
                             if s_change > 0:
@@ -117,12 +156,15 @@ class SectorCalcLayer:
                     s_change = pct_change + offset
                     s_close = last_price / (10.0 + i)
                     s_volume = 500000.0 + (i * 100000.0)
+                    meta = getStockMetadata(sym)
+                    cap_cat = meta.get("marketCapCategory", "Unknown")
                     
                     constituents_data.append({
                         "symbol": sym,
                         "close": float(s_close),
                         "change": float(s_change),
-                        "volume": float(s_volume)
+                        "volume": float(s_volume),
+                        "cap_category": cap_cat
                     })
                     
                     if s_change > 0:
@@ -268,7 +310,8 @@ class SectorCalcLayer:
                 "top_volume": top_volume,
                 "smart_money_rating": smart_money_rating,
                 "smart_money_confidence": smart_money_confidence,
-                "vol_ratio": vol_ratio
+                "vol_ratio": vol_ratio,
+                "constituents": constituents_data
             }
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:

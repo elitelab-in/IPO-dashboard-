@@ -8,7 +8,7 @@ import pandas as pd
 SECTORS_CONFIG = {
     "Nifty IT": {
         "ticker": "^CNXIT",
-        "constituents": ["TCS", "INFY", "WIPRO", "HCLTECH", "TECHM", "COFORGE", "LTIM", "PERSISTENT"]
+        "constituents": ["TCS", "INFY", "WIPRO", "HCLTECH", "TECHM", "COFORGE", "MPHASIS", "PERSISTENT"]
     },
     "Bank Nifty": {
         "ticker": "^NSEBANK",
@@ -20,7 +20,7 @@ SECTORS_CONFIG = {
     },
     "Auto": {
         "ticker": "^CNXAUTO",
-        "constituents": ["TATAMOTORS", "M&M", "MARUTI", "BAJAJ-AUTO", "HEROMOTOCO", "TVSMOTOR"]
+        "constituents": ["M&M", "MARUTI", "BAJAJ-AUTO", "HEROMOTOCO", "TVSMOTOR", "EICHERMOT"]
     },
     "Pharma": {
         "ticker": "^CNXPHARMA",
@@ -48,11 +48,11 @@ SECTORS_CONFIG = {
     },
     "Oil & Gas": {
         "ticker": "NIFTY_OIL_AND_GAS.NS",
-        "constituents": ["RELIANCE", "ONGC", "BPCL", "IOC", "GAIL", "HPCL"]
+        "constituents": ["RELIANCE", "ONGC", "BPCL", "IOC", "GAIL", "MGL"]
     },
     "Media": {
         "ticker": "^CNXMEDIA",
-        "constituents": ["SUNTV", "ZEEL", "PVRINOX", "Network18", "TV18BRDCST"]
+        "constituents": ["SUNTV", "ZEEL", "PVRINOX", "NAZARA", "SAREGAMA"]
     },
     "Healthcare": {
         "ticker": "NIFTY_HEALTHCARE.NS",
@@ -80,7 +80,7 @@ SECTORS_CONFIG = {
     },
     "Telecom": {
         "ticker": "TELECOM.SYNTHETIC",
-        "constituents": ["BHARTIARTL", "IDEA", "INDUSTOWER", "ROUTE", "TEJASNET"]
+        "constituents": ["BHARTIARTL", "INDUSTOWER", "ROUTE", "TEJASNET", "TATACOMM"]
     },
     "Services": {
         "ticker": "^CNXSERVICE",
@@ -92,7 +92,7 @@ class SectorDataLayer:
     def __init__(self):
         self.cache = {}
         self.lock = threading.Lock()
-        self.cache_duration = 300  # 5 minutes
+        self.cache_duration = 60  # 60s — batch download makes this safe without rate limiting
 
     def _is_history_stale(self, df):
         """Checks if the history dataframe has a date gap at the end (greater than 2 business days)."""
@@ -113,13 +113,58 @@ class SectorDataLayer:
             return False
 
     def _ensure_latest_day(self, df, ticker):
-        """Appends the latest active day from period='1d' if it is missing from period='3mo'."""
+        """Appends live intraday price (1m interval) so we get real-time close during market hours."""
         if df is None or df.empty:
             return df
+        # Normalize history index to timezone-naive
+        if df.index.tz is not None:
+            df.index = df.index.tz_localize(None)
+            
+        try:
+            import datetime, pytz
+            ist = pytz.timezone("Asia/Kolkata")
+            now_ist = datetime.datetime.now(ist)
+            # Try live 1m data first for real-time price
+            live_df = ticker.history(period="1d", interval="1m")
+            if live_df is not None and not live_df.empty:
+                # Normalize live_df index to timezone-naive
+                if live_df.index.tz is not None:
+                    live_df.index = live_df.index.tz_localize(None)
+                latest_price = float(live_df["Close"].dropna().iloc[-1])
+                # Convert to date-only naive timestamp to match daily format
+                latest_idx = pd.Timestamp(live_df.index[-1].date())
+                
+                # Normalise to date-only index to match 3mo history
+                today_str = now_ist.date()
+                # Update today's row in the 3mo history with live price
+                last_hist_idx = df.index[-1]
+                if hasattr(last_hist_idx, "date"):
+                    last_hist_date = last_hist_idx.date()
+                else:
+                    last_hist_date = last_hist_idx
+                if last_hist_date == today_str:
+                    df.iloc[-1, df.columns.get_loc("Close")] = latest_price
+                else:
+                    # Market is open but today not in 3mo — append a new row
+                    new_row = df.iloc[[-1]].copy()
+                    new_row.iloc[0, new_row.columns.get_loc("Close")] = latest_price
+                    new_row.index = [latest_idx]
+                    df = pd.concat([df, new_row])
+                return df
+        except Exception as e:
+            # print(f"[SectorDataLayer] Intraday append failed: {e}")
+            pass
+            
+        # Fallback: use period=1d daily data
         try:
             latest_df = ticker.history(period="1d")
             if not latest_df.empty:
-                latest_idx = latest_df.index[-1]
+                if latest_df.index.tz is not None:
+                    latest_df.index = latest_df.index.tz_localize(None)
+                latest_idx = pd.Timestamp(latest_df.index[-1].date())
+                # Update index of latest_df to be date-only as well
+                latest_df.index = [latest_idx]
+                
                 if latest_idx not in df.index:
                     df = pd.concat([df, latest_df])
                 else:
@@ -143,9 +188,19 @@ class SectorDataLayer:
         
         # Format for Indian market
         yf_symbol = f"{symbol}.NS" if "." not in symbol else symbol
+        # Common symbol fixes
+        SYMBOL_FIXES = {
+            "M&M.NS": "M&M.NS",
+            "BAJAJ-AUTO.NS": "BAJAJ-AUTO.NS",
+        }
+        yf_symbol = SYMBOL_FIXES.get(yf_symbol, yf_symbol)
         try:
             ticker = yf.Ticker(yf_symbol)
             hist = ticker.history(period="3mo")
+            if hist.empty:
+                # Try .BO (BSE) as fallback
+                ticker = yf.Ticker(yf_symbol.replace(".NS", ".BO"))
+                hist = ticker.history(period="3mo")
             if hist.empty:
                 return None
             
@@ -156,7 +211,7 @@ class SectorDataLayer:
             
             data = {
                 "history": hist,
-                "info": ticker.info if hasattr(ticker, "info") else {}
+                "info": {}
             }
             with self.lock:
                 self.cache[symbol] = {
@@ -182,6 +237,7 @@ class SectorDataLayer:
             # Build synthetic index
             data = self._build_synthetic_index(fallback_constituents)
             if data:
+                data["_ticker_symbol"] = ticker_symbol
                 with self.lock:
                     self.cache[name] = {"timestamp": now, "data": data}
                 return data
@@ -202,7 +258,8 @@ class SectorDataLayer:
             else:
                 data = {
                     "history": hist,
-                    "is_synthetic": False
+                    "is_synthetic": False,
+                    "_ticker_symbol": ticker_symbol
                 }
             
             if data:
@@ -212,6 +269,7 @@ class SectorDataLayer:
         except Exception:
             data = self._build_synthetic_index(fallback_constituents)
             if data:
+                data["_ticker_symbol"] = ticker_symbol
                 with self.lock:
                     self.cache[name] = {"timestamp": now, "data": data}
                 return data
@@ -233,6 +291,9 @@ class SectorDataLayer:
         # Align all dates by taking an average daily return
         returns_df = pd.DataFrame()
         for idx, df in enumerate(dfs):
+            # Normalize index to timezone-naive to avoid "Cannot join tz-naive with tz-aware" errors
+            if df.index.tz is not None:
+                df.index = df.index.tz_localize(None)
             # Calculate daily returns
             pct = df["Close"].pct_change().fillna(0)
             returns_df[f"stock_{idx}"] = pct
@@ -253,8 +314,110 @@ class SectorDataLayer:
             "is_synthetic": True
         }
 
+    def prefetch_batch(self):
+        """Bulk-download ALL stocks + index tickers in 2 yf.download() calls.
+        Seeds self.cache so individual get_stock_data/get_index_data calls hit cache."""
+        now = time.time()
+
+        # --- Collect all unique stock symbols ---
+        all_stocks = set()
+        for cfg in SECTORS_CONFIG.values():
+            for sym in cfg["constituents"]:
+                all_stocks.add(sym)
+
+        # --- Collect all real index tickers (skip SYNTHETIC / NIFTY_ prefixed) ---
+        all_indices = set()
+        for cfg in SECTORS_CONFIG.values():
+            t = cfg["ticker"]
+            if "SYNTHETIC" not in t and not t.startswith("NIFTY_"):
+                all_indices.add(t)
+        all_indices.add("^NSEI")  # always include Nifty 50
+
+        # --- Batch download stocks (3mo daily) ---
+        try:
+            ns_symbols = [f"{s}.NS" for s in all_stocks]
+            print(f"[Batch] Downloading {len(ns_symbols)} stocks...")
+            batch = yf.download(
+                ns_symbols,
+                period="3mo",
+                interval="1d",
+                group_by="ticker",
+                auto_adjust=True,
+                progress=False,
+                threads=True
+            )
+            for sym in all_stocks:
+                yf_sym = f"{sym}.NS"
+                try:
+                    if isinstance(batch.columns, pd.MultiIndex):
+                        if yf_sym in batch.columns.get_level_values(0):
+                            df = batch[yf_sym].dropna(how="all")
+                        else:
+                            continue
+                    else:
+                        df = batch.dropna(how="all")
+                    if df.empty or "Close" not in df.columns:
+                        continue
+                    df = df[["Close", "Volume"]].dropna(subset=["Close"])
+                    with self.lock:
+                        self.cache[sym] = {
+                            "timestamp": now,
+                            "data": {"history": df, "info": {}}
+                        }
+                except Exception:
+                    pass
+            print(f"[Batch] Stocks cached: {len([k for k in self.cache if '.' not in k])}")
+        except Exception as e:
+            print(f"[Batch] Stock download error: {e}")
+
+        # --- Batch download index tickers (3mo daily) ---
+        try:
+            idx_list = list(all_indices)
+            print(f"[Batch] Downloading {len(idx_list)} indices...")
+            ibatch = yf.download(
+                idx_list,
+                period="3mo",
+                interval="1d",
+                group_by="ticker",
+                auto_adjust=True,
+                progress=False,
+                threads=True
+            )
+            for ticker_sym in idx_list:
+                try:
+                    if isinstance(ibatch.columns, pd.MultiIndex):
+                        if ticker_sym in ibatch.columns.get_level_values(0):
+                            df = ibatch[ticker_sym].dropna(how="all")
+                        else:
+                            continue
+                    else:
+                        df = ibatch.dropna(how="all")
+                    if df.empty or "Close" not in df.columns:
+                        continue
+                    df = df[["Close", "Volume"]].dropna(subset=["Close"])
+                    # Find which sector this ticker belongs to
+                    for s_name, cfg in SECTORS_CONFIG.items():
+                        if cfg["ticker"] == ticker_sym:
+                            with self.lock:
+                                self.cache[s_name] = {
+                                    "timestamp": now,
+                                    "data": {
+                                        "history": df,
+                                        "is_synthetic": False,
+                                        "_ticker_symbol": ticker_sym
+                                    }
+                                }
+                except Exception:
+                    pass
+            print("[Batch] Indices cached.")
+        except Exception as e:
+            print(f"[Batch] Index download error: {e}")
+
     def fetch_all_sectors_data(self):
-        """Fetch data for all sectors concurrently."""
+        """Prefetch all data in batch, then process sectors concurrently."""
+        # One batch call seeds the cache for all get_stock_data/get_index_data calls
+        self.prefetch_batch()
+
         results = {}
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             future_to_sector = {

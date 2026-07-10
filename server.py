@@ -2342,7 +2342,7 @@ def get_sector_analysis_api():
             print(f"[SectorCache] First run sync fetch failed: {e}")
             return jsonify({"status": "error", "message": str(e)}), 500
             
-    elif now - SECTOR_ANALYSIS_CACHE["time"] > 180:
+    elif now - SECTOR_ANALYSIS_CACHE["time"] > 180:  # refresh every 3 minutes
         if not SECTOR_ANALYSIS_UPDATING:
             threading.Thread(target=update_sector_cache_in_background, daemon=True).start()
             
