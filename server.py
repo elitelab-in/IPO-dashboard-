@@ -2437,27 +2437,40 @@ def calculate_sector_analysis_sync():
         try:
             import cloudscraper
             import pandas as pd
+            import io
             scraper = cloudscraper.create_scraper()
             mc_url = "https://www.moneycontrol.com/stocks/marketstats/fii_dii_activity/index.php"
             res3 = scraper.get(mc_url, timeout=10)
             if res3.status_code == 200:
-                tables = pd.read_html(res3.text)
-                for df in tables:
-                    if df.shape[1] >= 3:
-                        cols = [str(c).lower() for c in df.columns]
-                        if any("fii" in c or "fpi" in c for c in cols) and any("dii" in c for c in cols):
-                            row = df.iloc[0]
-                            flow_date = str(row.iloc[0]).strip()
-                            def _safe_float(val):
-                                try: return float(str(val).replace(",","").replace(" ","").strip())
-                                except: return 0.0
-                            fii_net = _safe_float(row.iloc[1])
-                            dii_net = _safe_float(row.iloc[2])
-                            fii_buy, fii_sell = 0.0, 0.0
-                            dii_buy, dii_sell = 0.0, 0.0
-                            fetched = True
-                            print("[FiiDii] Stage 3 (Moneycontrol cloudscraper) success.")
-                            break
+                tables = pd.read_html(io.StringIO(res3.text), flavor='lxml')
+                if tables:
+                    df = tables[0]
+                    raw_date = str(df.columns[0]).strip()
+                    fii_val = 0.0
+                    dii_val = 0.0
+                    for _, row in df.iterrows():
+                        cat = str(row.iloc[0]).strip().upper()
+                        val_str = str(row.iloc[1]).strip()
+                        def _safe_float(val):
+                            try: return float(str(val).replace(",","").replace(" ","").strip())
+                            except: return 0.0
+                        if "FII CM" in cat:
+                            fii_val = _safe_float(val_str)
+                        elif "DII CM" in cat:
+                            dii_val = _safe_float(val_str)
+                    
+                    if fii_val != 0.0 or dii_val != 0.0:
+                        fii_net = fii_val
+                        dii_net = dii_val
+                        fii_buy, fii_sell = 0.0, 0.0
+                        dii_buy, dii_sell = 0.0, 0.0
+                        try:
+                            parsed_dt = datetime.datetime.strptime(raw_date, "%a %d %b, %Y")
+                            flow_date = parsed_dt.strftime("%d-%b-%Y")
+                        except Exception as dt_ex:
+                            flow_date = raw_date
+                        fetched = True
+                        print(f"[FiiDii] Stage 3 (Moneycontrol cloudscraper) success. Date: {flow_date}")
         except Exception as e:
             print(f"[FiiDii] Stage 3 failed: {e}")
 
@@ -2466,7 +2479,10 @@ def calculate_sector_analysis_sync():
         try:
             import requests as _req
             import csv, io
-            today_str = datetime.date.today().strftime("%d-%m-%Y")
+            # Make today_str IST-aware
+            utc_now = datetime.datetime.utcnow()
+            ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
+            today_str = ist_now.date().strftime("%d-%m-%Y")
             csv_url = f"https://www.nseindia.com/api/fiidiiTradeDetails?type=csv"
             hdr = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.nseindia.com/"}
             r35 = _req.get(csv_url, headers=hdr, timeout=8)
@@ -2492,9 +2508,12 @@ def calculate_sector_analysis_sync():
     # Stage 4: Dynamic date fallback — no hardcoded numbers, shows latest available trading day
     if not fetched:
         try:
-            today = datetime.date.today()
-            now_hour = datetime.datetime.now().hour
-            # NSE publishes provisional data after ~6 PM; before that use previous day
+            # Make timezone-aware (IST = UTC + 5:30)
+            utc_now = datetime.datetime.utcnow()
+            ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
+            today = ist_now.date()
+            now_hour = ist_now.hour
+            # NSE publishes provisional data after ~6 PM IST; before that use previous day
             if now_hour < 18:
                 target_date = today - datetime.timedelta(days=1)
             else:
@@ -2505,7 +2524,9 @@ def calculate_sector_analysis_sync():
             flow_date = target_date.strftime("%d-%b-%Y")
         except Exception as date_err:
             print(f"[FiiDii] Date calculation error: {date_err}")
-            flow_date = datetime.date.today().strftime("%d-%b-%Y")
+            utc_now = datetime.datetime.utcnow()
+            ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
+            flow_date = ist_now.date().strftime("%d-%b-%Y")
 
         # Do NOT use hardcoded stale numbers — keep zeros so UI shows "data unavailable"
         fii_buy, fii_sell, fii_net = 0.0, 0.0, 0.0
