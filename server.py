@@ -213,6 +213,15 @@ def terms():
 def refund_policy():
     return send_from_directory(get_file_path('refund-policy.html'), 'refund-policy.html')
 
+@app.route('/api/test-fii-dii')
+def test_fii_dii():
+    try:
+        res = calculate_sector_analysis_sync()
+        return jsonify({"status": "success", "data": res})
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()})
+
 @app.route('/sector-analysis')
 def sector_analysis():
     return send_from_directory(get_file_path('sector-analysis.html'), 'sector-analysis.html')
