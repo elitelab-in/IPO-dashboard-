@@ -209,6 +209,10 @@ def privacy():
 def terms():
     return send_from_directory(get_file_path('terms.html'), 'terms.html')
 
+@app.route('/refund-policy')
+def refund_policy():
+    return send_from_directory(get_file_path('refund-policy.html'), 'refund-policy.html')
+
 @app.route('/sector-analysis')
 def sector_analysis():
     return send_from_directory(get_file_path('sector-analysis.html'), 'sector-analysis.html')
@@ -2606,6 +2610,8 @@ def get_sector_analysis_api():
     global SECTOR_ANALYSIS_CACHE, SECTOR_ANALYSIS_UPDATING
     now = time.time()
     
+    is_vercel = os.environ.get('VERCEL') == '1' or 'VERCEL_ENV' in os.environ
+    
     if not SECTOR_ANALYSIS_CACHE["data"]:
         try:
             print("[SectorCache] First run: warming up cache synchronously...")
@@ -2618,9 +2624,20 @@ def get_sector_analysis_api():
             print(f"[SectorCache] First run sync fetch failed: {e}")
             return jsonify({"status": "error", "message": str(e)}), 500
             
-    elif now - SECTOR_ANALYSIS_CACHE["time"] > 180:  # refresh every 3 minutes
-        if not SECTOR_ANALYSIS_UPDATING:
-            threading.Thread(target=update_sector_cache_in_background, daemon=True).start()
+    elif now - SECTOR_ANALYSIS_CACHE["time"] > 300:  # refresh every 5 minutes
+        if is_vercel:
+            try:
+                print("[SectorCache] Serverless: refreshing cache synchronously...")
+                data = calculate_sector_analysis_sync()
+                SECTOR_ANALYSIS_CACHE = {
+                    "time": now,
+                    "data": data
+                }
+            except Exception as e:
+                print(f"[SectorCache] Serverless sync refresh failed: {e}")
+        else:
+            if not SECTOR_ANALYSIS_UPDATING:
+                threading.Thread(target=update_sector_cache_in_background, daemon=True).start()
             
     return jsonify({
         "status": "success",
