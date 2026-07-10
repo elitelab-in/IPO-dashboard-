@@ -9,6 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="index.css?v=62">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         .pricing-header {
             text-align: center;
@@ -598,16 +599,75 @@
                     .then(res => res.json())
                     .then(orderData => {
                         if (orderData.status === 'success') {
-                            activeOrderId = orderData.order_id;
-                            
-                            // Fill modal details
-                            document.getElementById('modal-plan-name').innerText = orderData.plan_name;
-                            document.getElementById('modal-order-id').innerText = orderData.order_id;
-                            document.getElementById('modal-amount').innerText = `₹${parseFloat(orderData.amount / 100).toFixed(2)}`;
-                            
-                            // Display modal
-                            document.getElementById('payment-status-message').style.display = 'none';
-                            document.getElementById('payment-modal').classList.add('active');
+                            if (orderData.is_sandbox) {
+                                activeOrderId = orderData.order_id;
+                                document.getElementById('modal-plan-name').innerText = orderData.plan_name;
+                                document.getElementById('modal-order-id').innerText = orderData.order_id;
+                                document.getElementById('modal-amount').innerText = `₹${parseFloat(orderData.amount / 100).toFixed(2)}`;
+                                document.getElementById('payment-status-message').style.display = 'none';
+                                document.getElementById('payment-modal').classList.add('active');
+                            } else {
+                                // Open official Razorpay Checkout popup
+                                const options = {
+                                    "key": orderData.key_id,
+                                    "amount": orderData.amount,
+                                    "currency": orderData.currency || "INR",
+                                    "name": "Elitelab",
+                                    "description": orderData.plan_name,
+                                    "order_id": orderData.order_id,
+                                    "handler": function (response) {
+                                        // Show loading/verifying state in modal
+                                        const modalStatus = document.getElementById('payment-status-message');
+                                        modalStatus.style.display = 'none';
+                                        
+                                        document.getElementById('modal-plan-name').innerText = orderData.plan_name;
+                                        document.getElementById('modal-order-id').innerText = response.razorpay_order_id;
+                                        document.getElementById('modal-amount').innerText = `₹${parseFloat(orderData.amount / 100).toFixed(2)}`;
+                                        
+                                        const successBtn = document.getElementById('btn-pay-success');
+                                        successBtn.disabled = true;
+                                        successBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying payment...';
+                                        document.getElementById('payment-modal').classList.add('active');
+                                        
+                                        fetch('/api/payments/verify', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                plan_id: selectedPlan.id,
+                                                razorpay_order_id: response.razorpay_order_id,
+                                                razorpay_payment_id: response.razorpay_payment_id,
+                                                razorpay_signature: response.razorpay_signature
+                                            })
+                                        })
+                                        .then(res => res.json())
+                                        .then(verifyData => {
+                                            if (verifyData.status === 'success') {
+                                                successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Activated!';
+                                                setTimeout(() => {
+                                                    closePaymentModal();
+                                                    window.location.href = '/dashboard';
+                                                }, 1500);
+                                            } else {
+                                                successBtn.disabled = false;
+                                                successBtn.innerHTML = 'Simulate Payment Success';
+                                                modalStatus.innerText = verifyData.message || 'Signature verification failed.';
+                                                modalStatus.style.display = 'block';
+                                            }
+                                        })
+                                        .catch(() => {
+                                            successBtn.disabled = false;
+                                            successBtn.innerHTML = 'Simulate Payment Success';
+                                            modalStatus.innerText = 'Network error verifying signature.';
+                                            modalStatus.style.display = 'block';
+                                        });
+                                    },
+                                    "theme": {
+                                        "color": "#8B5CF6"
+                                    }
+                                };
+                                const rzp = new Razorpay(options);
+                                rzp.open();
+                            }
                         } else {
                             alert(orderData.message || 'Error creating payment order.');
                         }

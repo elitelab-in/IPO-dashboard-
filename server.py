@@ -2931,17 +2931,37 @@ def api_create_order():
     if not plan:
         return jsonify({"status": "error", "message": "Invalid Plan ID"}), 400
         
-    # Generate mock Razorpay order values
-    # In production: replace this with real Razorpay SDK client order creation
-    mock_order_id = f"order_mock_{int(time.time())}_{session['user_id']}"
+    is_sandbox = True
+    razorpay_key = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_TBsqdEhYUgNIfu')
+    razorpay_secret = os.environ.get('RAZORPAY_KEY_SECRET', 'MQuJFMYiFXtD00ZHVLVGPalr')
     
+    order_id = f"order_mock_{int(time.time())}_{session['user_id']}"
+    
+    if razorpay_key and razorpay_secret and not razorpay_key.startswith('rzp_test_mock'):
+        try:
+            import razorpay
+            client = razorpay.Client(auth=(razorpay_key, razorpay_secret))
+            order_data = {
+                'amount': int(plan['price'] * 100), # Razorpay expects amount in paise
+                'currency': 'INR',
+                'receipt': f"receipt_{int(time.time())}_{session['user_id']}",
+                'payment_capture': 1
+            }
+            rzp_order = client.order.create(data=order_data)
+            if rzp_order and 'id' in rzp_order:
+                order_id = rzp_order['id']
+                is_sandbox = False
+        except Exception as e:
+            print(f"[Razorpay] Error creating real order: {e}")
+            
     return jsonify({
         "status": "success",
-        "order_id": mock_order_id,
+        "order_id": order_id,
+        "is_sandbox": is_sandbox,
         "amount": plan['price'] * 100, # Razorpay expects amount in paise
         "currency": "INR",
         "plan_name": plan['plan_name'],
-        "key_id": os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_mock_elitelab_key_987')
+        "key_id": razorpay_key or 'rzp_test_mock_elitelab_key_987'
     })
 
 @app.route('/api/payments/verify', methods=['POST'])
@@ -2965,13 +2985,26 @@ def api_verify_payment():
         conn.close()
         return jsonify({"status": "error", "message": "Invalid plan ID"}), 400
         
-    # Verify payment signature
-    # In production: 
-    #   import razorpay
-    #   client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
-    #   client.utility.verify_payment_signature(data)
-    # We implement signature verification simulation here.
+    is_sandbox = order_id.startswith('order_mock_')
     
+    if not is_sandbox:
+        razorpay_key = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_TBsqdEhYUgNIfu')
+        razorpay_secret = os.environ.get('RAZORPAY_KEY_SECRET', 'MQuJFMYiFXtD00ZHVLVGPalr')
+        try:
+            import razorpay
+            client = razorpay.Client(auth=(razorpay_key, razorpay_secret))
+            params_dict = {
+                'razorpay_order_id': order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+            client.utility.verify_payment_signature(params_dict)
+            print("[Razorpay] Signature verified successfully.")
+        except Exception as e:
+            print(f"[Razorpay] Signature verification failed: {e}")
+            conn.close()
+            return jsonify({"status": "error", "message": "Payment signature verification failed"}), 400
+            
     user_id = session['user_id']
     now = datetime.datetime.now()
     

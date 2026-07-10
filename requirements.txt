@@ -7,4 +7,5 @@ cloudscraper
 gunicorn
 smartapi-python
 pyotp
+razorpay
 
