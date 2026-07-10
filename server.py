@@ -2398,93 +2398,119 @@ def calculate_sector_analysis_sync():
     except Exception as e:
         print(f"[FiiDii] Stage 1 failed: {e}")
 
-    # Stage 2: Direct request to NSE India API bypassing wrapper
+    # Stage 2: Direct NSE API with full cookie priming
     if not fetched:
         try:
-            import requests
-            session = requests.Session()
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            import requests as _req
+            nse_s = _req.Session()
+            nse_headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                "Accept": "application/json, text/plain, */*",
                 "Accept-Language": "en-US,en;q=0.9",
-                "Referer": "https://www.nseindia.com/"
+                "Referer": "https://www.nseindia.com/market-data/fii-dii-activity",
+                "X-Requested-With": "XMLHttpRequest",
             }
-            session.get("https://www.nseindia.com", headers=headers, timeout=5)
-            res = session.get("https://www.nseindia.com/api/fiidiiTradeDetails", headers=headers, timeout=5)
-            if res.status_code == 200:
-                raw_data = res.json()
+            # Prime cookies by visiting the FII/DII page first
+            nse_s.get("https://www.nseindia.com", headers=nse_headers, timeout=8)
+            nse_s.get("https://www.nseindia.com/market-data/fii-dii-activity", headers=nse_headers, timeout=8)
+            res2 = nse_s.get("https://www.nseindia.com/api/fiidiiTradeDetails", headers=nse_headers, timeout=8)
+            if res2.status_code == 200:
+                raw_data = res2.json()
                 if raw_data and isinstance(raw_data, list):
                     dii_row = next((r for r in raw_data if r.get("category") == "DII"), None)
                     fii_row = next((r for r in raw_data if r.get("category") in ["FII/FPI", "FII"]), None)
-                    
-                    dii_buy = float(dii_row["buyValue"]) if dii_row else 0.0
-                    dii_sell = float(dii_row["sellValue"]) if dii_row else 0.0
-                    dii_net = float(dii_row["netValue"]) if dii_row else 0.0
-                    
-                    fii_buy = float(fii_row["buyValue"]) if fii_row else 0.0
-                    fii_sell = float(fii_row["sellValue"]) if fii_row else 0.0
-                    fii_net = float(fii_row["netValue"]) if fii_row else 0.0
-                    
-                    flow_date = dii_row.get("date", "") if dii_row else (fii_row.get("date", "") if fii_row else "")
-                    fetched = True
-                    print("[FiiDii] Stage 2 (Direct NSE API) success.")
+                    if fii_row or dii_row:
+                        dii_buy  = float(dii_row.get("buyValue",  0) or 0) if dii_row else 0.0
+                        dii_sell = float(dii_row.get("sellValue", 0) or 0) if dii_row else 0.0
+                        dii_net  = float(dii_row.get("netValue",  0) or 0) if dii_row else 0.0
+                        fii_buy  = float(fii_row.get("buyValue",  0) or 0) if fii_row else 0.0
+                        fii_sell = float(fii_row.get("sellValue", 0) or 0) if fii_row else 0.0
+                        fii_net  = float(fii_row.get("netValue",  0) or 0) if fii_row else 0.0
+                        flow_date = (dii_row or fii_row).get("date", "")
+                        fetched = True
+                        print("[FiiDii] Stage 2 (NSE API with cookie priming) success.")
         except Exception as e:
             print(f"[FiiDii] Stage 2 failed: {e}")
 
-    # Stage 3: Moneycontrol Stats Scraping
+    # Stage 3: Moneycontrol via cloudscraper (handles anti-bot)
     if not fetched:
         try:
-            import requests
+            import cloudscraper
             import pandas as pd
+            scraper = cloudscraper.create_scraper()
             mc_url = "https://www.moneycontrol.com/stocks/marketstats/fii_dii_activity/index.php"
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-            res = requests.get(mc_url, headers=headers, timeout=5)
-            if res.status_code == 200:
-                tables = pd.read_html(res.text)
+            res3 = scraper.get(mc_url, timeout=10)
+            if res3.status_code == 200:
+                tables = pd.read_html(res3.text)
                 for df in tables:
                     if df.shape[1] >= 3:
                         cols = [str(c).lower() for c in df.columns]
                         if any("fii" in c or "fpi" in c for c in cols) and any("dii" in c for c in cols):
                             row = df.iloc[0]
-                            flow_date = str(row.iloc[0])
-                            # Extract numeric net flows
-                            fii_net = float(str(row.iloc[1]).replace(",", "").replace(" ", "").strip())
-                            dii_net = float(str(row.iloc[2]).replace(",", "").replace(" ", "").strip())
+                            flow_date = str(row.iloc[0]).strip()
+                            def _safe_float(val):
+                                try: return float(str(val).replace(",","").replace(" ","").strip())
+                                except: return 0.0
+                            fii_net = _safe_float(row.iloc[1])
+                            dii_net = _safe_float(row.iloc[2])
                             fii_buy, fii_sell = 0.0, 0.0
                             dii_buy, dii_sell = 0.0, 0.0
                             fetched = True
-                            print("[FiiDii] Stage 3 (Moneycontrol) success.")
+                            print("[FiiDii] Stage 3 (Moneycontrol cloudscraper) success.")
                             break
         except Exception as e:
             print(f"[FiiDii] Stage 3 failed: {e}")
 
-    # Stage 4: Dynamic Date Fallback (No hardcoded stale dates)
+    # Stage 3.5: NSE downloadable CSV (reliable, no cookie needed)
     if not fetched:
         try:
-            import datetime
+            import requests as _req
+            import csv, io
+            today_str = datetime.date.today().strftime("%d-%m-%Y")
+            csv_url = f"https://www.nseindia.com/api/fiidiiTradeDetails?type=csv"
+            hdr = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.nseindia.com/"}
+            r35 = _req.get(csv_url, headers=hdr, timeout=8)
+            if r35.status_code == 200 and "text/csv" in r35.headers.get("Content-Type", ""):
+                reader = csv.DictReader(io.StringIO(r35.text))
+                for rrow in reader:
+                    cat = (rrow.get("Category") or rrow.get("category", "")).strip()
+                    if cat in ["FII/FPI", "FII"]:
+                        fii_buy  = float(str(rrow.get("Buy Value",  0) or 0).replace(",",""))
+                        fii_sell = float(str(rrow.get("Sell Value", 0) or 0).replace(",",""))
+                        fii_net  = float(str(rrow.get("Net Value",  0) or 0).replace(",",""))
+                        flow_date = rrow.get("Date", today_str)
+                        fetched = True
+                    elif cat == "DII":
+                        dii_buy  = float(str(rrow.get("Buy Value",  0) or 0).replace(",",""))
+                        dii_sell = float(str(rrow.get("Sell Value", 0) or 0).replace(",",""))
+                        dii_net  = float(str(rrow.get("Net Value",  0) or 0).replace(",",""))
+                if fetched:
+                    print("[FiiDii] Stage 3.5 (NSE CSV) success.")
+        except Exception as e:
+            print(f"[FiiDii] Stage 3.5 failed: {e}")
+
+    # Stage 4: Dynamic date fallback — no hardcoded numbers, shows latest available trading day
+    if not fetched:
+        try:
             today = datetime.date.today()
             now_hour = datetime.datetime.now().hour
-            # If before 6 PM, institutional data is yesterday's final figures
+            # NSE publishes provisional data after ~6 PM; before that use previous day
             if now_hour < 18:
                 target_date = today - datetime.timedelta(days=1)
-                if target_date.weekday() == 5: # Saturday -> Friday
-                    target_date = target_date - datetime.timedelta(days=1)
-                elif target_date.weekday() == 6: # Sunday -> Friday
-                    target_date = target_date - datetime.timedelta(days=2)
             else:
                 target_date = today
-                if target_date.weekday() == 5:
-                    target_date = target_date - datetime.timedelta(days=1)
-                elif target_date.weekday() == 6:
-                    target_date = target_date - datetime.timedelta(days=2)
-            
+            # Roll back over weekends
+            while target_date.weekday() >= 5:
+                target_date -= datetime.timedelta(days=1)
             flow_date = target_date.strftime("%d-%b-%Y")
         except Exception as date_err:
             print(f"[FiiDii] Date calculation error: {date_err}")
-            flow_date = "09-Jul-2026"
-            
-        fii_buy, fii_sell, fii_net = 14388.41, 14921.27, -532.86
-        dii_buy, dii_sell, dii_net = 18302.87, 16245.08, 2057.79
-        print(f"[FiiDii] Stage 4 (Dynamic Fallback) used. Resolved Date: {flow_date}")
+            flow_date = datetime.date.today().strftime("%d-%b-%Y")
+
+        # Do NOT use hardcoded stale numbers — keep zeros so UI shows "data unavailable"
+        fii_buy, fii_sell, fii_net = 0.0, 0.0, 0.0
+        dii_buy, dii_sell, dii_net = 0.0, 0.0, 0.0
+        print(f"[FiiDii] Stage 4 (date fallback only) used. Date: {flow_date}")
 
     net_total = dii_net + fii_net
     if fii_net < 0 and dii_net > 0:

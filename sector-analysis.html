@@ -242,24 +242,26 @@
         }
         #share-modal-actions {
             display: flex;
-            gap: 1.25rem;
+            gap: 0.9rem;
             width: 100%;
             justify-content: center;
             align-items: center;
             padding: 0.5rem 0;
+            flex-wrap: nowrap;
         }
         .share-circle-btn {
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.75rem; /* identically sized icons */
+            font-size: 1.5rem;
             border: none;
             background: none;
             cursor: pointer;
             transition: transform 0.2s, opacity 0.2s;
             text-decoration: none;
+            flex-shrink: 0;
         }
         .share-circle-btn:hover {
             transform: scale(1.2);
@@ -276,6 +278,9 @@
         }
         .share-circle-btn.share-native {
             color: var(--accent-primary) !important;
+        }
+        .share-circle-btn.share-download {
+            color: #94a3b8 !important;
         }
         /* The actual banner card (hidden, used for rendering) */
         #fii-share-banner {
@@ -652,15 +657,18 @@
             <div id="share-preview-wrap" style="width:100%;border-radius:14px;overflow:hidden;box-shadow:0 0 40px rgba(139,92,246,0.25);margin-bottom:0.5rem;"></div>
             
             <div id="share-modal-actions">
-                <a href="https://api.whatsapp.com/send?text=Check%20out%20today's%20FII/DII%20Net%20Flows%20on%20Elitelab%20%E2%9A%A1%20https://elitelab.in/sector-analysis" target="_blank" class="share-circle-btn whatsapp" title="Share on WhatsApp">
+                <button onclick="shareToNetwork('whatsapp')" class="share-circle-btn whatsapp" title="Share on WhatsApp">
                     <i class="fa-brands fa-whatsapp"></i>
-                </a>
-                <a href="https://www.instagram.com/" target="_blank" class="share-circle-btn instagram" title="Open Instagram">
+                </button>
+                <button onclick="shareToNetwork('instagram')" class="share-circle-btn instagram" title="Save for Instagram">
                     <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://twitter.com/intent/tweet?text=Check%20out%20today's%20FII/DII%20Net%20Flows%20on%20Elitelab%20%E2%9A%A1%20https://elitelab.in/sector-analysis" target="_blank" class="share-circle-btn twitter" title="Share on Twitter">
+                </button>
+                <button onclick="shareToNetwork('twitter')" class="share-circle-btn twitter" title="Share on X / Twitter">
                     <i class="fa-brands fa-x-twitter"></i>
-                </a>
+                </button>
+                <button onclick="downloadBanner()" class="share-circle-btn share-download" title="Download Banner">
+                    <i class="fa-solid fa-download"></i>
+                </button>
                 <button onclick="shareBannerDirect()" class="share-circle-btn share-native" title="System Share">
                     <i class="fa-solid fa-share-nodes"></i>
                 </button>
@@ -692,14 +700,14 @@
 
             <!-- FII big number -->
             <div style="margin-bottom:6px;">
-                <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:0.1em;margin-bottom:6px;font-weight:600;">FII / FPI NET</div>
-                <div id="banner-fii-net-big" style="font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px;">--</div>
+                <div style="font-size:14px;color:#ffffff;letter-spacing:0.1em;margin-bottom:6px;font-weight:600;">FII / FPI NET</div>
+                <div id="banner-fii-net-big" style="font-size:33px;font-weight:900;line-height:1;letter-spacing:-1px;">--</div>
             </div>
 
             <!-- DII big number -->
             <div style="margin-top:16px;">
-                <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:0.1em;margin-bottom:6px;font-weight:600;">DII NET</div>
-                <div id="banner-dii-net-big" style="font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px;">--</div>
+                <div style="font-size:14px;color:#ffffff;letter-spacing:0.1em;margin-bottom:6px;font-weight:600;">DII NET</div>
+                <div id="banner-dii-net-big" style="font-size:33px;font-weight:900;line-height:1;letter-spacing:-1px;">--</div>
             </div>
         </div>
 
@@ -723,10 +731,17 @@
             </div>
         </div>
 
-        <!-- Footer watermark -->
-        <div style="background:#08081a;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.04);">
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">DATA SOURCE: NSE · NSDL</div>
-            <div style="font-size:9px;color:rgba(139,92,246,0.6);font-weight:700;letter-spacing:0.08em;">elitelab.in</div>
+        <!-- Footer watermark with QR code -->
+        <div style="background:#08081a;padding:12px 28px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.04);">
+            <div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">DATA SOURCE: NSE · NSDL</div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;margin-top:2px;"><span style="color:#ffffff;">Elitelab</span><span style="color:#8B5CF6;">.</span><span style="color:#ffffff;">in</span></div>
+            </div>
+            <!-- QR Code -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <img src="qr-elitelab.png" alt="Scan to visit elitelab.in" crossorigin="anonymous" style="width:52px;height:52px;border-radius:4px;background:#fff;padding:2px;display:block;">
+                <div style="font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:0.06em;">SCAN TO VISIT</div>
+            </div>
         </div>
     </div>
 
@@ -797,11 +812,66 @@
         link.click();
     }
 
+    // Share the banner image to a specific network
+    async function shareToNetwork(network) {
+        const canvas = document.getElementById('banner-canvas');
+        if (!canvas) { alert('Please wait for the preview to load first.'); return; }
+
+        const prefix = currentShareType === 'fpi' ? 'elitelab-fpi-flow-' : 'elitelab-fiidii-';
+        const filename = prefix + (new Date().toISOString().slice(0,10)) + '.png';
+        const title = currentShareType === 'fpi' ? 'FPI Sector Flow — Elitelab.in' : 'FII / DII Daily Flow — Elitelab.in';
+        const text = currentShareType === 'fpi'
+            ? '📊 Fortnightly FPI sector positioning from NSDL. Powered by Elitelab.in 👉 https://elitelab.in/sector-analysis'
+            : '📊 Today\'s FII/DII institutional flow data from NSE. Powered by Elitelab.in 👉 https://elitelab.in/sector-analysis';
+
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], filename, { type: 'image/png' });
+
+            if (network === 'whatsapp') {
+                // Try Web Share API first (shares actual image on mobile)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ title, text, files: [file] });
+                        return;
+                    } catch(e) { if (e.name === 'AbortError') return; }
+                }
+                // Desktop fallback: download image + open WhatsApp with text
+                downloadBanner();
+                setTimeout(() => {
+                    window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
+                }, 500);
+            }
+
+            else if (network === 'twitter') {
+                // Download image first, then open Twitter compose
+                downloadBanner();
+                setTimeout(() => {
+                    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+                }, 500);
+            }
+
+            else if (network === 'instagram') {
+                // Instagram doesn't support direct web sharing — download image for user to post manually
+                downloadBanner();
+                setTimeout(() => {
+                    window.open('https://www.instagram.com/', '_blank');
+                }, 800);
+                // Show tip
+                const tip = document.createElement('p');
+                tip.style.cssText = 'font-size:0.72rem;color:#c4b5fd;margin:0.5rem 0 0;text-align:center;';
+                tip.innerText = '📥 Image saved! Open Instagram and post from your gallery.';
+                const actions = document.getElementById('share-modal-actions');
+                const existing = actions.nextElementSibling;
+                if (existing && existing.tagName === 'P') existing.remove();
+                actions.after(tip);
+            }
+        }, 'image/png');
+    }
+
     async function shareBannerDirect() {
         const canvas = document.getElementById('banner-canvas');
         if (!canvas) return;
         if (!navigator.share || !navigator.canShare) {
-            // Fallback to download if Web Share not supported
             downloadBanner();
             return;
         }
@@ -809,16 +879,12 @@
             canvas.toBlob(async (blob) => {
                 const filename = (currentShareType === 'fpi' ? 'elitelab-fpi-flow-' : 'elitelab-fiidii-') + (new Date().toISOString().slice(0,10)) + '.png';
                 const file = new File([blob], filename, { type: 'image/png' });
+                const title = currentShareType === 'fpi' ? 'FPI Sector Flow — Elitelab.in' : 'FII / DII Daily Flow — Elitelab.in';
+                const text = currentShareType === 'fpi'
+                    ? 'Fortnightly FPI sector positioning from NSDL. Powered by Elitelab.in'
+                    : 'Today\'s institutional flow data from NSE. Powered by Elitelab.in';
                 if (navigator.canShare({ files: [file] })) {
-                    const title = currentShareType === 'fpi' ? 'FPI Sector Flow — Elitelab.in' : 'FII / DII Daily Flow — Elitelab.in';
-                    const text = currentShareType === 'fpi'
-                        ? 'Fortnightly FPI sector positioning from NSDL. Powered by Elitelab.in'
-                        : 'Today\'s institutional flow data from NSE. Powered by Elitelab.in';
-                    await navigator.share({
-                        title: title,
-                        text: text,
-                        files: [file]
-                    });
+                    await navigator.share({ title, text, files: [file] });
                 } else {
                     downloadBanner();
                 }
@@ -871,10 +937,17 @@
             <div style="font-size:10px;color:rgba(139,92,246,0.5);font-weight:700;letter-spacing:0.08em;">NSDL DATA</div>
         </div>
 
-        <!-- Footer -->
-        <div style="background:#08081a;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.04);">
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">DATA SOURCE: NSDL · NSE</div>
-            <div style="font-size:9px;color:rgba(139,92,246,0.6);font-weight:700;letter-spacing:0.08em;">elitelab.in</div>
+        <!-- Footer with QR code -->
+        <div style="background:#08081a;padding:12px 28px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.04);">
+            <div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">DATA SOURCE: NSDL · NSE</div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;margin-top:2px;"><span style="color:#ffffff;">Elitelab</span><span style="color:#8B5CF6;">.</span><span style="color:#ffffff;">in</span></div>
+            </div>
+            <!-- QR Code -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <img src="qr-elitelab.png" alt="Scan to visit elitelab.in" crossorigin="anonymous" style="width:52px;height:52px;border-radius:4px;background:#fff;padding:2px;display:block;">
+                <div style="font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:0.06em;">SCAN TO VISIT</div>
+            </div>
         </div>
     </div>
 
