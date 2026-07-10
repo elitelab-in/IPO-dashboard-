@@ -2,13 +2,27 @@ let allSectors = {};
 let selectedSectorName = null;
 let currentFilter = 'all';
 let autoRefreshTimer = null;
+let heatmapLiveTimer = null;
 let countdownSeconds = 180; // 3 minutes
+let lastSectorSnapshot = {}; // for diff-based tile updates
+
+// Check if NSE market is currently open (IST 09:15 - 15:30, Mon-Fri)
+function isMarketOpen() {
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const ist = new Date(utc + 5.5 * 3600000);
+    const day = ist.getDay();
+    if (day === 0 || day === 6) return false;
+    const mins = ist.getHours() * 60 + ist.getMinutes();
+    return mins >= 555 && mins < 930; // 9:15 to 15:30
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchSectorAnalysis();
     fetchNsdlFpiFlows();
     setupFilters();
     startCountdown();
+    startHeatmapLivePoll();
 });
 
 function fetchSectorAnalysis() {
@@ -155,15 +169,15 @@ function renderHeatmap() {
             <div>
                 <h4 style="font-size: 0.95rem; font-weight: 700; color: #ffffff; margin-bottom: 0.25rem;">${s.name}</h4>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem;">
-                    <span style="font-size: 0.85rem; font-weight: 700; color: ${change >= 0 ? 'var(--success)' : 'var(--danger)'};">
+                    <span class="live-change" style="font-size: 0.85rem; font-weight: 700; color: ${change >= 0 ? 'var(--success)' : 'var(--danger)'}">
                         ${change >= 0 ? '+' : ''}${change.toFixed(2)}%
                     </span>
-                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${s.pts_change >= 0 ? '+' : ''}${s.pts_change.toFixed(1)} pts</span>
+                    <span class="live-pts" style="font-size: 0.75rem; color: var(--text-secondary);">${s.pts_change >= 0 ? '+' : ''}${s.pts_change.toFixed(1)} pts</span>
                 </div>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 0.5rem;">
                 <span style="color: var(--text-secondary);"><i class="fa-solid fa-shuffle"></i> ${s.advances}/${s.declines}</span>
-                <span style="background: rgba(255,255,255,0.06); padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 600; color: #ffffff;">Sc: ${s.strength_score}</span>
+                <span class="live-score" style="background: rgba(255,255,255,0.06); padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 600; color: #ffffff;">Sc: ${s.strength_score}</span>
             </div>
         `;
         tile.addEventListener('click', () => {
@@ -173,6 +187,82 @@ function renderHeatmap() {
         });
         container.appendChild(tile);
     });
+}
+
+// Lightweight heatmap-only poll — updates tile values in-place without full rebuild
+function fetchHeatmapOnly() {
+    if (!isMarketOpen()) return; // only poll during market hours
+    fetch('/api/sector-analysis')
+        .then(r => r.ok ? r.json() : null)
+        .then(res => {
+            if (!res || res.status !== 'success' || !res.data) return;
+            const newSectors = res.data.sectors;
+            if (!newSectors) return;
+
+            let anyChanged = false;
+
+            Object.entries(newSectors).forEach(([key, s]) => {
+                const old = lastSectorSnapshot[key];
+                const changed = !old
+                    || old.pct_change !== s.pct_change
+                    || old.strength_score !== s.strength_score
+                    || old.pts_change !== s.pts_change;
+
+                if (changed) {
+                    anyChanged = true;
+                    allSectors[key] = s;
+                    lastSectorSnapshot[key] = { ...s };
+
+                    // Find the tile for this sector and update in-place
+                    document.querySelectorAll('.sector-tile').forEach(tile => {
+                        const h4 = tile.querySelector('h4');
+                        if (!h4 || h4.innerText !== s.name) return;
+
+                        // Update change color class
+                        tile.classList.remove('tile-very-bullish','tile-bullish','tile-neutral','tile-weak','tile-very-weak');
+                        const change = s.pct_change;
+                        if (change > 1.5) tile.classList.add('tile-very-bullish');
+                        else if (change > 0.3) tile.classList.add('tile-bullish');
+                        else if (change < -1.5) tile.classList.add('tile-very-weak');
+                        else if (change < -0.3) tile.classList.add('tile-weak');
+                        else tile.classList.add('tile-neutral');
+
+                        // Update % change text
+                        const changeEl = tile.querySelector('.live-change');
+                        if (changeEl) {
+                            changeEl.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+                            changeEl.style.color = change >= 0 ? 'var(--success)' : 'var(--danger)';
+                        }
+                        // Update pts
+                        const ptsEl = tile.querySelector('.live-pts');
+                        if (ptsEl) ptsEl.innerText = `${s.pts_change >= 0 ? '+' : ''}${s.pts_change.toFixed(1)} pts`;
+                        // Update score
+                        const scoreEl = tile.querySelector('.live-score');
+                        if (scoreEl) scoreEl.innerText = `Sc: ${s.strength_score}`;
+
+                        // Flash pulse animation on changed tile
+                        tile.classList.add('tile-flash');
+                        setTimeout(() => tile.classList.remove('tile-flash'), 600);
+                    });
+                }
+            });
+
+            // Update live indicator
+            const timerEl = document.getElementById('update-timer');
+            if (timerEl && anyChanged) {
+                timerEl.innerText = '⚡ Updated just now';
+                setTimeout(() => {
+                    if (timerEl) timerEl.innerText = `🔴 LIVE · Next full sync in ${Math.floor(countdownSeconds/60)}:${String(countdownSeconds%60).padStart(2,'0')}`;
+                }, 2000);
+            }
+        })
+        .catch(() => {});
+}
+
+function startHeatmapLivePoll() {
+    if (heatmapLiveTimer) clearInterval(heatmapLiveTimer);
+    // Poll every 15 seconds — server cache responds in ~20ms
+    heatmapLiveTimer = setInterval(fetchHeatmapOnly, 15000);
 }
 
 function renderRotationQuadrants() {
@@ -320,13 +410,16 @@ function startCountdown() {
             fetchSectorAnalysis();
             fetchNsdlFpiFlows();
             countdownSeconds = 180;
+            // Snapshot sectors after full refresh
+            Object.entries(allSectors).forEach(([k,v]) => { lastSectorSnapshot[k] = {...v}; });
         }
         
         const minutes = Math.floor(countdownSeconds / 60);
         const seconds = countdownSeconds % 60;
         const timerEl = document.getElementById('update-timer');
         if (timerEl) {
-            timerEl.innerText = `Auto-refresh in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            const liveLabel = isMarketOpen() ? '🔴 LIVE · ' : '';
+            timerEl.innerText = `${liveLabel}Next sync in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         }
     }, 1000);
 }
