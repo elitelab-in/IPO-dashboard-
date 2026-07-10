@@ -67,8 +67,60 @@ function updateMarketStatus() {
     });
 }
 
+function updateAuthNavbar() {
+    fetch('/api/auth/status')
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
+        .then(data => {
+            const navLinksContainers = document.querySelectorAll('.nav-links');
+            navLinksContainers.forEach(nav => {
+                // Clean up any existing auth links to prevent duplicates
+                const existing = nav.querySelectorAll('.auth-nav-link');
+                existing.forEach(el => el.remove());
+                
+                if (data.logged_in) {
+                    // Render Dashboard Link
+                    const dashLink = document.createElement('a');
+                    dashLink.href = '/dashboard';
+                    dashLink.className = 'nav-link auth-nav-link';
+                    dashLink.innerText = 'Dashboard';
+                    if (window.location.pathname === '/dashboard') {
+                        dashLink.classList.add('active');
+                    }
+                    nav.appendChild(dashLink);
+                    
+                    // Render Admin Link if is_admin is true
+                    if (data.user && data.user.is_admin) {
+                        const adminLink = document.createElement('a');
+                        adminLink.href = '/admin';
+                        adminLink.className = 'nav-link auth-nav-link';
+                        adminLink.innerText = 'Admin';
+                        if (window.location.pathname === '/admin') {
+                            adminLink.classList.add('active');
+                        }
+                        nav.appendChild(adminLink);
+                    }
+                } else {
+                    // Render Login Link
+                    const loginLink = document.createElement('a');
+                    loginLink.href = '/login';
+                    loginLink.className = 'nav-link auth-nav-link';
+                    loginLink.innerText = 'Login';
+                    if (window.location.pathname === '/login') {
+                        loginLink.classList.add('active');
+                    }
+                    nav.appendChild(loginLink);
+                }
+            });
+        })
+        .catch(err => console.error('Navbar auth status fetch failed:', err));
+}
+
 // Run immediately and then every second
 document.addEventListener('DOMContentLoaded', () => {
     updateMarketStatus();
     setInterval(updateMarketStatus, 1000);
+    updateAuthNavbar();
 });

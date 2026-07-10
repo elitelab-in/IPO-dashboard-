@@ -177,7 +177,7 @@ class SectorDataLayer:
             print(f"[SectorDataLayer] Error appending latest day: {e}")
         return df
 
-    def get_stock_data(self, symbol):
+    def get_stock_data(self, symbol, ensure_latest=False):
         """Fetch stock data from yfinance with caching."""
         now = time.time()
         with self.lock:
@@ -204,7 +204,8 @@ class SectorDataLayer:
             if hist.empty:
                 return None
             
-            hist = self._ensure_latest_day(hist, ticker)
+            if ensure_latest:
+                hist = self._ensure_latest_day(hist, ticker)
             hist = hist.dropna(subset=['Close'])
             if hist.empty:
                 return None

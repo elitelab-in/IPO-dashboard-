@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Dashboard - Elitelab</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+        .dash-sidebar {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            height: fit-content;
+        }
+        .dash-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            text-align: left;
+            width: 100%;
+        }
+        .dash-menu-item:hover, .dash-menu-item.active {
+            color: #fff;
+            background: rgba(139, 92, 246, 0.1);
+        }
+        .dash-menu-item.active {
+            background: var(--accent-primary);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+        .dash-content {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            backdrop-filter: blur(12px);
+            min-height: 400px;
+        }
+        .dash-section {
+            display: none;
+        }
+        .dash-section.active {
+            display: block;
+        }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .billing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+        .billing-table th, .billing-table td {
+            padding: 0.85rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .billing-table th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .billing-table td {
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .status-badge.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .status-badge.expired {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .form-input {
+            width: 100%;
+            height: 42px;
+            padding: 0 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            color: #ffffff;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+        }
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        /* Responsive Mobile Styles */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+            .dash-sidebar {
+                flex-direction: row;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 0.6rem;
+                gap: 0.5rem;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none; /* Hide scrollbar for clean app feel */
+            }
+            .dash-sidebar::-webkit-scrollbar {
+                display: none; /* Hide scrollbar for Chrome/Safari */
+            }
+            .dash-menu-item {
+                width: auto;
+                display: inline-flex;
+                padding: 0.6rem 1.1rem;
+                flex-shrink: 0;
+            }
+            .dash-sidebar div {
+                display: none; /* Hide vertical separator line on mobile */
+            }
+            .dash-content {
+                padding: 1.5rem 1.25rem;
+                min-height: auto;
+            }
+            .overview-banner-box {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                padding: 1.5rem 1.25rem !important;
+                gap: 1.25rem !important;
+            }
+            .overview-banner-actions {
+                width: 100%;
+                flex-direction: column !important;
+            }
+            .overview-banner-actions a {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+                height: 44px !important;
+                display: flex;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/screener" class="nav-link">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Analysis <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                
+                <a href="/economy" class="nav-link">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <div class="market-status-widget desktop-only"></div>
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container" style="margin-top: 6rem;">
+        
+        <div style="margin-bottom: 2.5rem;">
+            <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">User <span class="highlight-text">Dashboard</span></h1>
+            <p style="color: var(--text-secondary);" id="dashboard-welcome-msg">Welcome to your dashboard</p>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <!-- Sidebar navigation -->
+            <div class="dash-sidebar">
+                <button class="dash-menu-item active" onclick="switchSection('overview')">
+                    <i class="fa-solid fa-gauge"></i> Overview
+                </button>
+                <button class="dash-menu-item" onclick="switchSection('profile')">
+                    <i class="fa-solid fa-user-gear"></i> Edit Profile
+                </button>
+                <button class="dash-menu-item" onclick="switchSection('billing')">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing History
+                </button>
+                <div style="border-top: 1px solid rgba(255,255,255,0.06); margin: 0.5rem 0;"></div>
+                <button class="dash-menu-item" onclick="logoutUser()" style="color: var(--danger);">
+                    <i class="fa-solid fa-right-from-bracket"></i> Log Out
+                </button>
+            </div>
+
+            <!-- Content Panel -->
+            <div class="dash-content">
+                
+                <!-- OVERVIEW SECTION -->
+                <div class="dash-section active" id="sec-overview">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Subscription Overview</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <!-- Active Plan Box -->
+                        <div class="stat-box">
+                            <span style="color: var(--text-secondary); font-size: 0.85rem;">CURRENT PLAN</span>
+                            <strong style="font-size: 1.4rem; color: #fff;" id="sub-plan-name">Loading...</strong>
+                            <div style="margin-top: auto; display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="status-badge active" id="sub-plan-status">Active</span>
+                            </div>
+                        </div>
+
+                        <!-- Days Left Box -->
+                        <div class="stat-box">
+                            <span style="color: var(--text-secondary); font-size: 0.85rem;">DAYS REMAINING</span>
+                            <strong style="font-size: 1.8rem; color: var(--accent-primary);" id="sub-days-left">0</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);" id="sub-expiry-date">Expires: -</span>
+                        </div>
+                    </div>
+
+                    <div class="overview-banner-box" style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+                        <div>
+                            <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">Unlock real-time algorithmic features</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Gain full access to the AI breakout and swing scanner dashboards.</p>
+                        </div>
+                        <div class="overview-banner-actions" style="display: flex; gap: 0.8rem;">
+                            <a href="/pricing" class="btn-submit" style="margin: 0; padding: 0.6rem 1.5rem; text-decoration: none; height: auto;">
+                                <i class="fa-solid fa-circle-arrow-up"></i> Renew / Upgrade Plan
+                            </a>
+                            <a href="/screener" class="btn-choose" style="margin: 0; padding: 0.6rem 1.5rem; text-decoration: none; border-color: var(--accent-primary); color: var(--accent-primary);">
+                                Open AI Scanner <i class="fa-solid fa-chevron-right" style="margin-left: 0.25rem; font-size: 0.8rem;"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROFILE EDIT SECTION -->
+                <div class="dash-section" id="sec-profile">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Edit Profile Details</h2>
+                    
+                    <div id="profile-error" class="alert alert-danger"></div>
+                    <div id="profile-success" class="alert alert-success"></div>
+
+                    <form id="profile-form" style="max-width: 480px;">
+                        <div class="form-group">
+                            <label class="form-label" for="profile-name">Full Name</label>
+                            <input class="form-input" type="text" id="profile-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-email">Email Address</label>
+                            <input class="form-input" type="email" id="profile-email" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label class="form-label" for="profile-pwd">New Password (leave blank to keep current)</label>
+                            <input class="form-input" type="password" id="profile-pwd" placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn-submit" style="margin: 0; width: auto; padding: 0 1.5rem;" id="btn-profile-submit">
+                            Save Profile Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- BILLING SECTION -->
+                <div class="dash-section" id="sec-billing">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Payment Invoices & Billing History</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;">View and download past invoices from premium plan payments.</p>
+                    
+                    <div class="table-responsive" style="margin-top: 1.5rem;">
+                        <table class="billing-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Transaction ID</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billing-history-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                                        No billing invoices found.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Tab Switching
+        function switchSection(secId) {
+            document.querySelectorAll('.dash-menu-item').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.dash-section').forEach(sec => sec.classList.remove('active'));
+            
+            // Find button by onclick matching
+            const buttons = Array.from(document.querySelectorAll('.dash-sidebar button'));
+            const targetBtn = buttons.find(b => b.getAttribute('onclick').includes(secId));
+            if (targetBtn) targetBtn.classList.add('active');
+            
+            const targetSec = document.getElementById(`sec-${secId}`);
+            if (targetSec) targetSec.classList.add('active');
+        }
+
+        let userDetails = null;
+
+        // Check login state and load details
+        function loadDashboard() {
+            fetch('/api/auth/status')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.logged_in) {
+                        window.location.href = '/login';
+                        return;
+                    }
+                    
+                    userDetails = data.user;
+                    
+                    // Welcome Title
+                    document.getElementById('dashboard-welcome-msg').innerText = `Welcome, ${data.user.name}! Manage your subscription billing details.`;
+                    
+                    // Edit Profile Fields
+                    document.getElementById('profile-name').value = data.user.name;
+                    document.getElementById('profile-email').value = data.user.email;
+                    
+                    // Overview fields
+                    document.getElementById('sub-plan-name').innerText = data.user.subscription_plan;
+                    document.getElementById('sub-days-left').innerText = data.user.days_remaining;
+                    document.getElementById('sub-expiry-date').innerText = data.user.expiry_date ? `Expires: ${data.user.expiry_date}` : 'No active subscription';
+                    
+                    const statusBadge = document.getElementById('sub-plan-status');
+                    if (data.user.active_subscription) {
+                        statusBadge.innerText = 'Active';
+                        statusBadge.className = 'status-badge active';
+                    } else {
+                        statusBadge.innerText = 'Inactive / Expired';
+                        statusBadge.className = 'status-badge expired';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    window.location.href = '/login';
+                });
+        }
+
+        // Fetch billing invoices
+        function loadBillingHistory() {
+            fetch('/api/payments/history')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('billing-history-body');
+                    tbody.innerHTML = '';
+                    
+                    const payments = data.payments || [];
+                    if (payments.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                                    No billing invoices found.
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    payments.forEach(p => {
+                        const tr = document.createElement('tr');
+                        // Parse timestamp
+                        let dateStr = p.created_at;
+                        try {
+                            const dt = new Date(p.created_at.replace(' ', 'T'));
+                            dateStr = dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        } catch(e) {}
+                        
+                        tr.innerHTML = `
+                            <td>${dateStr}</td>
+                            <td style="font-weight: 600;">${p.plan_name}</td>
+                            <td style="font-family: monospace; font-size: 0.82rem; color: var(--text-secondary);">${p.transaction_id}</td>
+                            <td style="font-weight: 700; color: #fff;">₹${parseFloat(p.amount).toFixed(2)}</td>
+                            <td><span class="status-badge active">${p.status.toUpperCase()}</span></td>
+                            <td style="text-align: right;">
+                                <button onclick="downloadMockInvoice('${p.transaction_id}', '${p.plan_name}', ${p.amount}, '${dateStr}')" style="background: none; border: none; color: var(--accent-primary); cursor: pointer; font-size: 1rem;" title="Download PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }
+
+        // Profile Form Submit
+        const profileForm = document.getElementById('profile-form');
+        const pError = document.getElementById('profile-error');
+        const pSuccess = document.getElementById('profile-success');
+        const pSubmitBtn = document.getElementById('btn-profile-submit');
+
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            pError.style.display = 'none';
+            pSuccess.style.display = 'none';
+            pSubmitBtn.disabled = true;
+            pSubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const name = document.getElementById('profile-name').value.trim();
+            const password = document.getElementById('profile-pwd').value;
+
+            fetch('/api/auth/profile/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, password })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(res => {
+                pSubmitBtn.disabled = false;
+                pSubmitBtn.innerText = 'Save Profile Changes';
+                if (res.status === 200) {
+                    pSuccess.innerText = 'Profile details updated successfully!';
+                    pSuccess.style.display = 'block';
+                    loadDashboard();
+                } else {
+                    pError.innerText = res.body.message || 'Failed to update profile details.';
+                    pError.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                pSubmitBtn.disabled = false;
+                pSubmitBtn.innerText = 'Save Profile Changes';
+                pError.innerText = 'Network connection error.';
+                pError.style.display = 'block';
+            });
+        });
+
+        // Logout
+        function logoutUser() {
+            fetch('/api/auth/logout', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/';
+                });
+        }
+
+        // Download Invoice mock
+        function downloadMockInvoice(txId, planName, amount, dateStr) {
+            alert(`Simulating invoice download:\n---------------------------------\nInvoice ID: INV-${txId.substring(5,13).toUpperCase()}\nDate: ${dateStr}\nPlan: ${planName}\nAmount Paid: ₹${amount.toFixed(2)}\nGateway: Razorpay\nStatus: SUCCESS\n---------------------------------`);
+        }
+
+        // Load dashboard on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+            loadBillingHistory();
+        });
+    </script>
+    <script src="market-status.js?v=62"></script>
+</body>
+</html>

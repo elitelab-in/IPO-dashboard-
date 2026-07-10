@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Elitelab</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+        @media (max-width: 768px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .admin-sidebar {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            height: fit-content;
+        }
+        .admin-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            text-align: left;
+            width: 100%;
+        }
+        .admin-menu-item:hover, .admin-menu-item.active {
+            color: #fff;
+            background: rgba(139, 92, 246, 0.1);
+        }
+        .admin-menu-item.active {
+            background: var(--accent-primary);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+        .admin-content {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            backdrop-filter: blur(12px);
+            min-height: 400px;
+        }
+        .admin-section {
+            display: none;
+        }
+        .admin-section.active {
+            display: block;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+        .admin-table th, .admin-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .admin-table th {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .admin-table td {
+            color: var(--text-primary);
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .form-input {
+            width: 100%;
+            height: 40px;
+            padding: 0 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+        .badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge.admin {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-primary);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .badge.user {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/screener" class="nav-link">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Analysis <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                
+                <a href="/economy" class="nav-link">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <div class="market-status-widget desktop-only"></div>
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container" style="margin-top: 6rem;">
+        
+        <div style="margin-bottom: 2.5rem;">
+            <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">Admin <span class="highlight-text">Console</span></h1>
+            <p style="color: var(--text-secondary);">Manage users, payments, subscriptions, and system configurations.</p>
+        </div>
+
+        <div class="admin-grid">
+            
+            <!-- Sidebar -->
+            <div class="admin-sidebar">
+                <button class="admin-menu-item active" onclick="switchSection('dashboard')">
+                    <i class="fa-solid fa-chart-pie"></i> Metrics
+                </button>
+                <button class="admin-menu-item" onclick="switchSection('users')">
+                    <i class="fa-solid fa-users"></i> User Database
+                </button>
+                <button class="admin-menu-item" onclick="switchSection('payments')">
+                    <i class="fa-solid fa-cash-register"></i> Transactions
+                </button>
+                <button class="admin-menu-item" onclick="switchSection('plans')">
+                    <i class="fa-solid fa-layer-group"></i> Manage Plans
+                </button>
+                <button class="admin-menu-item" onclick="switchSection('marketing')">
+                    <i class="fa-solid fa-bullhorn"></i> coupons & updates
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="admin-content">
+                
+                <!-- METRICS TAB -->
+                <div class="admin-section active" id="sec-dashboard">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">System Overview Metrics</h2>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem;">TOTAL REGISTERED</span>
+                            <strong style="font-size: 1.6rem; color:#fff;" id="metric-total-users">0</strong>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Registered accounts</span>
+                        </div>
+                        <div class="metric-card">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem;">ACTIVE PREMIUM</span>
+                            <strong style="font-size: 1.6rem; color: var(--success);" id="metric-active-subs">0</strong>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Paid active plans</span>
+                        </div>
+                        <div class="metric-card">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem;">EXPIRED PREMIUM</span>
+                            <strong style="font-size: 1.6rem; color: var(--danger);" id="metric-expired-subs">0</strong>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Unrenewed subscriptions</span>
+                        </div>
+                        <div class="metric-card" style="border-color: rgba(139, 92, 246, 0.3); background: rgba(139, 92, 246, 0.02);">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem;">TOTAL REVENUE</span>
+                            <strong style="font-size: 1.6rem; color: var(--accent-primary);" id="metric-revenue">₹0.00</strong>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Gross payment volume</span>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-top: 2rem; margin-bottom: 1rem;">Recent Transactions</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Amount</th>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="metrics-recent-payments">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No recent payments</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- USER DATABASE TAB -->
+                <div class="admin-section" id="sec-users">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">User Directory Database</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">List of registered users and their current subscription tiers.</p>
+                    
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Active Plan</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-list-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-secondary);">Loading user directory...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TRANSACTIONS TAB -->
+                <div class="admin-section" id="sec-payments">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">All Transaction Ledgers</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Complete historical breakdown of payment invoices captured on Razorpay.</p>
+                    
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Amount</th>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-list-body">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-secondary);">Loading transaction ledgers...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- MANAGE PLANS TAB -->
+                <div class="admin-section" id="sec-plans">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Create New Subscription Plan</h2>
+                    
+                    <div id="plan-success" class="alert alert-success"></div>
+                    <div id="plan-error" class="alert alert-danger"></div>
+
+                    <form id="add-plan-form" style="max-width: 480px;">
+                        <div class="form-group">
+                            <label class="form-label" for="plan-name-input">Plan Name</label>
+                            <input class="form-input" type="text" id="plan-name-input" required placeholder="e.g. Elite Quarterly">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="plan-price-input">Price (₹ INR)</label>
+                            <input class="form-input" type="number" step="0.01" id="plan-price-input" required placeholder="e.g. 2499.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="plan-duration-input">Duration (days)</label>
+                            <input class="form-input" type="number" id="plan-duration-input" required placeholder="e.g. 90">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label class="form-label">Features Checklist (comma separated)</label>
+                            <input class="form-input" type="text" id="plan-features-input" placeholder="e.g. Full AI Scanner, Advanced Filters, Priority Support">
+                        </div>
+                        <button type="submit" class="btn-submit" style="margin: 0; width: auto; padding: 0 1.5rem;" id="btn-add-plan">
+                            Add Pricing Tier Plan
+                        </button>
+                    </form>
+                </div>
+
+                <!-- MARKETING / MOCK TOOLS TAB -->
+                <div class="admin-section" id="sec-marketing">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Coupons & Announcements Console</h2>
+                    
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;"><i class="fa-solid fa-tags" style="color: var(--accent-primary); margin-right: 0.5rem;"></i> Active System Coupon Codes</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Create coupons to offer percentage or fixed discounts at Razorpay checkout.</p>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
+                                <span><code>ELITE30</code> - 30% discount on first month</span>
+                                <span style="color: var(--success); font-weight: 600;">ACTIVE</span>
+                            </div>
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
+                                <span><code>LAUNCH10</code> - 10% lifetime discount on yearly plan</span>
+                                <span style="color: var(--success); font-weight: 600;">ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;"><i class="fa-solid fa-bell" style="color: var(--accent-primary); margin-right: 0.5rem;"></i> Broadcast announcements</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Broadcast alerts directly onto the user dashboards.</p>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <strong>System Update:</strong> Sector capitalization filters are now live!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Tab Switching
+        function switchSection(secId) {
+            document.querySelectorAll('.admin-menu-item').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+            
+            const buttons = Array.from(document.querySelectorAll('.admin-sidebar button'));
+            const targetBtn = buttons.find(b => b.getAttribute('onclick').includes(secId));
+            if (targetBtn) targetBtn.classList.add('active');
+            
+            const targetSec = document.getElementById(`sec-${secId}`);
+            if (targetSec) targetSec.classList.add('active');
+            
+            // Load specific tab data
+            if (secId === 'users') loadUsersList();
+            if (secId === 'payments') loadPaymentsList();
+        }
+
+        // Load stats metrics
+        function loadMetrics() {
+            fetch('/api/admin/dashboard')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status !== 'success') {
+                        alert('Unauthorized Admin Access.');
+                        window.location.href = '/dashboard';
+                        return;
+                    }
+                    
+                    document.getElementById('metric-total-users').innerText = data.metrics.total_users;
+                    document.getElementById('metric-active-subs').innerText = data.metrics.active_subscribers;
+                    document.getElementById('metric-expired-subs').innerText = data.metrics.expired_subscribers;
+                    document.getElementById('metric-revenue').innerText = `₹${parseFloat(data.metrics.total_revenue).toFixed(2)}`;
+                    
+                    const recentTbody = document.getElementById('metrics-recent-payments');
+                    recentTbody.innerHTML = '';
+                    
+                    const recent = data.recent_payments || [];
+                    if (recent.length === 0) {
+                        recentTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No recent payments</td></tr>';
+                        return;
+                    }
+                    
+                    recent.forEach(p => {
+                        const tr = document.createElement('tr');
+                        let dateStr = p.created_at;
+                        try {
+                            const dt = new Date(p.created_at.replace(' ', 'T'));
+                            dateStr = dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        } catch(e) {}
+                        
+                        tr.innerHTML = `
+                            <td style="font-weight: 600;">${p.name}</td>
+                            <td style="color: var(--text-secondary);">${p.email}</td>
+                            <td style="font-weight: 700; color: #fff;">₹${parseFloat(p.amount).toFixed(2)}</td>
+                            <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-secondary);">${p.transaction_id}</td>
+                            <td>${dateStr}</td>
+                        `;
+                        recentTbody.appendChild(tr);
+                    });
+                })
+                .catch(() => {
+                    window.location.href = '/dashboard';
+                });
+        }
+
+        // Load Users List
+        function loadUsersList() {
+            fetch('/api/admin/users/list')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('users-list-body');
+                    tbody.innerHTML = '';
+                    
+                    const users = data.users || [];
+                    users.forEach(u => {
+                        const tr = document.createElement('tr');
+                        let dateStr = u.created_at;
+                        try {
+                            const dt = new Date(u.created_at.replace(' ', 'T'));
+                            dateStr = dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        } catch(e) {}
+                        
+                        const roleClass = u.is_admin ? 'badge admin' : 'badge user';
+                        const roleName = u.is_admin ? 'Admin' : 'User';
+                        const currentPlan = u.current_plan || 'Free Plan';
+                        
+                        tr.innerHTML = `
+                            <td>${u.id}</td>
+                            <td style="font-weight: 600; color:#fff;">${u.name}</td>
+                            <td>${u.email}</td>
+                            <td><span class="${roleClass}">${roleName}</span></td>
+                            <td style="font-weight: 600;">${currentPlan}</td>
+                            <td>${dateStr}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }
+
+        // Load Payments List
+        function loadPaymentsList() {
+            fetch('/api/admin/payments/list')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('payments-list-body');
+                    tbody.innerHTML = '';
+                    
+                    const payments = data.payments || [];
+                    payments.forEach(p => {
+                        const tr = document.createElement('tr');
+                        let dateStr = p.created_at;
+                        try {
+                            const dt = new Date(p.created_at.replace(' ', 'T'));
+                            dateStr = dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        } catch(e) {}
+                        
+                        tr.innerHTML = `
+                            <td>${p.id}</td>
+                            <td style="font-weight: 600; color:#fff;">${p.name}</td>
+                            <td>${p.email}</td>
+                            <td style="font-weight: 700; color:var(--success);">₹${parseFloat(p.amount).toFixed(2)}</td>
+                            <td style="font-family: monospace; font-size: 0.8rem; color:var(--text-secondary);">${p.transaction_id}</td>
+                            <td>${dateStr}</td>
+                            <td><span class="status-badge active">${p.status.toUpperCase()}</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }
+
+        // Form handler to Add Plan
+        const planForm = document.getElementById('add-plan-form');
+        const planSuccess = document.getElementById('plan-success');
+        const planError = document.getElementById('plan-error');
+        const addPlanBtn = document.getElementById('btn-add-plan');
+
+        planForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            planSuccess.style.display = 'none';
+            planError.style.display = 'none';
+            addPlanBtn.disabled = true;
+            addPlanBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+
+            const plan_name = document.getElementById('plan-name-input').value.trim();
+            const price = parseFloat(document.getElementById('plan-price-input').value);
+            const duration_days = parseInt(document.getElementById('plan-duration-input').value);
+            const features_raw = document.getElementById('plan-features-input').value;
+            const features = features_raw ? features_raw.split(',').map(f => f.trim()) : [];
+
+            fetch('/api/admin/plans/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan_name, price, duration_days, features })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(res => {
+                addPlanBtn.disabled = false;
+                addPlanBtn.innerText = 'Add Pricing Tier Plan';
+                if (res.status === 200) {
+                    planSuccess.innerText = res.body.message || 'Plan created successfully!';
+                    planSuccess.style.display = 'block';
+                    planForm.reset();
+                    loadMetrics();
+                } else {
+                    planError.innerText = res.body.message || 'Failed to create plan.';
+                    planError.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                addPlanBtn.disabled = false;
+                addPlanBtn.innerText = 'Add Pricing Tier Plan';
+                planError.innerText = 'Network error during plan creation.';
+                planError.style.display = 'block';
+            });
+        });
+
+        // Load stats metrics on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMetrics();
+        });
+    </script>
+    <script src="market-status.js?v=62"></script>
+</body>
+</html>

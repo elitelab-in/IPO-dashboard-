@@ -180,6 +180,63 @@
         </div>
     </section>
 
+    <!-- Pricing Plans Section -->
+    <section class="pricing-section container fade-in-up delay-2" style="padding: 4rem 1rem; text-align: center;">
+        <div class="pricing-header" style="margin-bottom: 2.5rem;">
+            <span class="reviews-subtitle" style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--accent-primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem;">PRICING PLANS</span>
+            <h2 class="reviews-title" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">Pro Features <span style="color: var(--accent-primary);">Plans</span></h2>
+            <p style="color: var(--text-secondary); font-size: 1rem; max-width: 600px; margin: 0 auto 1.5rem;">
+                Unlock institutional-grade scanning tools, sector sentiment mappings, and advanced fundamentals.
+            </p>
+            <div class="toggle-container" style="margin-top: 0; margin-bottom: 2rem;">
+                <button class="toggle-btn active" id="btn-toggle-monthly" onclick="setHomeBillingCycle('monthly')">Monthly</button>
+                <button class="toggle-btn" id="btn-toggle-yearly" onclick="setHomeBillingCycle('yearly')">Yearly</button>
+            </div>
+        </div>
+        
+        <div class="plans-grid" id="home-plans-container" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; max-width: 1000px; margin: 0 auto 2rem;">
+            <!-- Rendered Dynamically -->
+        </div>
+
+        <!-- Dyn Payment Simulator Modal -->
+        <div id="home-payment-modal" class="payment-modal" style="text-align: left;">
+            <div class="payment-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 0.75rem;">
+                    <h3 style="color: #fff; font-weight: 800; margin: 0; font-size: 1.2rem;">
+                        <i class="fa-solid fa-credit-card" style="color: var(--accent-primary); margin-right: 0.5rem;"></i> Razorpay Sandbox
+                    </h3>
+                    <button onclick="closeHomePaymentModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; padding: 0.2rem;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <span style="color: var(--text-secondary);">Plan selected:</span>
+                        <strong id="home-modal-plan-name" style="color: #fff;">-</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <span style="color: var(--text-secondary);">Order ID:</span>
+                        <code id="home-modal-order-id" style="color: var(--accent-primary);">-</code>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 1.05rem; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 0.5rem; margin-top: 0.5rem;">
+                        <span style="color: #fff; font-weight: 600;">Total Amount:</span>
+                        <strong id="home-modal-amount" style="color: var(--success); font-weight: 800;">-</strong>
+                    </div>
+                </div>
+                
+                <div id="home-payment-status-message" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; line-height: 1.4;"></div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button id="home-btn-pay-success" onclick="executeHomeMockPayment(true)" class="btn btn-primary" style="width: 100%; height: 46px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-circle-check"></i> Simulate Payment Success
+                    </button>
+                    <button onclick="executeHomeMockPayment(false)" class="btn btn-secondary" style="width: 100%; height: 46px; border-radius: 8px; font-weight: 700; color: var(--text-secondary); border-color: rgba(255,255,255,0.08);">
+                        Decline / Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Us Section -->
     <section class="contact-section container fade-in-up delay-3" style="padding: calc(4rem + 10px) 1rem 6rem; display: flex; flex-direction: column; align-items: center;">
         <div class="reviews-header text-center" style="margin-bottom: 2.5rem; width: 100%;">
@@ -279,6 +336,198 @@
         formspree('initForm', { formElement: '#contact-form', formId: 'mvzjlrda' });
     </script>
     <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+    <script>
+        let homePlans = [];
+        let homeBillingCycle = 'monthly';
+        let homeSelectedPlanId = null;
+        let homeActiveOrderId = null;
+        let homePlanName = "";
+        let homeLoggedIn = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Promise.all([
+                fetch('/api/auth/status').then(r => r.json()),
+                fetch('/api/plans').then(r => r.json())
+            ]).then(([authData, plansData]) => {
+                homeLoggedIn = authData.logged_in;
+                homePlans = plansData.plans || [];
+                renderHomePlans();
+            }).catch(err => console.error('Error loading plans:', err));
+        });
+
+        window.setHomeBillingCycle = function(cycle) {
+            homeBillingCycle = cycle;
+            document.getElementById('btn-toggle-monthly').classList.toggle('active', cycle === 'monthly');
+            document.getElementById('btn-toggle-yearly').classList.toggle('active', cycle === 'yearly');
+            renderHomePlans();
+        };
+
+        function renderHomePlans() {
+            const container = document.getElementById('home-plans-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const filtered = homePlans.filter(p => {
+                if (p.plan_name === 'Free Plan') return true;
+                if (homeBillingCycle === 'monthly') {
+                    return p.plan_name.toLowerCase().includes('monthly');
+                } else {
+                    return p.plan_name.toLowerCase().includes('yearly');
+                }
+            });
+
+            filtered.forEach(plan => {
+                const card = document.createElement('div');
+                const isPro = plan.plan_name.toLowerCase().includes('pro');
+                const isFree = plan.plan_name === 'Free Plan';
+                card.className = `pricing-card ${isPro ? 'popular' : ''}`;
+                card.style.flex = "1";
+                card.style.minWidth = "250px";
+                card.style.maxWidth = "320px";
+
+                let features = [];
+                if (isFree) {
+                    features = ["Economy Analyser Features", "Daily Sector Heatmaps", "Basic Fundamental Search"];
+                } else if (!isPro) {
+                    features = ["Economy Analyser", "Sector Analysis", "Fundamental Analysis", "Standard Filters"];
+                } else {
+                    features = ["AI Scanner (Intraday + Swing)", "Sector Analysis", "Fundamental Analysis", "Economy Analyser", "Unlimited Usage", "Priority Support"];
+                }
+
+                const featuresHtml = features.map(f => `
+                    <li class="feature-item" style="color: var(--text-primary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-circle-check" style="color: var(--success);"></i> ${f}
+                    </li>
+                `).join('');
+
+                const priceDisplay = isFree ? '₹0' : `₹${plan.price}`;
+                const periodStr = isFree ? '/ forever' : (homeBillingCycle === 'monthly' ? '/ month' : '/ year');
+
+                let btnText = "Subscribe Now";
+                if (isFree) {
+                    btnText = homeLoggedIn ? "Active (Free)" : "Get Started";
+                }
+
+                card.innerHTML = `
+                    ${isPro ? '<span class="badge-popular" style="position: absolute; top: 12px; right: 12px; background: var(--accent-primary); color: #fff; padding: 2px 8px; border-radius: 8px; font-size: 0.65rem; font-weight: 700;">RECOMMENDED</span>' : ''}
+                    <h3 class="plan-name" style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">${plan.plan_name}</h3>
+                    <div class="plan-price-box" style="margin: 0.75rem 0; display: flex; align-items: baseline; gap: 0.25rem;">
+                        <span class="plan-price" style="font-size: 2rem; font-weight: 800; color: #fff;">${priceDisplay}</span>
+                        <span class="plan-period" style="color: var(--text-secondary); font-size: 0.8rem;">${periodStr}</span>
+                    </div>
+                    <ul class="features-list" style="list-style: none; margin-bottom: 1.5rem; flex-grow: 1; padding: 0;">
+                        ${featuresHtml}
+                    </ul>
+                    <button class="${isPro ? 'btn btn-primary' : 'btn btn-secondary'}" style="width: 100%; border-radius: 6px; padding: 0.6rem; font-size: 0.85rem; font-weight: 700; cursor: pointer;"
+                            onclick="homeInitiateSubscription(${plan.id}, ${isFree})"
+                            ${isFree && homeLoggedIn ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+                        ${btnText}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.homeInitiateSubscription = function(planId, isFree) {
+            if (!homeLoggedIn) {
+                if (isFree) {
+                    window.location.href = `/register`;
+                } else {
+                    window.location.href = `/login?next=/pricing`;
+                }
+                return;
+            }
+
+            if (isFree) {
+                window.location.href = '/screener';
+                return;
+            }
+
+            homeSelectedPlanId = planId;
+            const plan = homePlans.find(p => p.id === planId);
+            if (!plan) return;
+            homePlanName = plan.plan_name;
+
+            fetch('/api/payments/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan_id: planId })
+            })
+            .then(res => res.json())
+            .then(orderData => {
+                if (orderData.status === 'success') {
+                    homeActiveOrderId = orderData.order_id;
+                    
+                    document.getElementById('home-modal-plan-name').innerText = orderData.plan_name;
+                    document.getElementById('home-modal-order-id').innerText = orderData.order_id;
+                    document.getElementById('home-modal-amount').innerText = `₹${parseFloat(orderData.amount / 100).toFixed(2)}`;
+                    
+                    document.getElementById('home-payment-status-message').style.display = 'none';
+                    document.getElementById('home-payment-modal').classList.add('active');
+                } else {
+                    alert(orderData.message || 'Error creating payment order.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Payment system error. Please try again.');
+            });
+        };
+
+        window.closeHomePaymentModal = function() {
+            document.getElementById('home-payment-modal').classList.remove('active');
+        };
+
+        window.executeHomeMockPayment = function(isSuccess) {
+            const statusBox = document.getElementById('home-payment-status-message');
+            statusBox.style.display = 'none';
+            
+            if (!isSuccess) {
+                statusBox.innerText = 'Checkout Simulation: Payment was declined or cancelled by the user.';
+                statusBox.style.display = 'block';
+                return;
+            }
+
+            const paymentPayload = {
+                plan_id: homeSelectedPlanId,
+                razorpay_order_id: homeActiveOrderId,
+                razorpay_payment_id: `pay_mock_${Math.floor(Math.random() * 900000) + 100000}`,
+                razorpay_signature: `sig_mock_${Math.floor(Math.random() * 90000000) + 10000000}`
+            };
+
+            const successBtn = document.getElementById('home-btn-pay-success');
+            successBtn.disabled = true;
+            successBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying signature...';
+
+            fetch('/api/payments/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(paymentPayload)
+            })
+            .then(res => res.json())
+            .then(verifyData => {
+                if (verifyData.status === 'success') {
+                    successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Activated!';
+                    setTimeout(() => {
+                        window.closeHomePaymentModal();
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                } else {
+                    statusBox.innerText = verifyData.message || 'Signature verification failed.';
+                    statusBox.style.display = 'block';
+                    successBtn.disabled = false;
+                    successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Simulate Payment Success';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                statusBox.innerText = 'Network error during payment verification.';
+                statusBox.style.display = 'block';
+                successBtn.disabled = false;
+                successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Simulate Payment Success';
+            });
+        };
+    </script>
     <script src="app.js?v=62"></script>
     <script src="market-status.js?v=62"></script>
     <script src="reviews.js?v=62"></script>

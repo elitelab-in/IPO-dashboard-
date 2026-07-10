@@ -29,9 +29,17 @@ function fetchSectorAnalysis() {
     const container = document.getElementById('heatmap-container');
     
     fetch('/api/sector-analysis')
-        .then(apiData => {
-            if (!apiData.ok) throw new Error('API Response Error');
-            return apiData.json();
+        .then(res => {
+            if (res.status === 401) {
+                showPremiumLockOverlay(true);
+                throw new Error('Login required');
+            }
+            if (res.status === 402 || res.status === 403) {
+                showPremiumLockOverlay(false);
+                throw new Error('Subscription required');
+            }
+            if (!res.ok) throw new Error('API Response Error');
+            return res.json();
         })
         .then(res => {
             if (res.status === 'success' && res.data) {
@@ -551,4 +559,281 @@ function fetchNsdlFpiFlows() {
             const periodEl = document.getElementById('nsdl-period');
             if (periodEl) periodEl.innerText = 'FETCH FAILED';
         });
+}
+
+let sectorSelectedPlanId = null;
+let sectorActiveOrderId = null;
+let sectorPlanName = "";
+
+window.sectorInitiateSubscription = function(planId, isFree, loggedIn, planName) {
+    if (!loggedIn) {
+        if (isFree) {
+            window.location.href = `/register`;
+        } else {
+            window.location.href = `/login?next=/sector-analysis`;
+        }
+        return;
+    }
+    
+    if (isFree) {
+        window.location.reload();
+        return;
+    }
+    
+    sectorSelectedPlanId = planId;
+    sectorPlanName = planName;
+    
+    // Create payment order
+    fetch('/api/payments/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan_id: planId })
+    })
+    .then(res => res.json())
+    .then(orderData => {
+        if (orderData.status === 'success') {
+            sectorActiveOrderId = orderData.order_id;
+            
+            // Fill modal details
+            document.getElementById('sec-modal-plan-name').innerText = orderData.plan_name;
+            document.getElementById('sec-modal-order-id').innerText = orderData.order_id;
+            document.getElementById('sec-modal-amount').innerText = `₹${parseFloat(orderData.amount / 100).toFixed(2)}`;
+            
+            // Display modal
+            document.getElementById('sec-payment-status-message').style.display = 'none';
+            document.getElementById('sector-payment-modal').classList.add('active');
+        } else {
+            alert(orderData.message || 'Error creating payment order.');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Payment system error. Please try again.');
+    });
+};
+
+window.closeSectorPaymentModal = function() {
+    document.getElementById('sector-payment-modal').classList.remove('active');
+};
+
+window.executeSectorMockPayment = function(isSuccess) {
+    const statusBox = document.getElementById('sec-payment-status-message');
+    statusBox.style.display = 'none';
+    
+    if (!isSuccess) {
+        statusBox.innerText = 'Checkout Simulation: Payment was declined or cancelled by the user.';
+        statusBox.style.display = 'block';
+        return;
+    }
+
+    // Simulate sending Razorpay transaction ID, Order ID and mock signature
+    const paymentPayload = {
+        plan_id: sectorSelectedPlanId,
+        razorpay_order_id: sectorActiveOrderId,
+        razorpay_payment_id: `pay_mock_${Math.floor(Math.random() * 900000) + 100000}`,
+        razorpay_signature: `sig_mock_${Math.floor(Math.random() * 90000000) + 10000000}`
+    };
+
+    const successBtn = document.getElementById('sec-btn-pay-success');
+    successBtn.disabled = true;
+    successBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying signature...';
+
+    fetch('/api/payments/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentPayload)
+    })
+    .then(res => res.json())
+    .then(verifyData => {
+        if (verifyData.status === 'success') {
+            successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Activated!';
+            setTimeout(() => {
+                window.closeSectorPaymentModal();
+                window.location.reload(); // Reload page to unlock sector data in-place!
+            }, 1500);
+        } else {
+            statusBox.innerText = verifyData.message || 'Signature verification failed.';
+            statusBox.style.display = 'block';
+            successBtn.disabled = false;
+            successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Simulate Payment Success';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        statusBox.innerText = 'Network error during payment verification.';
+        statusBox.style.display = 'block';
+        successBtn.disabled = false;
+        successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Simulate Payment Success';
+    });
+};
+
+function showPremiumLockOverlay(isNotLoggedIn) {
+    const container = document.querySelector('.page-container');
+    if (!container) return;
+    
+    // Clear live polling interval to save server resources
+    if (typeof heatmapLiveTimer !== 'undefined') {
+        clearInterval(heatmapLiveTimer);
+    }
+    
+    container.style.marginTop = '4rem';
+    container.style.marginBottom = '4rem';
+    
+    // Show a loading spinner first while we fetch active plans and status
+    container.innerHTML = `
+        <div style="text-align: center; padding: 4rem;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1.5rem;"></i>
+            <p style="color: var(--text-secondary);">Loading secure pricing matrix...</p>
+        </div>
+    `;
+
+    Promise.all([
+        fetch('/api/auth/status').then(r => r.json()),
+        fetch('/api/plans').then(r => r.json())
+    ]).then(([authData, plansData]) => {
+        const allPlans = plansData.plans || [];
+        const loggedIn = authData.logged_in;
+        let billingCycle = 'monthly';
+        
+        function renderOverlayContent() {
+            let headingText = "Unlock Sector Rotation Analysis";
+            let descText = 'Sector Rotation analysis is a premium feature reserved for active subscribers. Choose a plan to unlock FII/DII activities, advanced heatmaps, and trend trackers.';
+            
+            if (isNotLoggedIn) {
+                descText = 'Please <a href="/login?next=/sector-analysis" class="highlight-text" style="font-weight: 700; text-decoration: underline;">log in</a> or <a href="/register" class="highlight-text" style="font-weight: 700; text-decoration: underline;">create an account</a> to access premium Sector Rotations, FII/DII Net Flow Trackers, and Market Breadth indicators.';
+            }
+
+            // Filter plans based on billingCycle
+            const filtered = allPlans.filter(p => {
+                if (p.plan_name === 'Free Plan') return true;
+                if (billingCycle === 'monthly') {
+                    return p.plan_name.toLowerCase().includes('monthly');
+                } else {
+                    return p.plan_name.toLowerCase().includes('yearly');
+                }
+            });
+
+            // Map plans to cards html
+            const cardsHtml = filtered.map(plan => {
+                const isPro = plan.plan_name.toLowerCase().includes('pro');
+                const isFree = plan.plan_name === 'Free Plan';
+                
+                // Set features array manually to map cleanly
+                let features = [];
+                if (isFree) {
+                    features = ["Economy Analyser Features", "Daily Sector Heatmaps", "Basic Fundamental Search"];
+                } else if (!isPro) {
+                    features = ["Economy Analyser", "Sector Analysis", "Fundamental Analysis", "Standard Filters"];
+                } else {
+                    features = ["AI Scanner (Intraday + Swing)", "Sector Analysis", "Fundamental Analysis", "Economy Analyser", "Unlimited Usage", "Priority Support"];
+                }
+
+                const featuresHtml = features.map(f => `
+                    <li class="feature-item" style="color: var(--text-primary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-circle-check" style="color: var(--success);"></i> ${f}
+                    </li>
+                `).join('');
+
+                const priceDisplay = isFree ? '₹0' : `₹${plan.price}`;
+                const periodStr = isFree ? '/ forever' : (billingCycle === 'monthly' ? '/ month' : '/ year');
+                
+                let btnText = "Subscribe Now";
+                let btnClass = isPro ? "btn btn-primary" : "btn btn-secondary";
+                if (isFree) {
+                    btnText = loggedIn ? "Active (Free)" : "Get Started";
+                }
+
+                return `
+                    <div class="pricing-card ${isPro ? 'popular' : ''}" style="flex: 1; min-width: 230px; background: rgba(255, 255, 255, 0.02); border: 1px solid ${isPro ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.06)'}; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; position: relative;">
+                        ${isPro ? '<span class="badge-popular" style="position: absolute; top: 12px; right: 12px; background: var(--accent-primary); color: #fff; padding: 2px 8px; border-radius: 8px; font-size: 0.65rem; font-weight: 700;">RECOMMENDED</span>' : ''}
+                        <h3 class="plan-name" style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">${plan.plan_name}</h3>
+                        <div class="plan-price-box" style="margin: 0.75rem 0; display: flex; align-items: baseline; gap: 0.25rem;">
+                            <span class="plan-price" style="font-size: 2rem; font-weight: 800; color: #fff;">${priceDisplay}</span>
+                            <span class="plan-period" style="color: var(--text-secondary); font-size: 0.8rem;">${periodStr}</span>
+                        </div>
+                        <ul class="features-list" style="list-style: none; margin-bottom: 1.5rem; flex-grow: 1; padding: 0;">
+                            ${featuresHtml}
+                        </ul>
+                        <button class="${btnClass}" style="width: 100%; border-radius: 6px; padding: 0.6rem; font-size: 0.85rem; font-weight: 700; cursor: pointer;" 
+                                onclick="sectorInitiateSubscription(${plan.id}, ${isFree}, ${loggedIn}, '${plan.plan_name}')"
+                                ${isFree && loggedIn ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+                            ${btnText}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="glass-panel" style="max-width: 850px; margin: 0 auto; padding: 2.5rem 2rem; text-align: center; border-color: rgba(139, 92, 246, 0.25);">
+                    <div style="margin: 0 auto 1rem; display: flex; justify-content: center;">
+                        <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                            <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                            <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                        </svg>
+                    </div>
+                    
+                    <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">${headingText}</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; max-width: 580px; margin: 0 auto 1.5rem; text-align: center;">
+                        ${descText}
+                    </p>
+
+                    <!-- Toggle Billing Cycle -->
+                    <div class="toggle-container" style="margin-top: 0; margin-bottom: 2rem;">
+                        <button class="toggle-btn ${billingCycle === 'monthly' ? 'active' : ''}" onclick="window.setSectorBillingCycle('monthly')">Monthly</button>
+                        <button class="toggle-btn ${billingCycle === 'yearly' ? 'active' : ''}" onclick="window.setSectorBillingCycle('yearly')">Yearly</button>
+                    </div>
+                    
+                    <div class="plans-grid" style="display: flex; gap: 1.25rem; flex-wrap: wrap; justify-content: center; margin-bottom: 0.5rem;">
+                        ${cardsHtml}
+                    </div>
+                </div>
+
+                <!-- Dyn Payment Simulator Modal -->
+                <div id="sector-payment-modal" class="payment-modal" style="text-align: left;">
+                    <div class="payment-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 0.75rem;">
+                            <h3 style="color: #fff; font-weight: 800; margin: 0; font-size: 1.2rem;">
+                                <i class="fa-solid fa-credit-card" style="color: var(--accent-primary); margin-right: 0.5rem;"></i> Razorpay Sandbox
+                            </h3>
+                            <button onclick="closeSectorPaymentModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; padding: 0.2rem;"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                                <span style="color: var(--text-secondary);">Plan selected:</span>
+                                <strong id="sec-modal-plan-name" style="color: #fff;">-</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                                <span style="color: var(--text-secondary);">Order ID:</span>
+                                <code id="sec-modal-order-id" style="color: var(--accent-primary);">-</code>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 1.05rem; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 0.5rem; margin-top: 0.5rem;">
+                                <span style="color: #fff; font-weight: 600;">Total Amount:</span>
+                                <strong id="sec-modal-amount" style="color: var(--success); font-weight: 800;">-</strong>
+                            </div>
+                        </div>
+                        
+                        <div id="sec-payment-status-message" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; line-height: 1.4;"></div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <button id="sec-btn-pay-success" onclick="executeSectorMockPayment(true)" class="btn btn-primary" style="width: 100%; height: 46px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-circle-check"></i> Simulate Payment Success
+                            </button>
+                            <button onclick="executeSectorMockPayment(false)" class="btn btn-secondary" style="width: 100%; height: 46px; border-radius: 8px; font-weight: 700; color: var(--text-secondary); border-color: rgba(255,255,255,0.08);">
+                                Decline / Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.setSectorBillingCycle = function(cycle) {
+            billingCycle = cycle;
+            renderOverlayContent();
+        };
+
+        renderOverlayContent();
+    });
 }

@@ -8,7 +8,7 @@
     <meta name="description" content="Track live sectoral momentum, market breadth, relative rotation quadrants, and institutional FPI flows in the Indian stock market.">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="index.css?v=62">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         .dashboard-grid {
@@ -242,29 +242,41 @@
         }
         #share-modal-actions {
             display: flex;
-            gap: 0.75rem;
+            gap: 1.25rem;
             width: 100%;
-            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem 0;
         }
-        #share-modal-actions button {
-            flex: 1;
-            min-width: 80px;
-            padding: 0.65rem;
-            border-radius: 10px;
-            border: none;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
+        .share-circle-btn {
+            width: 48px;
+            height: 48px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.4rem;
-            transition: opacity 0.2s;
+            font-size: 1.75rem; /* identically sized icons */
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            text-decoration: none;
         }
-        #share-modal-actions button:hover { opacity: 0.85; }
-        #btn-share-direct { background: #10b981; color: #fff; }
-        #btn-download-banner { background: var(--accent-primary); color: #fff; }
-        #btn-close-modal { background: rgba(255,255,255,0.08); color: #fff; }
+        .share-circle-btn:hover {
+            transform: scale(1.2);
+            opacity: 0.95;
+        }
+        .share-circle-btn.whatsapp {
+            color: #25D366 !important;
+        }
+        .share-circle-btn.instagram {
+            color: #E1306C !important;
+        }
+        .share-circle-btn.twitter {
+            color: #e2e8f0 !important;
+        }
+        .share-circle-btn.share-native {
+            color: var(--accent-primary) !important;
+        }
         /* The actual banner card (hidden, used for rendering) */
         #fii-share-banner {
             position: fixed;
@@ -632,22 +644,29 @@
 
     <!-- ===== SHARE MODAL OVERLAY ===== -->
     <div id="share-modal-overlay" onclick="if(event.target===this) closeShareModal()">
-        <div id="share-modal-box">
-            <h3><i class="fa-solid fa-share-nodes" style="color:var(--accent-primary);margin-right:0.4rem;"></i> Share FII / DII Card</h3>
-            <div id="share-preview-wrap" style="width:100%;border-radius:14px;overflow:hidden;box-shadow:0 0 40px rgba(139,92,246,0.25);"></div>
+        <div id="share-modal-box" style="position: relative;">
+            <button onclick="closeShareModal()" style="position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; padding: 0.2rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 style="margin-top: 0.25rem;"><i class="fa-solid fa-share-nodes" style="color:var(--accent-primary);margin-right:0.4rem;"></i> Share Report Card</h3>
+            <div id="share-preview-wrap" style="width:100%;border-radius:14px;overflow:hidden;box-shadow:0 0 40px rgba(139,92,246,0.25);margin-bottom:0.5rem;"></div>
+            
             <div id="share-modal-actions">
-                <button id="btn-share-direct" onclick="shareBannerDirect()">
-                    <i class="fa-solid fa-share-nodes"></i> Share
-                </button>
-                <button id="btn-download-banner" onclick="downloadBanner()">
-                    <i class="fa-solid fa-download"></i> Download
-                </button>
-                <button id="btn-close-modal" onclick="closeShareModal()">
-                    <i class="fa-solid fa-xmark"></i> Close
+                <a href="https://api.whatsapp.com/send?text=Check%20out%20today's%20FII/DII%20Net%20Flows%20on%20Elitelab%20%E2%9A%A1%20https://elitelab.in/sector-analysis" target="_blank" class="share-circle-btn whatsapp" title="Share on WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <a href="https://www.instagram.com/" target="_blank" class="share-circle-btn instagram" title="Open Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?text=Check%20out%20today's%20FII/DII%20Net%20Flows%20on%20Elitelab%20%E2%9A%A1%20https://elitelab.in/sector-analysis" target="_blank" class="share-circle-btn twitter" title="Share on Twitter">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <button onclick="shareBannerDirect()" class="share-circle-btn share-native" title="System Share">
+                    <i class="fa-solid fa-share-nodes"></i>
                 </button>
             </div>
             <p style="font-size:0.72rem;color:var(--text-secondary);margin:0;text-align:center;">
-                Tap <b>Share</b> to post directly or <b>Download</b> to save!
+                Tap to share or post report card dynamically!
             </p>
         </div>
     </div>
@@ -741,9 +760,13 @@
         document.getElementById('banner-dii-sell').innerText = fmt(data.dii_sell);
     }
 
+    let currentShareType = 'fiidii';
+
     function openShareModal() {
+        currentShareType = 'fiidii';
         const overlay = document.getElementById('share-modal-overlay');
         overlay.classList.add('active');
+        overlay.querySelector('#share-modal-box h3').innerHTML = '<i class="fa-solid fa-share-nodes" style="color:var(--accent-primary);margin-right:0.4rem;"></i> Share Report Card';
 
         // Render banner to canvas, put preview inside modal
         const banner = document.getElementById('fii-share-banner');
@@ -768,7 +791,8 @@
         const canvas = document.getElementById('banner-canvas');
         if (!canvas) return;
         const link = document.createElement('a');
-        link.download = 'elitelab-fiidii-' + (new Date().toISOString().slice(0,10)) + '.png';
+        const prefix = currentShareType === 'fpi' ? 'elitelab-fpi-flow-' : 'elitelab-fiidii-';
+        link.download = prefix + (new Date().toISOString().slice(0,10)) + '.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
     }
@@ -783,11 +807,16 @@
         }
         try {
             canvas.toBlob(async (blob) => {
-                const file = new File([blob], 'elitelab-fiidii-' + (new Date().toISOString().slice(0,10)) + '.png', { type: 'image/png' });
+                const filename = (currentShareType === 'fpi' ? 'elitelab-fpi-flow-' : 'elitelab-fiidii-') + (new Date().toISOString().slice(0,10)) + '.png';
+                const file = new File([blob], filename, { type: 'image/png' });
                 if (navigator.canShare({ files: [file] })) {
+                    const title = currentShareType === 'fpi' ? 'FPI Sector Flow — Elitelab.in' : 'FII / DII Daily Flow — Elitelab.in';
+                    const text = currentShareType === 'fpi'
+                        ? 'Fortnightly FPI sector positioning from NSDL. Powered by Elitelab.in'
+                        : 'Today\'s institutional flow data from NSE. Powered by Elitelab.in';
                     await navigator.share({
-                        title: 'FII / DII Daily Flow — Elitelab.in',
-                        text: 'Today\'s institutional flow data from NSE. Powered by Elitelab.in',
+                        title: title,
+                        text: text,
                         files: [file]
                     });
                 } else {
@@ -884,10 +913,9 @@
     }
 
     function openFpiShareModal() {
+        currentShareType = 'fpi';
         const overlay = document.getElementById('share-modal-overlay');
-        // Reuse same modal but with FPI banner
         overlay.classList.add('active');
-        // Update modal title
         overlay.querySelector('#share-modal-box h3').innerHTML = '<i class="fa-solid fa-share-nodes" style="color:var(--accent-primary);margin-right:0.4rem;"></i> Share FPI Flow Card';
 
         const wrap = document.getElementById('share-preview-wrap');
@@ -901,25 +929,6 @@
             canvas.style.borderRadius = '12px';
             wrap.innerHTML = '';
             wrap.appendChild(canvas);
-            // Override download filename for FPI
-            document.getElementById('btn-download-banner').onclick = () => {
-                const link = document.createElement('a');
-                link.download = 'elitelab-fpi-flow-' + (new Date().toISOString().slice(0,10)) + '.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            };
-            // Override direct share for FPI
-            document.getElementById('btn-share-direct').onclick = async () => {
-                if (!navigator.share || !navigator.canShare) { document.getElementById('btn-download-banner').click(); return; }
-                try {
-                    canvas.toBlob(async (blob) => {
-                        const file = new File([blob], 'elitelab-fpi-flow-' + (new Date().toISOString().slice(0,10)) + '.png', { type: 'image/png' });
-                        if (navigator.canShare({ files: [file] })) {
-                            await navigator.share({ title: 'FPI Sector Flow — Elitelab.in', text: 'Fortnightly FPI sector positioning from NSDL. Powered by Elitelab.in', files: [file] });
-                        } else { document.getElementById('btn-download-banner').click(); }
-                    }, 'image/png');
-                } catch(err) { if (err.name !== 'AbortError') document.getElementById('btn-download-banner').click(); }
-            };
         });
     }
     </script>
