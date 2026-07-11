@@ -2686,14 +2686,14 @@ def get_sector_analysis_api():
 @app.route('/api/block-deals')
 def get_block_deals_api():
     global BLOCK_DEALS_1W_CACHE
-    import nsepython
-    import datetime
-    import time
-    
-    timeframe = request.args.get('timeframe', '1D')
-    now = time.time()
     
     try:
+        import nsepython
+        import datetime
+        import time
+        
+        timeframe = request.args.get('timeframe', '1D')
+        now = time.time()
         if timeframe == '1W':
             # Cache for 4 hours (14400 seconds)
             if BLOCK_DEALS_1W_CACHE["data"] and (now - BLOCK_DEALS_1W_CACHE["time"] < 14400):
