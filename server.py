@@ -14,7 +14,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import time
 import cloudscraper
-import sqlite3
+import psycopg2
+import psycopg2.extras
 import datetime
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -162,19 +163,38 @@ app.config.update(
     PERMANENT_SESSION_LIFETIME=datetime.timedelta(days=7)
 )
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'elitelab.db')
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://neondb_owner:npg_qbMV89YOCzNA@ep-floral-heart-adgrnp7q.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require')
+
+
+class DBWrapper:
+    def __init__(self, conn):
+        self.conn = conn
+
+    def cursor(self):
+        return self.conn.cursor()
+
+    def execute(self, query, vars=None):
+        cursor = self.conn.cursor()
+        cursor.execute(query, vars)
+        return cursor
+
+    def commit(self):
+        self.conn.commit()
+
+    def close(self):
+        self.conn.close()
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.DictCursor)
+    return DBWrapper(conn)
+
 
 def get_user_active_plan(user_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     
     # Check if admin - admins get Elite Pro level access
-    cursor.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT is_admin FROM users WHERE id = %s", (user_id,))
     user_row = cursor.fetchone()
     if user_row and user_row['is_admin'] == 1:
         conn.close()
@@ -183,7 +203,7 @@ def get_user_active_plan(user_id):
     cursor.execute('''
         SELECT s.id, s.expiry_date, s.status, p.plan_name FROM subscriptions s
         JOIN plans p ON s.plan_id = p.id
-        WHERE s.user_id = ? AND s.status = 'active'
+        WHERE s.user_id = %s AND s.status = 'active'
         ORDER BY s.expiry_date DESC LIMIT 1
     ''', (user_id,))
     sub = cursor.fetchone()
@@ -212,7 +232,7 @@ def get_user_active_plan(user_id):
         return "Free Plan"
     else:
         # Mark as expired
-        cursor.execute("UPDATE subscriptions SET status = 'expired' WHERE id = ?", (sub['id'],))
+        cursor.execute("UPDATE subscriptions SET status = 'expired' WHERE id = %s", (sub['id'],))
         conn.commit()
         conn.close()
         return "Free Plan"
@@ -275,7 +295,7 @@ def admin_required(f):
             
         user_id = session['user_id']
         conn = get_db_connection()
-        user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+        user = conn.execute("SELECT is_admin FROM users WHERE id = %s", (user_id,)).fetchone()
         conn.close()
         if not user or user['is_admin'] != 1:
             if request.path.startswith('/api/'):
@@ -2935,7 +2955,7 @@ def api_register():
     cursor = conn.cursor()
     
     # Check if user already exists
-    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+    cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
     if cursor.fetchone():
         conn.close()
         return jsonify({"status": "error", "message": "Email is already registered"}), 400
@@ -2950,7 +2970,7 @@ def api_register():
     try:
         cursor.execute('''
             INSERT INTO users (name, email, password_hash, is_admin)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s)
         ''', (name, email, hashed_pwd, is_admin))
         user_id = cursor.lastrowid
         conn.commit()
@@ -2963,7 +2983,7 @@ def api_register():
             expiry_date = start_date + datetime.timedelta(days=free_plan['duration_days'])
             cursor.execute('''
                 INSERT INTO subscriptions (user_id, plan_id, start_date, expiry_date, status)
-                VALUES (?, ?, ?, ?, 'active')
+                VALUES (%s, %s, %s, %s, 'active')
             ''', (user_id, free_plan['id'], start_date.strftime('%Y-%m-%d %H:%M:%S'), expiry_date.strftime('%Y-%m-%d %H:%M:%S')))
             conn.commit()
             
@@ -2984,7 +3004,7 @@ def api_login():
         
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
     user = cursor.fetchone()
     conn.close()
     
@@ -3019,7 +3039,7 @@ def api_auth_status():
     user_id = session['user_id']
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT name, email, is_admin FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT name, email, is_admin FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     
     if not user:
@@ -3034,7 +3054,7 @@ def api_auth_status():
     cursor.execute('''
         SELECT s.expiry_date, p.plan_name, p.price FROM subscriptions s
         JOIN plans p ON s.plan_id = p.id
-        WHERE s.user_id = ? AND s.status = 'active'
+        WHERE s.user_id = %s AND s.status = 'active'
         ORDER BY s.expiry_date DESC LIMIT 1
     ''', (user_id,))
     sub = cursor.fetchone()
@@ -3091,9 +3111,9 @@ def api_profile_update():
                 conn.close()
                 return jsonify({"status": "error", "message": "Password must be at least 6 characters"}), 400
             hashed_pwd = generate_password_hash(password)
-            cursor.execute("UPDATE users SET name = ?, password_hash = ? WHERE id = ?", (name, hashed_pwd, user_id))
+            cursor.execute("UPDATE users SET name = %s, password_hash = %s WHERE id = %s", (name, hashed_pwd, user_id))
         else:
-            cursor.execute("UPDATE users SET name = ? WHERE id = ?", (name, user_id))
+            cursor.execute("UPDATE users SET name = %s WHERE id = %s", (name, user_id))
             
         conn.commit()
         session['user_name'] = name
@@ -3126,7 +3146,7 @@ def api_create_order():
         return jsonify({"status": "error", "message": "Plan ID is required"}), 400
         
     conn = get_db_connection()
-    plan = conn.execute("SELECT * FROM plans WHERE id = ?", (plan_id,)).fetchone()
+    plan = conn.execute("SELECT * FROM plans WHERE id = %s", (plan_id,)).fetchone()
     conn.close()
     
     if not plan:
@@ -3181,7 +3201,7 @@ def api_verify_payment():
     cursor = conn.cursor()
     
     # Fetch plan details
-    plan = cursor.execute("SELECT * FROM plans WHERE id = ?", (plan_id,)).fetchone()
+    plan = cursor.execute("SELECT * FROM plans WHERE id = %s", (plan_id,)).fetchone()
     if not plan:
         conn.close()
         return jsonify({"status": "error", "message": "Invalid plan ID"}), 400
@@ -3213,12 +3233,12 @@ def api_verify_payment():
         # Record payment transaction
         cursor.execute('''
             INSERT INTO payments (user_id, amount, payment_gateway, transaction_id, status)
-            VALUES (?, ?, 'Razorpay', ?, 'success')
+            VALUES (%s, %s, 'Razorpay', %s, 'success')
         ''', (user_id, plan['price'], payment_id))
         db_payment_id = cursor.lastrowid
         
         # Deactivate previous active subscriptions for this user
-        cursor.execute("UPDATE subscriptions SET status = 'expired' WHERE user_id = ? AND status = 'active'", (user_id,))
+        cursor.execute("UPDATE subscriptions SET status = 'expired' WHERE user_id = %s AND status = 'active'", (user_id,))
         
         # Calculate new subscription expiry dates
         start_date = now
@@ -3227,7 +3247,7 @@ def api_verify_payment():
         # Record new subscription
         cursor.execute('''
             INSERT INTO subscriptions (user_id, plan_id, payment_id, order_id, start_date, expiry_date, status)
-            VALUES (?, ?, ?, ?, ?, ?, 'active')
+            VALUES (%s, %s, %s, %s, %s, %s, 'active')
         ''', (user_id, plan_id, db_payment_id, order_id, start_date.strftime('%Y-%m-%d %H:%M:%S'), expiry_date.strftime('%Y-%m-%d %H:%M:%S')))
         
         conn.commit()
@@ -3253,7 +3273,7 @@ def api_payment_history():
         SELECT p.id, p.amount, p.created_at, p.status, pl.plan_name FROM payments p
         JOIN subscriptions s ON s.payment_id = p.id
         JOIN plans pl ON s.plan_id = pl.id
-        WHERE p.user_id = ?
+        WHERE p.user_id = %s
         ORDER BY p.created_at DESC
     ''', (user_id,)).fetchall()
     conn.close()
@@ -3364,7 +3384,7 @@ def api_admin_plans_add():
     try:
         cursor.execute('''
             INSERT INTO plans (plan_name, price, duration_days, features, status)
-            VALUES (?, ?, ?, ?, 'active')
+            VALUES (%s, %s, %s, %s, 'active')
         ''', (name, price, duration, json.dumps(features_list)))
         conn.commit()
         conn.close()
@@ -3391,8 +3411,8 @@ def api_admin_plans_update():
     try:
         cursor.execute('''
             UPDATE plans 
-            SET plan_name = ?, price = ?, duration_days = ?, features = ?
-            WHERE id = ?
+            SET plan_name = %s, price = %s, duration_days = %s, features = %s
+            WHERE id = %s
         ''', (name, price, duration, json.dumps(features_list), plan_id))
         conn.commit()
         conn.close()
@@ -3407,7 +3427,7 @@ def api_admin_plans_delete(plan_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("DELETE FROM plans WHERE id = ?", (plan_id,))
+        cursor.execute("DELETE FROM plans WHERE id = %s", (plan_id,))
         conn.commit()
         conn.close()
         return jsonify({"status": "success", "message": "Plan deleted successfully"})
@@ -3424,7 +3444,7 @@ def notification_preferences():
     cursor = conn.cursor()
     
     if request.method == 'GET':
-        cursor.execute("SELECT auto_email, auto_push FROM notification_preferences WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT auto_email, auto_push FROM notification_preferences WHERE user_id = %s", (user_id,))
         row = cursor.fetchone()
         conn.close()
         if row:
@@ -3436,11 +3456,11 @@ def notification_preferences():
         auto_email = 1 if data.get('auto_email', True) else 0
         auto_push = 1 if data.get('auto_push', True) else 0
         
-        cursor.execute("SELECT user_id FROM notification_preferences WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT user_id FROM notification_preferences WHERE user_id = %s", (user_id,))
         if cursor.fetchone():
-            cursor.execute("UPDATE notification_preferences SET auto_email = ?, auto_push = ? WHERE user_id = ?", (auto_email, auto_push, user_id))
+            cursor.execute("UPDATE notification_preferences SET auto_email = %s, auto_push = %s WHERE user_id = %s", (auto_email, auto_push, user_id))
         else:
-            cursor.execute("INSERT INTO notification_preferences (user_id, auto_email, auto_push) VALUES (?, ?, ?)", (user_id, auto_email, auto_push))
+            cursor.execute("INSERT INTO notification_preferences (user_id, auto_email, auto_push) VALUES (%s, %s, %s)", (user_id, auto_email, auto_push))
         conn.commit()
         conn.close()
         return jsonify({"status": "success"})
@@ -3461,7 +3481,7 @@ def subscribe_push():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("INSERT OR REPLACE INTO push_subscriptions (user_id, endpoint, p256dh, auth) VALUES (?, ?, ?, ?)", 
+        cursor.execute("INSERT OR REPLACE INTO push_subscriptions (user_id, endpoint, p256dh, auth) VALUES (%s, %s, %s, %s)", 
                        (user_id, endpoint, p256dh, auth))
         conn.commit()
     except Exception as e:
@@ -3510,9 +3530,9 @@ def cron_check_fii_dii():
         dii_sell = float(newest.get('dii_sell', 0).replace(',','')) if isinstance(newest.get('dii_sell'), str) else newest.get('dii_sell', 0)
         
         if row:
-            cursor.execute("UPDATE fii_dii_state SET last_update_date=?, fii_net=?, dii_net=?, updated_at=CURRENT_TIMESTAMP WHERE id=1", (data_date, fii_net, dii_net))
+            cursor.execute("UPDATE fii_dii_state SET last_update_date=%s, fii_net=%s, dii_net=%s, updated_at=CURRENT_TIMESTAMP WHERE id=1", (data_date, fii_net, dii_net))
         else:
-            cursor.execute("INSERT INTO fii_dii_state (id, last_update_date, fii_net, dii_net) VALUES (1, ?, ?, ?)", (data_date, fii_net, dii_net))
+            cursor.execute("INSERT INTO fii_dii_state (id, last_update_date, fii_net, dii_net) VALUES (1, %s, %s, %s)", (data_date, fii_net, dii_net))
             
         banner_data = {
             "date": data_date,
@@ -3550,7 +3570,7 @@ def cron_check_fii_dii():
                     
             # Deliver Push
             if u['auto_push'] is None or u['auto_push'] == 1:
-                cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=?", (u['id'],))
+                cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=%s", (u['id'],))
                 subs = cursor.fetchall()
                 for sub in subs:
                     sub_info = {
@@ -3566,7 +3586,7 @@ def cron_check_fii_dii():
                         pushes_sent += 1
 
         # Log Delivery
-        cursor.execute("INSERT INTO fii_dii_delivery_logs (data_date, banner_path, emails_sent, pushes_sent, status) VALUES (?, ?, ?, ?, 'Success')",
+        cursor.execute("INSERT INTO fii_dii_delivery_logs (data_date, banner_path, emails_sent, pushes_sent, status) VALUES (%s, %s, %s, %s, 'Success')",
                        (data_date, banner_path, emails_sent, pushes_sent))
         conn.commit()
         conn.close()
@@ -3589,7 +3609,7 @@ def cron_check_fii_dii():
 def admin_fii_dii_trigger():
     user_id = session['user_id']
     conn = get_db_connection()
-    user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    user = conn.execute("SELECT is_admin FROM users WHERE id = %s", (user_id,)).fetchone()
     conn.close()
     if not user or user['is_admin'] != 1:
         return jsonify({"status": "error", "message": "Admin access required"}), 403
@@ -3626,9 +3646,9 @@ def admin_fii_dii_trigger():
         dii_sell = float(newest.get('dii_sell', 0).replace(',','')) if isinstance(newest.get('dii_sell'), str) else newest.get('dii_sell', 0)
         
         if row:
-            cursor.execute("UPDATE fii_dii_state SET last_update_date=?, fii_net=?, dii_net=?, updated_at=CURRENT_TIMESTAMP WHERE id=1", (data_date, fii_net, dii_net))
+            cursor.execute("UPDATE fii_dii_state SET last_update_date=%s, fii_net=%s, dii_net=%s, updated_at=CURRENT_TIMESTAMP WHERE id=1", (data_date, fii_net, dii_net))
         else:
-            cursor.execute("INSERT INTO fii_dii_state (id, last_update_date, fii_net, dii_net) VALUES (1, ?, ?, ?)", (data_date, fii_net, dii_net))
+            cursor.execute("INSERT INTO fii_dii_state (id, last_update_date, fii_net, dii_net) VALUES (1, %s, %s, %s)", (data_date, fii_net, dii_net))
             
         banner_data = {
             "date": data_date,
@@ -3658,7 +3678,7 @@ def admin_fii_dii_trigger():
                 if send_email_with_banner(u['email'], banner_path, banner_data):
                     emails_sent += 1
             if u['auto_push'] is None or u['auto_push'] == 1:
-                cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=?", (u['id'],))
+                cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=%s", (u['id'],))
                 subs = cursor.fetchall()
                 for sub in subs:
                     sub_info = {"endpoint": sub['endpoint'], "keys": {"p256dh": sub['p256dh'], "auth": sub['auth']}}
@@ -3666,7 +3686,7 @@ def admin_fii_dii_trigger():
                     if send_push_notification(sub_info, payload):
                         pushes_sent += 1
 
-        cursor.execute("INSERT INTO fii_dii_delivery_logs (data_date, banner_path, emails_sent, pushes_sent, status) VALUES (?, ?, ?, ?, 'Success (Admin Triggered)')",
+        cursor.execute("INSERT INTO fii_dii_delivery_logs (data_date, banner_path, emails_sent, pushes_sent, status) VALUES (%s, %s, %s, %s, 'Success (Admin Triggered)')",
                        (data_date, banner_path, emails_sent, pushes_sent))
         conn.commit()
         conn.close()
@@ -3681,7 +3701,7 @@ def admin_fii_dii_trigger():
 def admin_fii_dii_test():
     user_id = session['user_id']
     conn = get_db_connection()
-    user = conn.execute("SELECT email, is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    user = conn.execute("SELECT email, is_admin FROM users WHERE id = %s", (user_id,)).fetchone()
     if not user or user['is_admin'] != 1:
         conn.close()
         return jsonify({"status": "error", "message": "Admin access required"}), 403
@@ -3702,7 +3722,7 @@ def admin_fii_dii_test():
         
         push_success = False
         cursor = conn.cursor()
-        cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=?", (user_id,))
+        cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=%s", (user_id,))
         subs = cursor.fetchall()
         for sub in subs:
             sub_info = {"endpoint": sub['endpoint'], "keys": {"p256dh": sub['p256dh'], "auth": sub['auth']}}
@@ -3722,7 +3742,7 @@ def admin_fii_dii_test():
 def admin_fii_dii_logs():
     user_id = session['user_id']
     conn = get_db_connection()
-    user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    user = conn.execute("SELECT is_admin FROM users WHERE id = %s", (user_id,)).fetchone()
     if not user or user['is_admin'] != 1:
         conn.close()
         return jsonify({"status": "error", "message": "Admin access required"}), 403
@@ -3737,7 +3757,7 @@ def admin_fii_dii_logs():
 def admin_fii_dii_clear_tests():
     user_id = session['user_id']
     conn = get_db_connection()
-    user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    user = conn.execute("SELECT is_admin FROM users WHERE id = %s", (user_id,)).fetchone()
     if not user or user['is_admin'] != 1:
         conn.close()
         return jsonify({"status": "error", "message": "Admin access required"}), 403

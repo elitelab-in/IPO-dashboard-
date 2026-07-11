@@ -1,17 +1,19 @@
-import sqlite3
+import psycopg2
+import psycopg2.extras
+import os
 import os
 import json
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'elitelab.db')
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = psycopg2.connect(os.environ.get('DATABASE_URL', 'postgresql://neondb_owner:npg_qbMV89YOCzNA@ep-floral-heart-adgrnp7q.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require'), cursor_factory=psycopg2.extras.DictCursor)
     cursor = conn.cursor()
     
     # Create Users Table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
@@ -24,7 +26,7 @@ def init_db():
     # Create Plans Table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS plans (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         plan_name TEXT NOT NULL,
         price REAL NOT NULL,
         duration_days INTEGER NOT NULL,
@@ -36,7 +38,7 @@ def init_db():
     # Create Payments Table (must exist before subscriptions for fk constraint)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS payments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         amount REAL NOT NULL,
         payment_gateway TEXT NOT NULL DEFAULT 'Razorpay',
@@ -50,7 +52,7 @@ def init_db():
     # Create Subscriptions Table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS subscriptions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         plan_id INTEGER NOT NULL,
         payment_id INTEGER,
@@ -106,7 +108,7 @@ def init_db():
     ]
     cursor.executemany('''
         INSERT INTO plans (plan_name, price, duration_days, features, status)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
     ''', initial_plans)
     print("[Database] Seeded new default subscription plans.")
         
