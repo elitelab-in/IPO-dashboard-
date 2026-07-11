@@ -112,7 +112,7 @@ function updateAuthNavbar() {
                 if (data.logged_in) {
                     const mobDash = document.createElement('a');
                     mobDash.href = '/dashboard';
-                    mobDash.className = 'btn btn-primary auth-nav-link';
+                    mobDash.className = 'btn btn-primary auth-nav-link mobile-only';
                     mobDash.innerText = 'Dashboard';
                     mobDash.style.display = 'block';
                     mobDash.style.padding = '0.4rem 1.2rem';
