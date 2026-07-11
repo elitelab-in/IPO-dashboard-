@@ -381,14 +381,21 @@
                         </table>
                     </div>
                 </div>
-
                 <!-- MANAGE PLANS TAB -->
                 <div class="admin-section" id="sec-plans">
-                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Create New Subscription Plan</h2>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Active Subscription Plans</h2>
                     
                     <div id="plan-success" class="alert alert-success"></div>
                     <div id="plan-error" class="alert alert-danger"></div>
 
+                    <!-- Dynamic container for existing plans -->
+                    <div id="plans-container" class="metrics-grid" style="margin-bottom: 3rem;">
+                        <p style="color: var(--text-secondary);">Loading plans...</p>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin-bottom: 2rem;">
+                    
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Create New Subscription Plan</h2>
                     <form id="add-plan-form" style="max-width: 480px;">
                         <div class="form-group">
                             <label class="form-label" for="plan-name-input">Plan Name</label>
@@ -561,6 +568,7 @@
             // Load specific tab data
             if (secId === 'users') loadUsersList();
             if (secId === 'payments') loadPaymentsList();
+            if (secId === 'plans') loadAdminPlans();
         }
 
         // Load stats metrics
@@ -674,6 +682,142 @@
                         tbody.appendChild(tr);
                     });
                 });
+        }
+
+        async function loadAdminPlans() {
+            const container = document.getElementById('plans-container');
+            container.innerHTML = '<p style="color: var(--text-secondary);">Loading plans...</p>';
+            
+            try {
+                const res = await fetch('/api/plans');
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    container.innerHTML = '';
+                    if (data.plans.length === 0) {
+                        container.innerHTML = '<p style="color: var(--text-secondary);">No active plans found.</p>';
+                        return;
+                    }
+                    
+                    data.plans.forEach(p => {
+                        let featuresList = [];
+                        try {
+                            featuresList = JSON.parse(p.features);
+                        } catch (e) {
+                            if (p.features) featuresList = [p.features];
+                        }
+                        const featuresText = featuresList.join('\n');
+                        
+                        const card = document.createElement('div');
+                        card.className = 'metric-card';
+                        card.style.gap = '1rem';
+                        card.innerHTML = `
+                            <div class="form-group" style="margin:0; margin-bottom:1rem;">
+                                <label class="form-label">Plan Name</label>
+                                <input type="text" class="form-input plan-edit-name" value="${p.plan_name}" style="background: rgba(0,0,0,0.2);">
+                            </div>
+                            <div style="display: flex; gap: 1rem; margin-bottom:1rem;">
+                                <div class="form-group" style="margin:0; flex:1;">
+                                    <label class="form-label">Price (₹)</label>
+                                    <input type="number" step="0.01" class="form-input plan-edit-price" value="${p.price}" style="background: rgba(0,0,0,0.2);">
+                                </div>
+                                <div class="form-group" style="margin:0; flex:1;">
+                                    <label class="form-label">Duration (Days)</label>
+                                    <input type="number" class="form-input plan-edit-duration" value="${p.duration_days}" style="background: rgba(0,0,0,0.2);">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin:0; margin-bottom:1rem;">
+                                <label class="form-label">Features (1 per line)</label>
+                                <textarea class="form-input plan-edit-features" style="height: 120px; resize: vertical; padding: 0.75rem 1rem; background: rgba(0,0,0,0.2); font-family: inherit;">${featuresText}</textarea>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                <button class="btn btn-primary" onclick="updateAdminPlan(${p.id}, this)" style="flex:1; padding: 0.5rem; font-size: 0.85rem; border-radius: 6px;">
+                                    <i class="fa-solid fa-save"></i> Save
+                                </button>
+                                <button class="btn" onclick="deleteAdminPlan(${p.id}, this)" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 0.5rem; font-size: 0.85rem; border-radius: 6px;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="plan-update-msg" style="font-size: 0.8rem; margin-top: 0.5rem; display:none;"></div>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                container.innerHTML = '<p style="color: var(--danger);">Failed to load plans.</p>';
+            }
+        }
+
+        async function updateAdminPlan(planId, btnElement) {
+            const card = btnElement.closest('.metric-card');
+            const name = card.querySelector('.plan-edit-name').value;
+            const price = card.querySelector('.plan-edit-price').value;
+            const duration = card.querySelector('.plan-edit-duration').value;
+            const featuresText = card.querySelector('.plan-edit-features').value;
+            const msgEl = card.querySelector('.plan-update-msg');
+            
+            const features = featuresText.split('\n').map(f => f.trim()).filter(f => f.length > 0);
+            
+            const origText = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btnElement.disabled = true;
+            
+            try {
+                const res = await fetch('/api/admin/plans/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan_id: planId,
+                        plan_name: name,
+                        price: parseFloat(price),
+                        duration_days: parseInt(duration),
+                        features: features
+                    })
+                });
+                const data = await res.json();
+                
+                msgEl.style.display = 'block';
+                if (data.status === 'success') {
+                    msgEl.style.color = 'var(--success)';
+                    msgEl.innerText = 'Saved successfully!';
+                    setTimeout(() => msgEl.style.display='none', 3000);
+                } else {
+                    msgEl.style.color = 'var(--danger)';
+                    msgEl.innerText = data.message || 'Update failed.';
+                }
+            } catch (err) {
+                msgEl.style.display = 'block';
+                msgEl.style.color = 'var(--danger)';
+                msgEl.innerText = 'Network error.';
+            } finally {
+                btnElement.innerHTML = origText;
+                btnElement.disabled = false;
+            }
+        }
+
+        async function deleteAdminPlan(planId, btnElement) {
+            if(!confirm("Are you sure you want to permanently delete this plan? Active subscriptions on this plan may break.")) return;
+            
+            const origText = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btnElement.disabled = true;
+            
+            try {
+                const res = await fetch(`/api/admin/plans/delete/${planId}`, { method: 'DELETE' });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    loadAdminPlans();
+                } else {
+                    alert("Error: " + data.message);
+                    btnElement.innerHTML = origText;
+                    btnElement.disabled = false;
+                }
+            } catch (err) {
+                alert("Network error.");
+                btnElement.innerHTML = origText;
+                btnElement.disabled = false;
+            }
         }
 
         // Form handler to Add Plan

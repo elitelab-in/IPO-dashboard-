@@ -25,6 +25,134 @@ from metadata_service import getStockMetadata, getSector, getIndustry, getIndice
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from pywebpush import webpush, WebPushException
+from PIL import Image, ImageDraw, ImageFont
+
+SMTP_EMAIL = os.environ.get('SMTP_EMAIL', 'elitelab.in@gmail.com')
+SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
+VAPID_PRIVATE_KEY = os.environ.get('VAPID_PRIVATE_KEY', '3I70LQQV1ZebeRgj6h8_5iaKfbVbZbXL-agH8hmmgpw')
+VAPID_CLAIMS = {"sub": f"mailto:{SMTP_EMAIL}"}
+
+def generate_fii_dii_banner(data, output_path):
+    width, height = 800, 500
+    bg_color = (13, 17, 23)
+    image = Image.new("RGB", (width, height), bg_color)
+    draw = ImageDraw.Draw(image)
+    accent_color = (0, 210, 255)
+    text_primary = (255, 255, 255)
+    text_secondary = (156, 163, 175)
+    green_color = (34, 197, 94)
+    red_color = (239, 68, 68)
+    card_bg = (30, 41, 59)
+    try:
+        title_font = ImageFont.truetype("arialbd.ttf", 36)
+        heading_font = ImageFont.truetype("arialbd.ttf", 28)
+        value_font = ImageFont.truetype("arialbd.ttf", 42)
+        label_font = ImageFont.truetype("arial.ttf", 18)
+        date_font = ImageFont.truetype("arial.ttf", 20)
+    except IOError:
+        title_font = ImageFont.load_default()
+        heading_font = ImageFont.load_default()
+        value_font = ImageFont.load_default()
+        label_font = ImageFont.load_default()
+        date_font = ImageFont.load_default()
+
+    draw.text((40, 40), "Institutional Activity (FII/DII)", font=title_font, fill=text_primary)
+    draw.text((40, 90), f"Data for: {data.get('date', 'Today')}", font=date_font, fill=accent_color)
+    draw.rounded_rectangle([40, 140, 380, 400], radius=15, fill=card_bg, outline=(45, 55, 72), width=2)
+    draw.text((60, 160), "FII (Foreign Inst.)", font=heading_font, fill=text_primary)
+    
+    fii_net = data.get('fii_net', 0)
+    fii_color = green_color if fii_net >= 0 else red_color
+    fii_sign = "+" if fii_net >= 0 else ""
+    draw.text((60, 220), "Net Value", font=label_font, fill=text_secondary)
+    draw.text((60, 250), f"{fii_sign}{fii_net:,.2f} Cr", font=value_font, fill=fii_color)
+    draw.text((60, 320), f"Buy: {data.get('fii_buy', 0):,.2f} Cr", font=label_font, fill=green_color)
+    draw.text((60, 350), f"Sell: {data.get('fii_sell', 0):,.2f} Cr", font=label_font, fill=red_color)
+
+    draw.rounded_rectangle([420, 140, 760, 400], radius=15, fill=card_bg, outline=(45, 55, 72), width=2)
+    draw.text((440, 160), "DII (Domestic Inst.)", font=heading_font, fill=text_primary)
+    
+    dii_net = data.get('dii_net', 0)
+    dii_color = green_color if dii_net >= 0 else red_color
+    dii_sign = "+" if dii_net >= 0 else ""
+    draw.text((440, 220), "Net Value", font=label_font, fill=text_secondary)
+    draw.text((440, 250), f"{dii_sign}{dii_net:,.2f} Cr", font=value_font, fill=dii_color)
+    draw.text((440, 320), f"Buy: {data.get('dii_buy', 0):,.2f} Cr", font=label_font, fill=green_color)
+    draw.text((440, 350), f"Sell: {data.get('dii_sell', 0):,.2f} Cr", font=label_font, fill=red_color)
+
+    draw.text((40, 440), "Traders Ki Apni Lab", font=heading_font, fill=accent_color)
+    draw.text((40, 470), "Generated automatically for Elite Pro Subscribers", font=label_font, fill=text_secondary)
+    draw.text((640, 450), "elitelab.in", font=heading_font, fill=text_primary)
+    image.save(output_path)
+    return output_path
+
+def send_email_with_banner(recipient, banner_path, fii_data):
+    if not SMTP_PASSWORD:
+        return False
+    msg = MIMEMultipart('related')
+    msg['Subject'] = f"EliteLab Pro • Today's FII/DII Institutional Activity ({fii_data.get('date', '')})"
+    msg['From'] = SMTP_EMAIL
+    msg['To'] = recipient
+    html = f"""
+    <html>
+      <head></head>
+      <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+        <div style="max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #1e293b; color: white; padding: 20px; text-align: center;">
+                <h2 style="margin: 0; color: #00d2ff;">EliteLab Pro</h2>
+                <p style="margin: 5px 0 0 0; font-size: 14px;">Institutional Market Update</p>
+            </div>
+            <div style="padding: 20px;">
+                <p>Hello Elite Pro Member,</p>
+                <p>The latest FII & DII data for today has been published. Here is your automated premium market update:</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="cid:banner_img" alt="FII DII Banner" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://elitelab.in/sector-analysis" style="background-color: #00d2ff; color: #1e293b; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View Complete Analysis on Dashboard</a>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #888; text-align: center;">You are receiving this because you have an active Elite Pro subscription with Auto Banner Delivery enabled. You can manage these settings in your dashboard.</p>
+            </div>
+        </div>
+      </body>
+    </html>
+    """
+    msg.attach(MIMEText(html, 'html'))
+    try:
+        with open(banner_path, 'rb') as f:
+            img_data = f.read()
+        image = MIMEImage(img_data, name=os.path.basename(banner_path))
+        image.add_header('Content-ID', '<banner_img>')
+        msg.attach(image)
+    except:
+        pass
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(SMTP_EMAIL, SMTP_PASSWORD)
+        server.sendmail(SMTP_EMAIL, recipient, msg.as_string())
+        server.quit()
+        return True
+    except:
+        return False
+
+def send_push_notification(subscription_info, payload_data):
+    try:
+        webpush(
+            subscription_info=subscription_info,
+            data=json.dumps(payload_data),
+            vapid_private_key=VAPID_PRIVATE_KEY,
+            vapid_claims=VAPID_CLAIMS
+        )
+        return True
+    except:
+        return False
+
 app.secret_key = os.environ.get('SECRET_KEY', 'elitelab_super_secret_key_987654321_signing_key')
 # Configure session options
 app.config.update(
@@ -3244,6 +3372,48 @@ def api_admin_plans_add():
     except Exception as e:
         conn.close()
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/admin/plans/update', methods=['POST'])
+@admin_required
+def api_admin_plans_update():
+    data = request.get_json() or {}
+    plan_id = data.get('plan_id')
+    name = data.get('plan_name', '').strip()
+    price = float(data.get('price', 0.0))
+    duration = int(data.get('duration_days', 30))
+    features_list = data.get('features', [])
+    
+    if not plan_id or not name or price < 0 or duration <= 0:
+        return jsonify({"status": "error", "message": "Invalid plan parameters"}), 400
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+            UPDATE plans 
+            SET plan_name = ?, price = ?, duration_days = ?, features = ?
+            WHERE id = ?
+        ''', (name, price, duration, json.dumps(features_list), plan_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "message": f"Plan '{name}' updated successfully"})
+    except Exception as e:
+        conn.close()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/admin/plans/delete/<int:plan_id>', methods=['DELETE'])
+@admin_required
+def api_admin_plans_delete(plan_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM plans WHERE id = ?", (plan_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "message": "Plan deleted successfully"})
+    except Exception as e:
+        conn.close()
+        return jsonify({"status": "error", "message": str(e)}), 500
 # --- Elite Pro Auto Banner Delivery System ---
 
 @app.route('/api/user/notifications/preferences', methods=['GET', 'POST'])
@@ -3307,8 +3477,7 @@ def cron_check_fii_dii():
     try:
         import nsepython
         import datetime
-        from utils.banner_generator import generate_fii_dii_banner
-        from utils.delivery_service import send_email_with_banner, send_push_notification
+
         import json
         import os
         
@@ -3429,8 +3598,7 @@ def admin_fii_dii_trigger():
     
     try:
         import nsepython
-        from utils.banner_generator import generate_fii_dii_banner
-        from utils.delivery_service import send_email_with_banner, send_push_notification
+
         import os
         
         raw_data = nsepython.nse_fiidii()
@@ -3519,8 +3687,7 @@ def admin_fii_dii_test():
         return jsonify({"status": "error", "message": "Admin access required"}), 403
         
     try:
-        from utils.banner_generator import generate_fii_dii_banner
-        from utils.delivery_service import send_email_with_banner, send_push_notification
+
         import os
         
         test_data = {
