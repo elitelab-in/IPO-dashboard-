@@ -389,15 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    // Check subscription status on load to show lock overlay if necessary
-    fetch('/api/auth/status')
-        .then(res => res.json())
-        .then(data => {
-            const hasPremium = data.logged_in && (data.user.active_subscription && data.user.subscription_plan !== 'Free Plan');
-            if (!hasPremium) {
-                showPremiumLockOverlay(!data.logged_in);
-            }
-        });
+    // Frontend paywall lock removed (Fundamentals is now free)
 
     let fundSelectedPlanId = null;
     let fundActiveOrderId = null;
@@ -557,11 +549,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Set features array manually to map cleanly
                     let features = [];
                     if (isFree) {
-                        features = ["Economy Analyser Features", "Daily Sector Heatmaps", "Basic Fundamental Search"];
+                        features = ["Macro economy analyzer", "Fundamental analysis", "Sector heatmap", "Real-time market data", "Real-time News"];
                     } else if (!isPro) {
-                        features = ["Economy Analyser", "Sector Analysis", "Fundamental Analysis", "Standard Filters"];
+                        features = ["Macro economy analyzer", "Fundamental analysis", "Sector analysis", "FII DII data", "FPI flow", "Real-time News"];
                     } else {
-                        features = ["AI Scanner (Intraday + Swing)", "Sector Analysis", "Fundamental Analysis", "Economy Analyser", "Unlimited Usage", "Priority Support"];
+                        features = ["Macro economy analyzer", "Fundamental & Sector analysis", "FII DII data & FPI flow", "AI auto screener", "Alerts", "Real-time News"];
                     }
 
                     const featuresHtml = features.map(f => `
