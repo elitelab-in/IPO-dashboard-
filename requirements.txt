@@ -9,3 +9,5 @@ smartapi-python
 pyotp
 razorpay
 nsepython
+Pillow
+pywebpush

@@ -74,40 +74,68 @@ function updateAuthNavbar() {
             return res.json();
         })
         .then(data => {
+            const navActionsContainers = document.querySelectorAll('.nav-actions');
             const navLinksContainers = document.querySelectorAll('.nav-links');
-            navLinksContainers.forEach(nav => {
-                // Clean up any existing auth links to prevent duplicates
-                const existing = nav.querySelectorAll('.auth-nav-link');
-                existing.forEach(el => el.remove());
+            
+            // Clean up existing
+            document.querySelectorAll('.auth-nav-link').forEach(el => el.remove());
+            
+            navActionsContainers.forEach(nav => {
+                const mobileMenuBtn = nav.querySelector('.mobile-menu-btn');
                 
                 if (data.logged_in) {
-                    // Render Dashboard Link
                     const dashLink = document.createElement('a');
                     dashLink.href = '/dashboard';
-                    dashLink.className = 'nav-link auth-nav-link';
+                    dashLink.className = 'nav-link auth-nav-link desktop-only';
                     dashLink.innerText = 'Dashboard';
-                    if (window.location.pathname === '/dashboard') {
-                        dashLink.classList.add('active');
-                    }
-                    nav.appendChild(dashLink);
+                    dashLink.style.marginRight = '1rem';
+                    if (window.location.pathname === '/dashboard') dashLink.classList.add('active');
+                    nav.insertBefore(dashLink, mobileMenuBtn);
                     
-                    // Render Admin Link if is_admin is true
-                    if (data.user && data.user.is_admin) {
+                    if (data.user && data.user.is_admin && data.user.email === 'elitelab.in@gmail.com') {
                         const adminLink = document.createElement('a');
                         adminLink.href = '/admin';
-                        adminLink.className = 'nav-link auth-nav-link';
+                        adminLink.className = 'nav-link auth-nav-link desktop-only';
                         adminLink.innerText = 'Admin';
-                        if (window.location.pathname === '/admin') {
-                            adminLink.classList.add('active');
-                        }
+                        adminLink.style.marginRight = '1rem';
+                        if (window.location.pathname === '/admin') adminLink.classList.add('active');
+                        nav.insertBefore(adminLink, mobileMenuBtn);
+                    }
+                } else {
+                    const loginLink = document.createElement('a');
+                    loginLink.href = '/login';
+                    loginLink.className = 'btn btn-primary auth-nav-link desktop-only';
+                    loginLink.style.marginRight = '1rem';
+                    loginLink.style.padding = '0.4rem 1.2rem';
+                    loginLink.style.fontSize = '0.9rem';
+                    loginLink.style.borderRadius = '6px';
+                    loginLink.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Login / Sign up';
+                    nav.insertBefore(loginLink, mobileMenuBtn);
+                }
+            });
+            
+            navLinksContainers.forEach(nav => {
+                if (data.logged_in) {
+                    const dashLink = document.createElement('a');
+                    dashLink.href = '/dashboard';
+                    dashLink.className = 'nav-link auth-nav-link mobile-only';
+                    dashLink.innerText = 'Dashboard';
+                    if (window.location.pathname === '/dashboard') dashLink.classList.add('active');
+                    nav.appendChild(dashLink);
+                    
+                    if (data.user && data.user.is_admin && data.user.email === 'elitelab.in@gmail.com') {
+                        const adminLink = document.createElement('a');
+                        adminLink.href = '/admin';
+                        adminLink.className = 'nav-link auth-nav-link mobile-only';
+                        adminLink.innerText = 'Admin';
+                        if (window.location.pathname === '/admin') adminLink.classList.add('active');
                         nav.appendChild(adminLink);
                     }
                 } else {
-                    // Render Login Link
                     const loginLink = document.createElement('a');
                     loginLink.href = '/login';
-                    loginLink.className = 'btn btn-primary auth-nav-link';
-                    loginLink.style.marginLeft = '0.5rem';
+                    loginLink.className = 'btn btn-primary auth-nav-link mobile-only';
+                    loginLink.style.marginTop = '1rem';
                     loginLink.style.padding = '0.4rem 1.2rem';
                     loginLink.style.fontSize = '0.9rem';
                     loginLink.style.borderRadius = '6px';

@@ -21,11 +21,12 @@ self.addEventListener('push', function(event) {
     
     const options = {
         body: data.body,
-        icon: 'data:image/svg+xml,%3Csvg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="%238B5CF6" /%3E%3C/svg%3E',
+        icon: '/favicon.svg',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
-            primaryKey: '1'
+            primaryKey: '1',
+            url: data.url || '/'
         }
     };
     
@@ -36,7 +37,23 @@ self.addEventListener('push', function(event) {
 
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
+    
+    let targetUrl = '/';
+    if (event.notification.data && event.notification.data.url) {
+        targetUrl = event.notification.data.url;
+    }
+
     event.waitUntil(
-        clients.openWindow('/')
+        clients.matchAll({ type: 'window' }).then(windowClients => {
+            for (let i = 0; i < windowClients.length; i++) {
+                let client = windowClients[i];
+                if (client.url === targetUrl && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow(targetUrl);
+            }
+        })
     );
 });

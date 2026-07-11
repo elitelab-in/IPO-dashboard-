@@ -467,13 +467,16 @@
         <!-- Navbar -->
     <nav class="nav glass">
         <div class="container nav-inner">
-            <a href="/" class="logo" aria-label="Elitelab Home">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
                 <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
                     <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
                     <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
                     <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
                 </svg>
             </a>
+                <div class="market-status-widget desktop-only"></div>
+            </div>
             <div class="nav-links">
                 <div class="mobile-menu-market-status mobile-only"></div>
 
@@ -498,7 +501,6 @@
                 <a href="/economy" class="nav-link ">Economy</a>
             </div>
             <div class="nav-actions">
-                <div class="market-status-widget desktop-only"></div>
                 <button class="mobile-menu-btn" aria-label="Toggle Menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>

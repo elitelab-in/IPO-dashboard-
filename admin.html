@@ -164,13 +164,16 @@
     <!-- Navbar -->
     <nav class="nav glass">
         <div class="container nav-inner">
-            <a href="/" class="logo" aria-label="Elitelab Home">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
                 <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
                     <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
                     <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
                     <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
                 </svg>
             </a>
+                <div class="market-status-widget desktop-only"></div>
+            </div>
             <div class="nav-links">
                 <div class="mobile-menu-market-status mobile-only"></div>
                 <a href="/" class="nav-link">Home</a>
@@ -194,7 +197,6 @@
                 <a href="/economy" class="nav-link">Economy</a>
             </div>
             <div class="nav-actions">
-                <div class="market-status-widget desktop-only"></div>
                 <button class="mobile-menu-btn" aria-label="Toggle Menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>
@@ -228,6 +230,9 @@
                 </button>
                 <button class="admin-menu-item" onclick="switchSection('marketing')">
                     <i class="fa-solid fa-bullhorn"></i> coupons & updates
+                </button>
+                <button class="admin-menu-item" onclick="switchSection('fiidii')">
+                    <i class="fa-solid fa-paper-plane"></i> FII/DII Delivery
                 </button>
             </div>
 
@@ -394,6 +399,57 @@
                                 <strong>System Update:</strong> Sector capitalization filters are now live!
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- FII/DII DELIVERY TAB -->
+                <div class="admin-section" id="sec-fiidii">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">FII/DII Auto-Delivery System</h2>
+                    
+                    <div class="metrics-grid" style="margin-bottom: 2rem;">
+                        <div class="metric-card">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem;">TOTAL EMAILS SENT</span>
+                            <strong style="font-size: 1.6rem; color:#fff;" id="metric-fii-emails">0</strong>
+                        </div>
+                        <div class="metric-card">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem;">TOTAL PUSHES SENT</span>
+                            <strong style="font-size: 1.6rem; color: var(--success);" id="metric-fii-pushes">0</strong>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="triggerFiiDii(true)" id="btn-fii-force" style="display: flex; align-items: center; gap: 0.5rem; border: none; padding: 0.75rem 1.2rem; border-radius: 8px;">
+                            <i class="fa-solid fa-bolt"></i> Force Trigger Banner & Delivery
+                        </button>
+                        <button class="btn btn-secondary" onclick="testFiiDiiDelivery()" id="btn-fii-test" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.75rem 1.2rem; border-radius: 8px;">
+                            <i class="fa-solid fa-vial"></i> Send Test to My Account
+                        </button>
+                    </div>
+                    
+                    <p id="fii-status-msg" style="margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 500;"></p>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0;">Recent Delivery Logs</h3>
+                        <button class="btn" onclick="clearTestLogs()" id="btn-clear-tests" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-trash"></i> Clear Test Logs
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Market Date</th>
+                                    <th>Banner File</th>
+                                    <th>Emails</th>
+                                    <th>Pushes</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fii-logs-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">Loading logs...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -624,9 +680,145 @@
             });
         });
 
+        // --- FII/DII Controls Logic ---
+        
+        async function loadFiiDiiLogs() {
+            try {
+                const res = await fetch('/api/admin/fii-dii/logs');
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    const tbody = document.getElementById('fii-logs-tbody');
+                    tbody.innerHTML = '';
+                    
+                    let totalEmails = 0;
+                    let totalPushes = 0;
+                    
+                    if (data.logs.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No deliveries recorded yet.</td></tr>';
+                    }
+                    
+                    data.logs.forEach(log => {
+                        totalEmails += log.emails_sent;
+                        totalPushes += log.pushes_sent;
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${new Date(log.created_at).toLocaleString()}</td>
+                            <td>${log.data_date}</td>
+                            <td><a href="/${log.banner_path}" target="_blank" style="color: var(--accent-primary);">View Banner</a></td>
+                            <td>${log.emails_sent}</td>
+                            <td>${log.pushes_sent}</td>
+                            <td><span class="badge ${log.status.includes('Success') ? 'admin' : 'user'}" style="background: ${log.status.includes('Success') ? 'var(--success)' : 'var(--danger)'}; color: #fff;">${log.status}</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    
+                    document.getElementById('metric-fii-emails').innerText = totalEmails;
+                    document.getElementById('metric-fii-pushes').innerText = totalPushes;
+                }
+            } catch(e) {
+                console.error("Failed to load FII/DII logs", e);
+            }
+        }
+        
+        async function triggerFiiDii(force = false) {
+            if (!confirm(`Are you sure you want to trigger the FII/DII delivery engine?${force ? ' (FORCE OVERRIDE ENABLED)' : ''}`)) return;
+            
+            const btn = document.getElementById('btn-fii-force');
+            const msg = document.getElementById('fii-status-msg');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+            msg.innerText = "Running FII/DII Delivery Script... This may take a moment.";
+            msg.style.color = "var(--text-secondary)";
+            
+            try {
+                const res = await fetch('/api/admin/fii-dii/trigger', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ force })
+                });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    msg.innerText = data.message;
+                    msg.style.color = "var(--success)";
+                    loadFiiDiiLogs(); // Refresh table
+                } else {
+                    msg.innerText = "Error: " + data.message;
+                    msg.style.color = "var(--danger)";
+                }
+            } catch (err) {
+                msg.innerText = "Network error occurred.";
+                msg.style.color = "var(--danger)";
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Force Trigger Banner & Delivery';
+                btn.disabled = false;
+            }
+        }
+        
+        async function testFiiDiiDelivery() {
+            const btn = document.getElementById('btn-fii-test');
+            const msg = document.getElementById('fii-status-msg');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending Test...';
+            btn.disabled = true;
+            msg.innerText = "Sending test email and push...";
+            msg.style.color = "var(--text-secondary)";
+            
+            try {
+                const res = await fetch('/api/admin/fii-dii/test-delivery', { method: 'POST' });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    msg.innerText = `Test dispatched to ${data.recipient}. Email: ${data.email_sent ? 'Sent' : 'Failed'}. Push: ${data.push_sent ? 'Sent' : 'Failed'}.`;
+                    msg.style.color = data.email_sent || data.push_sent ? "var(--success)" : "var(--danger)";
+                } else {
+                    msg.innerText = "Error: " + data.message;
+                    msg.style.color = "var(--danger)";
+                }
+            } catch (err) {
+                msg.innerText = "Network error occurred.";
+                msg.style.color = "var(--danger)";
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-vial"></i> Send Test to My Account';
+                btn.disabled = false;
+            }
+        }
+
+        async function clearTestLogs() {
+            if (!confirm("Are you sure you want to clear all test and manually triggered FII/DII logs? This will also delete any test banner images from storage.")) return;
+            
+            const btn = document.getElementById('btn-clear-tests');
+            const msg = document.getElementById('fii-status-msg');
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Clearing...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/admin/fii-dii/logs/clear-tests', { method: 'DELETE' });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    msg.innerText = data.message;
+                    msg.style.color = "var(--success)";
+                    loadFiiDiiLogs(); // Refresh table
+                } else {
+                    msg.innerText = "Error: " + data.message;
+                    msg.style.color = "var(--danger)";
+                }
+            } catch (err) {
+                msg.innerText = "Network error occurred.";
+                msg.style.color = "var(--danger)";
+            } finally {
+                btn.innerHTML = origHtml;
+                btn.disabled = false;
+            }
+        }
+
         // Load stats metrics on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadMetrics();
+            loadFiiDiiLogs(); // load logs
         });
     </script>
     <script src="market-status.js?v=62"></script>

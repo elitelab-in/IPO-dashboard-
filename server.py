@@ -3242,8 +3242,375 @@ def api_admin_plans_add():
     except Exception as e:
         conn.close()
         return jsonify({"status": "error", "message": str(e)}), 500
+# --- Elite Pro Auto Banner Delivery System ---
 
+@app.route('/api/user/notifications/preferences', methods=['GET', 'POST'])
+@login_required
+def notification_preferences():
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    if request.method == 'GET':
+        cursor.execute("SELECT auto_email, auto_push FROM notification_preferences WHERE user_id = ?", (user_id,))
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return jsonify({"status": "success", "auto_email": bool(row['auto_email']), "auto_push": bool(row['auto_push'])})
+        return jsonify({"status": "success", "auto_email": True, "auto_push": True})
+        
+    elif request.method == 'POST':
+        data = request.json
+        auto_email = 1 if data.get('auto_email', True) else 0
+        auto_push = 1 if data.get('auto_push', True) else 0
+        
+        cursor.execute("SELECT user_id FROM notification_preferences WHERE user_id = ?", (user_id,))
+        if cursor.fetchone():
+            cursor.execute("UPDATE notification_preferences SET auto_email = ?, auto_push = ? WHERE user_id = ?", (auto_email, auto_push, user_id))
+        else:
+            cursor.execute("INSERT INTO notification_preferences (user_id, auto_email, auto_push) VALUES (?, ?, ?)", (user_id, auto_email, auto_push))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"})
 
+@app.route('/api/user/notifications/subscribe-push', methods=['POST'])
+@login_required
+def subscribe_push():
+    user_id = session['user_id']
+    subscription = request.json
+    if not subscription or not subscription.get('endpoint'):
+        return jsonify({"status": "error", "message": "Invalid subscription"}), 400
+        
+    endpoint = subscription['endpoint']
+    keys = subscription.get('keys', {})
+    p256dh = keys.get('p256dh', '')
+    auth = keys.get('auth', '')
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT OR REPLACE INTO push_subscriptions (user_id, endpoint, p256dh, auth) VALUES (?, ?, ?, ?)", 
+                       (user_id, endpoint, p256dh, auth))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return jsonify({"status": "error", "message": str(e)}), 500
+    conn.close()
+    return jsonify({"status": "success"})
+
+@app.route('/api/cron/check-fii-dii')
+def cron_check_fii_dii():
+    # Only allow cron requests (you can add a cron secret here)
+    # This fetches data, checks DB, generates banner, sends emails/push
+    try:
+        import nsepython
+        import datetime
+        from utils.banner_generator import generate_fii_dii_banner
+        from utils.delivery_service import send_email_with_banner, send_push_notification
+        import json
+        import os
+        
+        raw_data = nsepython.nse_fiidii()
+        if not raw_data:
+            return jsonify({"status": "error", "message": "Failed to fetch FII/DII"}), 500
+            
+        # Parse newest data
+        newest = raw_data[0] # Usually index 0 is today
+        data_date = newest.get("date")
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check DB state
+        cursor.execute("SELECT last_update_date FROM fii_dii_state WHERE id = 1")
+        row = cursor.fetchone()
+        
+        if row and row['last_update_date'] == data_date:
+            conn.close()
+            return jsonify({"status": "success", "message": f"Data for {data_date} already processed. No action taken."})
+            
+        # NEW DATA DETECTED!
+        # Save new state
+        fii_net = float(newest.get('fii_net', 0).replace(',','')) if isinstance(newest.get('fii_net'), str) else newest.get('fii_net', 0)
+        dii_net = float(newest.get('dii_net', 0).replace(',','')) if isinstance(newest.get('dii_net'), str) else newest.get('dii_net', 0)
+        fii_buy = float(newest.get('fii_buy', 0).replace(',','')) if isinstance(newest.get('fii_buy'), str) else newest.get('fii_buy', 0)
+        fii_sell = float(newest.get('fii_sell', 0).replace(',','')) if isinstance(newest.get('fii_sell'), str) else newest.get('fii_sell', 0)
+        dii_buy = float(newest.get('dii_buy', 0).replace(',','')) if isinstance(newest.get('dii_buy'), str) else newest.get('dii_buy', 0)
+        dii_sell = float(newest.get('dii_sell', 0).replace(',','')) if isinstance(newest.get('dii_sell'), str) else newest.get('dii_sell', 0)
+        
+        if row:
+            cursor.execute("UPDATE fii_dii_state SET last_update_date=?, fii_net=?, dii_net=?, updated_at=CURRENT_TIMESTAMP WHERE id=1", (data_date, fii_net, dii_net))
+        else:
+            cursor.execute("INSERT INTO fii_dii_state (id, last_update_date, fii_net, dii_net) VALUES (1, ?, ?, ?)", (data_date, fii_net, dii_net))
+            
+        banner_data = {
+            "date": data_date,
+            "fii_buy": fii_buy,
+            "fii_sell": fii_sell,
+            "fii_net": fii_net,
+            "dii_buy": dii_buy,
+            "dii_sell": dii_sell,
+            "dii_net": dii_net
+        }
+        
+        os.makedirs("generated_banners", exist_ok=True)
+        banner_path = f"generated_banners/fii_dii_{data_date.replace('-','_')}.png"
+        generate_fii_dii_banner(banner_data, banner_path)
+        
+        # Get Elite Pro users
+        cursor.execute("""
+            SELECT u.id, u.email, np.auto_email, np.auto_push
+            FROM users u
+            JOIN subscriptions s ON u.id = s.user_id
+            JOIN plans p ON s.plan_id = p.id
+            LEFT JOIN notification_preferences np ON u.id = np.user_id
+            WHERE s.status = 'active' AND p.plan_name LIKE '%Elite Pro%'
+        """)
+        pro_users = cursor.fetchall()
+        
+        emails_sent = 0
+        pushes_sent = 0
+        
+        for u in pro_users:
+            # Deliver Email
+            if u['auto_email'] is None or u['auto_email'] == 1:
+                if send_email_with_banner(u['email'], banner_path, banner_data):
+                    emails_sent += 1
+                    
+            # Deliver Push
+            if u['auto_push'] is None or u['auto_push'] == 1:
+                cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=?", (u['id'],))
+                subs = cursor.fetchall()
+                for sub in subs:
+                    sub_info = {
+                        "endpoint": sub['endpoint'],
+                        "keys": {"p256dh": sub['p256dh'], "auth": sub['auth']}
+                    }
+                    payload = {
+                        "title": "New FII/DII Institutional Data",
+                        "body": "Today's institutional activity has been updated. Your premium banner is ready.",
+                        "url": "/sector-analysis"
+                    }
+                    if send_push_notification(sub_info, payload):
+                        pushes_sent += 1
+
+        # Log Delivery
+        cursor.execute("INSERT INTO fii_dii_delivery_logs (data_date, banner_path, emails_sent, pushes_sent, status) VALUES (?, ?, ?, ?, 'Success')",
+                       (data_date, banner_path, emails_sent, pushes_sent))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Auto delivery completed.",
+            "data_date": data_date,
+            "emails_sent": emails_sent,
+            "pushes_sent": pushes_sent
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "trace": traceback.format_exc()}), 500
+# --- Admin Console FII/DII Endpoints ---
+
+@app.route('/api/admin/fii-dii/trigger', methods=['POST'])
+@login_required
+def admin_fii_dii_trigger():
+    user_id = session['user_id']
+    conn = get_db_connection()
+    user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    conn.close()
+    if not user or user['is_admin'] != 1:
+        return jsonify({"status": "error", "message": "Admin access required"}), 403
+        
+    force = request.json.get('force', False)
+    
+    try:
+        import nsepython
+        from utils.banner_generator import generate_fii_dii_banner
+        from utils.delivery_service import send_email_with_banner, send_push_notification
+        import os
+        
+        raw_data = nsepython.nse_fiidii()
+        if not raw_data:
+            return jsonify({"status": "error", "message": "Failed to fetch FII/DII"}), 500
+            
+        newest = raw_data[0]
+        data_date = newest.get("date")
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT last_update_date FROM fii_dii_state WHERE id = 1")
+        row = cursor.fetchone()
+        
+        if row and row['last_update_date'] == data_date and not force:
+            conn.close()
+            return jsonify({"status": "success", "message": f"Data for {data_date} already processed. Use force trigger to override."})
+            
+        fii_net = float(newest.get('fii_net', 0).replace(',','')) if isinstance(newest.get('fii_net'), str) else newest.get('fii_net', 0)
+        dii_net = float(newest.get('dii_net', 0).replace(',','')) if isinstance(newest.get('dii_net'), str) else newest.get('dii_net', 0)
+        fii_buy = float(newest.get('fii_buy', 0).replace(',','')) if isinstance(newest.get('fii_buy'), str) else newest.get('fii_buy', 0)
+        fii_sell = float(newest.get('fii_sell', 0).replace(',','')) if isinstance(newest.get('fii_sell'), str) else newest.get('fii_sell', 0)
+        dii_buy = float(newest.get('dii_buy', 0).replace(',','')) if isinstance(newest.get('dii_buy'), str) else newest.get('dii_buy', 0)
+        dii_sell = float(newest.get('dii_sell', 0).replace(',','')) if isinstance(newest.get('dii_sell'), str) else newest.get('dii_sell', 0)
+        
+        if row:
+            cursor.execute("UPDATE fii_dii_state SET last_update_date=?, fii_net=?, dii_net=?, updated_at=CURRENT_TIMESTAMP WHERE id=1", (data_date, fii_net, dii_net))
+        else:
+            cursor.execute("INSERT INTO fii_dii_state (id, last_update_date, fii_net, dii_net) VALUES (1, ?, ?, ?)", (data_date, fii_net, dii_net))
+            
+        banner_data = {
+            "date": data_date,
+            "fii_buy": fii_buy, "fii_sell": fii_sell, "fii_net": fii_net,
+            "dii_buy": dii_buy, "dii_sell": dii_sell, "dii_net": dii_net
+        }
+        
+        os.makedirs("generated_banners", exist_ok=True)
+        banner_path = f"generated_banners/fii_dii_{data_date.replace('-','_')}.png"
+        generate_fii_dii_banner(banner_data, banner_path)
+        
+        cursor.execute("""
+            SELECT u.id, u.email, np.auto_email, np.auto_push
+            FROM users u
+            JOIN subscriptions s ON u.id = s.user_id
+            JOIN plans p ON s.plan_id = p.id
+            LEFT JOIN notification_preferences np ON u.id = np.user_id
+            WHERE s.status = 'active' AND p.plan_name LIKE '%Elite Pro%'
+        """)
+        pro_users = cursor.fetchall()
+        
+        emails_sent = 0
+        pushes_sent = 0
+        
+        for u in pro_users:
+            if u['auto_email'] is None or u['auto_email'] == 1:
+                if send_email_with_banner(u['email'], banner_path, banner_data):
+                    emails_sent += 1
+            if u['auto_push'] is None or u['auto_push'] == 1:
+                cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=?", (u['id'],))
+                subs = cursor.fetchall()
+                for sub in subs:
+                    sub_info = {"endpoint": sub['endpoint'], "keys": {"p256dh": sub['p256dh'], "auth": sub['auth']}}
+                    payload = {"title": "New FII/DII Institutional Data", "body": "Today's institutional activity has been updated.", "url": "/sector-analysis"}
+                    if send_push_notification(sub_info, payload):
+                        pushes_sent += 1
+
+        cursor.execute("INSERT INTO fii_dii_delivery_logs (data_date, banner_path, emails_sent, pushes_sent, status) VALUES (?, ?, ?, ?, 'Success (Admin Triggered)')",
+                       (data_date, banner_path, emails_sent, pushes_sent))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "message": f"Successfully forced delivery for {data_date}", "emails": emails_sent, "pushes": pushes_sent})
+        
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "trace": traceback.format_exc()}), 500
+
+@app.route('/api/admin/fii-dii/test-delivery', methods=['POST'])
+@login_required
+def admin_fii_dii_test():
+    user_id = session['user_id']
+    conn = get_db_connection()
+    user = conn.execute("SELECT email, is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not user or user['is_admin'] != 1:
+        conn.close()
+        return jsonify({"status": "error", "message": "Admin access required"}), 403
+        
+    try:
+        from utils.banner_generator import generate_fii_dii_banner
+        from utils.delivery_service import send_email_with_banner, send_push_notification
+        import os
+        
+        test_data = {
+            "date": "TEST-DATE", "fii_buy": 100, "fii_sell": 50, "fii_net": 50,
+            "dii_buy": 50, "dii_sell": 100, "dii_net": -50
+        }
+        os.makedirs("generated_banners", exist_ok=True)
+        banner_path = "generated_banners/fii_dii_TEST.png"
+        generate_fii_dii_banner(test_data, banner_path)
+        
+        email_success = send_email_with_banner(user['email'], banner_path, test_data)
+        
+        push_success = False
+        cursor = conn.cursor()
+        cursor.execute("SELECT endpoint, p256dh, auth FROM push_subscriptions WHERE user_id=?", (user_id,))
+        subs = cursor.fetchall()
+        for sub in subs:
+            sub_info = {"endpoint": sub['endpoint'], "keys": {"p256dh": sub['p256dh'], "auth": sub['auth']}}
+            payload = {"title": "TEST: FII/DII Data", "body": "This is a test delivery from Admin Console.", "url": "/admin"}
+            if send_push_notification(sub_info, payload):
+                push_success = True
+                
+        conn.close()
+        return jsonify({"status": "success", "email_sent": email_success, "push_sent": push_success, "recipient": user['email']})
+    except Exception as e:
+        conn.close()
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "trace": traceback.format_exc()}), 500
+
+@app.route('/api/admin/fii-dii/logs')
+@login_required
+def admin_fii_dii_logs():
+    user_id = session['user_id']
+    conn = get_db_connection()
+    user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not user or user['is_admin'] != 1:
+        conn.close()
+        return jsonify({"status": "error", "message": "Admin access required"}), 403
+        
+    logs = conn.execute("SELECT * FROM fii_dii_delivery_logs ORDER BY created_at DESC LIMIT 50").fetchall()
+    conn.close()
+    
+    return jsonify({"status": "success", "logs": [dict(r) for r in logs]})
+
+@app.route('/api/admin/fii-dii/logs/clear-tests', methods=['DELETE'])
+@login_required
+def admin_fii_dii_clear_tests():
+    user_id = session['user_id']
+    conn = get_db_connection()
+    user = conn.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not user or user['is_admin'] != 1:
+        conn.close()
+        return jsonify({"status": "error", "message": "Admin access required"}), 403
+        
+    try:
+        import os
+        cursor = conn.cursor()
+        
+        # Note: the test delivery does not actually insert into the database currently!
+        # Ah wait, the test delivery endpoint does NOT log to fii_dii_delivery_logs.
+        # But if the user triggered it manually via "Force Trigger", it logs it as "Success (Admin Triggered)".
+        # Let's delete anything that was manually triggered or has TEST in it.
+        
+        cursor.execute("SELECT banner_path FROM fii_dii_delivery_logs WHERE status LIKE '%Admin Triggered%' OR data_date LIKE '%TEST%'")
+        test_logs = cursor.fetchall()
+        
+        deleted_count = 0
+        for log in test_logs:
+            path = log['banner_path']
+            if os.path.exists(path):
+                try:
+                    os.remove(path)
+                except:
+                    pass
+            deleted_count += 1
+            
+        cursor.execute("DELETE FROM fii_dii_delivery_logs WHERE status LIKE '%Admin Triggered%' OR data_date LIKE '%TEST%'")
+        
+        conn.commit()
+        conn.close()
+        
+        # Also clean up any loose TEST banners just in case
+        try:
+            if os.path.exists("generated_banners/fii_dii_TEST.png"):
+                os.remove("generated_banners/fii_dii_TEST.png")
+        except:
+            pass
+            
+        return jsonify({"status": "success", "message": f"Cleared {deleted_count} test/manual logs and associated images."})
+    except Exception as e:
+        conn.close()
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
     import os
