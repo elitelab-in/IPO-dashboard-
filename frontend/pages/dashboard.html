@@ -278,6 +278,9 @@
                 <button class="dash-menu-item" onclick="switchSection('billing')">
                     <i class="fa-solid fa-file-invoice-dollar"></i> Billing History
                 </button>
+                <button class="dash-menu-item" id="author-dashboard-link" style="display: none;" onclick="window.location.href='/author'">
+                    <i class="fa-solid fa-pen-nib"></i> Author Articles
+                </button>
                 <div style="border-top: 1px solid rgba(255,255,255,0.06); margin: 0.5rem 0;"></div>
                 <button class="dash-menu-item" onclick="logoutUser()" style="color: var(--danger);">
                     <i class="fa-solid fa-right-from-bracket"></i> Log Out
@@ -457,6 +460,10 @@
                     }
                     
                     userDetails = data.user;
+                    if (data.user.is_admin === 1) {
+                        const authorLink = document.getElementById('author-dashboard-link');
+                        if (authorLink) authorLink.style.display = 'flex';
+                    }
                     
                     // Welcome Title
                     document.getElementById('dashboard-welcome-msg').innerText = `Welcome, ${data.user.name}! Manage your subscription billing details.`;
@@ -594,4 +601,5 @@
     <script src="/assets/js/notifications.js"></script>
 </body>
 </html>
+
 
