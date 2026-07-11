@@ -18,7 +18,40 @@
         @media (max-width: 768px) {
             .admin-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
+            .admin-sidebar {
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 1rem;
+            }
+            .admin-menu-item {
+                width: auto;
+                flex: 1 1 calc(50% - 0.5rem);
+                justify-content: center;
+                padding: 0.6rem 0.5rem;
+                font-size: 0.8rem;
+                text-align: center;
+            }
+            .admin-content {
+                padding: 1.5rem 1rem;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .admin-menu-item {
+                flex: 1 1 100%;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .admin-sidebar {
             background: rgba(255, 255, 255, 0.02);
