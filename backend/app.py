@@ -293,40 +293,40 @@ def get_file_path(filename):
 
 @app.route('/')
 def index():
-    return send_from_directory(get_file_path('index.html'), 'index.html')
+    return send_from_directory(app.template_folder, 'index.html')
 
 @app.route('/screener')
 def screener():
-    return send_from_directory(get_file_path('screener.html'), 'screener.html')
+    return send_from_directory(app.template_folder, 'screener.html')
 
 
 @app.route('/contact')
 def contact():
-    return send_from_directory(get_file_path('contact.html'), 'contact.html')
+    return send_from_directory(app.template_folder, 'contact.html')
 
 @app.route('/articles')
 def articles():
-    return send_from_directory(get_file_path('articles.html'), 'articles.html')
+    return send_from_directory(app.template_folder, 'articles.html')
 
 @app.route('/article')
 def article_detail():
-    return send_from_directory(get_file_path('article-detail.html'), 'article-detail.html')
+    return send_from_directory(app.template_folder, 'article-detail.html')
 
 @app.route('/about')
 def about():
-    return send_from_directory(get_file_path('about.html'), 'about.html')
+    return send_from_directory(app.template_folder, 'about.html')
 
 @app.route('/privacy')
 def privacy():
-    return send_from_directory(get_file_path('privacy.html'), 'privacy.html')
+    return send_from_directory(app.template_folder, 'privacy.html')
 
 @app.route('/terms')
 def terms():
-    return send_from_directory(get_file_path('terms.html'), 'terms.html')
+    return send_from_directory(app.template_folder, 'terms.html')
 
 @app.route('/refund-policy')
 def refund_policy():
-    return send_from_directory(get_file_path('refund-policy.html'), 'refund-policy.html')
+    return send_from_directory(app.template_folder, 'refund-policy.html')
 
 @app.route('/api/test-fii-dii')
 def test_fii_dii():
@@ -342,11 +342,11 @@ def test_fii_dii():
 
 @app.route('/sector-analysis')
 def sector_analysis():
-    return send_from_directory(get_file_path('sector-analysis.html'), 'sector-analysis.html')
+    return send_from_directory(app.template_folder, 'sector-analysis.html')
 
 @app.route('/block-deals')
 def block_deals():
-    return send_from_directory(get_file_path('block-deals.html'), 'block-deals.html')
+    return send_from_directory(app.template_folder, 'block-deals.html')
 
 def map_indian_sector(industry, sector, symbol):
     base_symbol = symbol.replace('.NS', '').replace('.BO', '')
@@ -568,7 +568,7 @@ def get_news():
 
 @app.route('/fundamentals')
 def fundamentals():
-    return send_from_directory(get_file_path('fundamentals.html'), 'fundamentals.html')
+    return send_from_directory(app.template_folder, 'fundamentals.html')
 
 TICKER_CACHE = {"time": 0, "data": None}
 
@@ -2039,7 +2039,7 @@ ECONOMY_EVENTS = {
 
 @app.route('/economy')
 def economy():
-    return send_from_directory(get_file_path('economy.html'), 'economy.html')
+    return send_from_directory(app.template_folder, 'economy.html')
 
 @app.route('/api/economy/analyze')
 def analyze_economy_event():
@@ -2879,22 +2879,22 @@ threading.Thread(target=prewarm_all_caches, daemon=True).start()
 def login_page():
     if 'user_id' in session:
         return redirect(url_for('dashboard_page'))
-    return send_from_directory(get_file_path('login.html'), 'login.html')
+    return send_from_directory(app.template_folder, 'login.html')
 
 @app.route('/register')
 def register_page():
     if 'user_id' in session:
         return redirect(url_for('dashboard_page'))
-    return send_from_directory(get_file_path('register.html'), 'register.html')
+    return send_from_directory(app.template_folder, 'register.html')
 
 @app.route('/pricing')
 def pricing_page():
-    return send_from_directory(get_file_path('pricing.html'), 'pricing.html')
+    return send_from_directory(app.template_folder, 'pricing.html')
 
 @app.route('/dashboard')
 @login_required
 def dashboard_page():
-    return send_from_directory(get_file_path('dashboard.html'), 'dashboard.html')
+    return send_from_directory(app.template_folder, 'dashboard.html')
 
 # Auth APIs
 @app.route('/api/auth/register', methods=['POST'])
@@ -3511,6 +3511,7 @@ def get_article(slug):
 if __name__ == '__main__':
     print("[Prewarm] App is starting...")
     app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+
 
 
 
