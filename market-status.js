@@ -84,8 +84,11 @@ function updateAuthNavbar() {
                 if (data.logged_in) {
                     const dashLink = document.createElement('a');
                     dashLink.href = '/dashboard';
-                    dashLink.className = 'btn btn-primary desktop-only';
+                    dashLink.className = 'btn btn-primary auth-nav-link desktop-only';
                     dashLink.innerText = 'Dashboard';
+                    dashLink.style.padding = '0.4rem 1.2rem';
+                    dashLink.style.fontSize = '0.9rem';
+                    dashLink.style.borderRadius = '6px';
                     dashLink.style.marginRight = '1rem';
                     dashLink.style.textDecoration = 'none';
                     if (window.location.pathname === '/dashboard') dashLink.style.opacity = '0.9';
@@ -109,9 +112,12 @@ function updateAuthNavbar() {
                 if (data.logged_in) {
                     const mobDash = document.createElement('a');
                     mobDash.href = '/dashboard';
-                    mobDash.className = 'btn btn-primary';
+                    mobDash.className = 'btn btn-primary auth-nav-link';
                     mobDash.innerText = 'Dashboard';
                     mobDash.style.display = 'block';
+                    mobDash.style.padding = '0.4rem 1.2rem';
+                    mobDash.style.fontSize = '0.9rem';
+                    mobDash.style.borderRadius = '6px';
                     mobDash.style.margin = '1rem';
                     mobDash.style.textAlign = 'center';
                     mobDash.style.textDecoration = 'none';
