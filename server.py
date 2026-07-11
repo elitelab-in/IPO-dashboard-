@@ -2684,7 +2684,6 @@ def get_sector_analysis_api():
     })
 
 @app.route('/api/block-deals')
-@subscription_required
 def get_block_deals_api():
     global BLOCK_DEALS_1W_CACHE
     import nsepython
