@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elitelab - Traders Ki Apni Lab</title>
+    <meta name="description" content="Your digital trading lab to scan swing stocks, analyze IPO metrics, and track live macro drivers.">
+    
+    
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for the price chart and bar charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        /* Search Hero CSS (Finology Style) */
+        .search-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: calc(70vh - 100px);
+        }
+        .search-hero .hero-title {
+            transition: all 0.5s ease;
+        }
+        .search-hero .hero-subtitle {
+            transition: all 0.5s ease;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-hero .trending-tickers {
+            transition: all 0.5s ease;
+        }
+        .search-box-wrapper input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+        .trend-pill:hover {
+            background: rgba(139, 92, 246, 0.1) !important;
+            border-color: var(--accent-primary) !important;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Shrunk Search Header state when results are loaded */
+        .has-results .search-hero {
+            min-height: auto;
+            padding: 1rem 1rem 0rem;
+            margin-bottom: 0.25rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .has-results .search-hero .hero-title {
+            font-size: 1.5rem !important;
+            margin-bottom: 0 !important;
+        }
+        .has-results .search-hero .hero-subtitle {
+            display: none !important;
+        }
+        .has-results .search-hero .trending-tickers {
+            display: none !important;
+        }
+        .has-results .search-hero .search-box-wrapper {
+            max-width: 550px !important;
+            margin-top: 0.75rem;
+        }
+        .has-results .search-hero .search-box-wrapper input {
+            padding: 0.7rem 1.25rem 0.7rem 2.8rem !important;
+            font-size: 0.95rem !important;
+        }
+        .has-results .search-hero .search-box-wrapper i {
+            font-size: 0.95rem !important;
+            left: 1rem !important;
+        }
+        .has-results .search-hero .search-box-wrapper .btn {
+            padding: 0.4rem 1.1rem !important;
+            font-size: 0.85rem !important;
+            right: 0.35rem !important;
+        }
+
+        /* Momentum Scorecard CSS (copied from intraday.html) */
+        .score-gauge-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 4px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .rating-badge {
+            font-weight: 800;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .rating-very-strong {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .rating-strong {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .rating-moderate {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .rating-avoid {
+            background: rgba(220, 38, 38, 0.15);
+            color: #EF4444;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        /* Checklist Grid */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .checklist-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .checklist-row-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .checklist-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .checklist-status {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .status-pass {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22C55E;
+        }
+        .status-fail {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-secondary);
+        }
+        .checklist-value {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        .tickertape-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            margin-top: 1rem;
+        }
+        .tt-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 100px;
+        }
+        .tt-icon-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -16px;
+            left: 16px;
+            font-size: 0.95rem;
+        }
+        .gauge-divider {
+            width: 1px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        @media (max-width: 768px) {
+            .gauge-divider {
+                display: none !important;
+            }
+        }
+
+        
+        /* Fundamental Dashboard specific layout */
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+        }
+        .stock-title h2 {
+            font-size: 2rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .stock-symbol-badge {
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+        .stock-price {
+            text-align: right;
+        }
+        .stock-price .price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .stock-price .change {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .change.positive { color: #22c55e; }
+        .change.negative { color: #ef4444; }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            position: relative;
+            white-space: nowrap;
+        }
+        .tab.active {
+            color: var(--accent-primary);
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-primary);
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        /* Overview layout */
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-card-icon {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+        .stat-title {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        /* Table overrides for financials */
+        .financial-table th { background: transparent; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .financial-table td { font-weight: 400; }
+        .financial-table tr:hover { background: rgba(255,255,255,0.02); }
+        
+        #initial-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        #initial-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        #error-state {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        #dashboard-data { display: none; }
+        
+        .glass-panel {
+            padding: 2.25rem 2rem;
+        }
+        
+        /* Search autocomplete suggestions styles */
+        .suggestion-item {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+        }
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        .suggestion-item:hover {
+            background: rgba(139, 92, 246, 0.15);
+        }
+        .suggestion-symbol {
+            font-weight: 700;
+            color: #8B5CF6;
+        }
+        .suggestion-name {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-left: 0.75rem;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .suggestion-sector {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+        }
+        #loading-state {
+            position: relative !important;
+            display: none;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            width: 100% !important;
+            padding: 6rem 0 !important;
+            background: transparent !important;
+            left: auto !important;
+            right: auto !important;
+            top: auto !important;
+            bottom: auto !important;
+            z-index: 1 !important;
+        }
+        @media (max-width: 768px) {
+            .glass-panel {
+                padding: 1.25rem 1rem !important;
+            }
+            .stock-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0.75rem !important;
+                margin-bottom: 1.5rem !important;
+                padding-bottom: 0.75rem !important;
+            }
+            .stock-title h2 {
+                font-size: 1.4rem !important;
+                flex-wrap: wrap !important;
+                gap: 0.5rem !important;
+            }
+            .stock-price {
+                text-align: left !important;
+            }
+            .stock-price .price {
+                font-size: 1.5rem !important;
+            }
+            .score-gauge-wrapper {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 1.5rem !important;
+                padding: 1.25rem 1rem !important;
+            }
+            #analyst-forecast-container {
+                min-width: 100% !important;
+                align-items: flex-start !important;
+            }
+            .tickertape-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            .checklist-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+            }
+            .financial-table {
+                min-width: 550px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+        <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+                <div class="market-status-widget desktop-only"></div>
+            </div>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+
+                <a href="/" class="nav-link ">Home</a>
+                <a href="/screener" class="nav-link ">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown active desktop-only">
+                    <button class="nav-dropbtn" style="color: var(--accent-primary);">Market Data <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals" style="color: var(--accent-primary); font-weight: 700;">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                        <a href="/block-deals">Block Deals</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link active mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                <a href="/block-deals" class="nav-link mobile-only">Block Deals</a>
+                
+                <a href="/economy" class="nav-link ">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Section -->
+    <main class="container dashboard-container fade-in-up delay-2" style="padding-top: 0;">
+        
+        <!-- Search Hero Section (Finology Style) -->
+        <div class="search-hero" id="search-hero">
+            <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #FFFFFF; font-weight: 800;">
+                Stocks Ka <span class="highlight-text">Search Engine</span>
+            </h1>
+            <p class="hero-subtitle" style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                The Modern Stock Screener that helps you pick better stocks.
+            </p>
+            
+            <div class="search-box-wrapper" style="position: relative; width: 100%; max-width: 650px;">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem; z-index: 10;"></i>
+                <input type="text" id="stock-search" placeholder="Type a Company Name or Symbol to Search..." autocomplete="off" style="width: 100%; padding: 0.9rem 1.5rem 0.9rem 3.2rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.3); color: var(--text-primary); font-size: 1.1rem; outline: none; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 5;">
+                <button class="btn btn-primary" id="search-submit" style="position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%); border-radius: 50px; padding: 0.55rem 1.4rem; font-size: 0.95rem; font-weight: 700; border: none; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); z-index: 10;">
+                    Analyze
+                </button>
+                <div id="search-suggestions" style="display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: rgba(17, 12, 28, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100; max-height: 250px; overflow-y: auto; text-align: left; padding: 6px 0;"></div>
+            </div>
+            
+            <!-- Trending Tickers -->
+            <div class="trending-tickers" style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.9rem; color: var(--text-secondary);">
+                <span style="font-weight: 700;">What's Trending:</span>
+                <button class="trend-pill" data-symbol="ITC.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">ITC</button>
+                <button class="trend-pill" data-symbol="RELIANCE.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">RELIANCE</button>
+                <button class="trend-pill" data-symbol="HDFCBANK.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">HDFCBANK</button>
+                <button class="trend-pill" data-symbol="TCS.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">TCS</button>
+                <button class="trend-pill" data-symbol="SBIN.NS" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.35rem 1rem; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">SBIN</button>
+            </div>
+        </div>
+        
+        <div class="glass-panel" style="min-height: 400px;">
+            
+            <div id="initial-state">
+                <i class="fa-solid fa-chart-pie"></i>
+                <h3>Fundamental Deep Dive</h3>
+                <p>Enter a stock symbol above (e.g. INFY.NS for Infosys) to load its complete financial dashboard.</p>
+            </div>
+            
+            <div id="loading-state" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 6rem 0; gap: 1rem; width: 100%; text-align: center;">
+                <div class="spinner"></div>
+                <p style="font-weight: 500; color: var(--text-secondary); margin: 0;">Crunching financial data...</p>
+            </div>
+            
+            <div id="error-state">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                <h3 id="error-message">Could not find stock data</h3>
+                <p>Please check the symbol and try again.</p>
+            </div>
+            
+            <div id="dashboard-data">
+                <div class="stock-header">
+                    <div class="stock-title">
+                        <h2 id="stock-name">Reliance Industries <span class="stock-symbol-badge" id="stock-symbol">RELIANCE.NS</span></h2>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;" id="stock-sector">Energy</span>
+                    </div>
+                    <div class="stock-price">
+                        <p class="price" id="live-price">₹0.00</p>
+                        <p class="change positive" id="live-change"><i class="fa-solid fa-caret-up"></i> 0.00%</p>
+                    </div>
+                </div>
+                
+                <!-- Momentum Scorecard -->
+                    <div class="score-gauge-wrapper" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding: 1.5rem 2rem; margin-top: 1rem;">
+                        <!-- Left: Momentum Rating -->
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div class="score-circle" id="res-score">0</div>
+                            <div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Momentum Rating</span>
+                                <span class="rating-badge rating-strong" id="res-rating">Strong</span>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.35rem;" id="res-updated">Synced: -</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="gauge-divider"></div>
+                        
+                        <!-- Right: Analyst Ratings & Forecast -->
+                        <div id="analyst-forecast-container" style="display: flex; align-items: center; gap: 1.5rem; flex: 1; min-width: 280px;">
+                            <!-- Circular progress ring -->
+                            <div style="position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg width="80" height="80" viewBox="0 0 80 80">
+                                    <circle cx="40" cy="40" r="32" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+                                    <circle id="analyst-progress-bar" cx="40" cy="40" r="32" fill="transparent" stroke="#22c55e" stroke-width="6" 
+                                            stroke-dasharray="201.06" stroke-dashoffset="201.06" stroke-linecap="round" transform="rotate(-90 40 40)"
+                                            style="transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.3s ease;"/>
+                                </svg>
+                                <span id="analyst-percentage" style="position: absolute; font-size: 1.15rem; font-weight: 800; color: #ffffff;">0%</span>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Analyst Ratings & Forecast</span>
+                                <p id="analyst-desc" style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.4; margin: 0; font-weight: 500;">
+                                    Loading analyst opinions...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tickertape-style Summary Cards Grid -->
+                    <div class="tickertape-grid">
+                        
+                        <!-- Card 1: Sector & Industry -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.2);">🛍️</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-sector-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <span style="font-size: 0.82rem; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 4px; padding: 0.25rem 0.6rem; color: var(--text-secondary); display: inline-block; font-weight: 600;" id="tt-sector-tag">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Market Cap / Cap Rank -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);">🌿</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-cap-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 0;" id="tt-cap-desc">
+                                -
+                            </p>
+                        </div>
+
+                        <!-- Card 3: Volatility & Risk -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2);">🛤️</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-risk-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 0;" id="tt-risk-desc">
+                                -
+                            </p>
+                        </div>
+
+                        <!-- Card 4: Index Membership -->
+                        <div class="tt-card">
+                            <div class="tt-icon-badge" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">📊</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.35rem;" id="tt-index-title">
+                                - <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--text-secondary);"></i>
+                            </div>
+                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 0;" id="tt-index-desc">
+                                -
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Company Description Card -->
+                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column;">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Company Profile Description</span>
+                        <div style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin: 0;" id="res-metadata-summary-container">
+                            <span id="res-metadata-summary-text">-</span>
+                            <button id="res-metadata-read-more-btn" style="background: none; border: none; color: #A78BFA; font-weight: 700; cursor: pointer; padding: 0 0 0 0.5rem; font-size: 0.95rem; outline: none; display: none;">Read More</button>
+                        </div>
+                    </div>
+
+                    <!-- TradingView Chart Card -->
+                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; height: 600px;">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Interactive Chart</span>
+                        <div id="fundamentals-chart-container" style="width: 100%; height: 100%;"></div>
+                    </div>
+                    
+                    <div class="checklist-grid" id="res-checklist-grid" style="margin-bottom: 1.5rem;">
+                        <!-- Checklist items populated dynamically -->
+                    </div>
+
+                    <!-- Shareholding Pattern Section -->
+                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;">
+                            <div>
+                                <h3 style="font-size: 1.35rem; font-weight: 700; color: #FFFFFF; margin: 0;">Shareholding Pattern</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.25rem;">Numbers in percentages</span>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive" style="overflow-x: auto; margin-top: 0.5rem;">
+                            <table class="data-table financial-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr id="holdings-table-headers">
+                                        <th style="padding: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-weight: 600;">Sector</th>
+                                        <!-- Dynamic Quarter Headers -->
+                                    </tr>
+                                </thead>
+                                <tbody id="holdings-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 1rem; display: block; font-style: italic;">
+                            * The classifications might have changed from Sep'2022 onwards.
+                        </span>
+                        
+                        <!-- Holdings Trend Notes -->
+                        <div id="holdings-trend-notes" style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+
+
+                
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/pricing">Pricing Plans</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/refund-policy">Refund Policy</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <!-- Chart Tooltip (TradingView) — same as AI Screener -->
+    <div id="chart-tooltip" class="chart-tooltip">
+        <iframe id="chart-iframe" src="" frameborder="0" scrolling="no"></iframe>
+    </div>
+
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script src="/assets/js/market-status.js"></script>
+    <script src="/assets/js/fundamentals.js"></script>
+    <script>
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
+

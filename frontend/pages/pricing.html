@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Plans - Elitelab - Traders Ki Apni Lab</title>
+    <meta name="description" content="Unlock Elitelab Premium AI scanner plans. Get access to swing breakout and real-time intraday indicators.">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        .toggle-container {
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px;
+            border-radius: 30px;
+            margin-top: 1.5rem;
+        }
+        .toggle-btn {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .toggle-btn.active {
+            background: var(--accent-primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto 5rem;
+        }
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(12px);
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
+        }
+        .pricing-card.popular {
+            background: rgba(139, 92, 246, 0.04);
+            border-color: var(--accent-primary);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+        }
+        .badge-popular {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-primary);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        .plan-price-box {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        .plan-period {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .features-list {
+            list-style: none;
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            flex-grow: 1;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .feature-item i {
+            color: var(--success);
+            font-size: 0.95rem;
+        }
+        .btn-choose {
+            width: 100%;
+            height: 46px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .pricing-card.popular .btn-choose {
+            background: var(--accent-primary);
+            border: none;
+        }
+        .pricing-card.popular .btn-choose:hover {
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+        .btn-choose:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        /* Modal checkout styling */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .payment-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .payment-card {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            max-width: 480px;
+            width: 90%;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .payment-modal.active .payment-card {
+            transform: scale(1);
+        }
+        
+        /* Comparison Table Section */
+        .comparison-section {
+            max-width: 850px;
+            margin: 0 auto 5rem;
+        }
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .comp-table th, .comp-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .comp-table th {
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .comp-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            max-width: 800px;
+            margin: 0 auto 5rem;
+        }
+        .faq-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question i {
+            transition: transform 0.3s ease;
+            color: var(--accent-primary);
+        }
+        .faq-answer {
+            padding: 0 1.5rem 1.25rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            display: none;
+        }
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+                <div class="market-status-widget desktop-only"></div>
+            </div>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/screener" class="nav-link">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Market Data <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                        <a href="/block-deals">Block Deals</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                <a href="/block-deals" class="nav-link mobile-only">Block Deals</a>
+                
+                <a href="/economy" class="nav-link">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container" style="margin-top: 6rem;">
+        
+        <!-- Header -->
+        <div class="pricing-header">
+            <h1 style="font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Upgrade to <span class="highlight-text">Elite Premium</span></h1>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Choose a plan that fits your trading style. Unlock high-probability breakout scans, custom filters, and priority support.</p>
+            
+            <div class="toggle-container">
+                <button class="toggle-btn active" id="billing-monthly" onclick="switchBilling('monthly')">Monthly</button>
+                <button class="toggle-btn" id="billing-yearly" onclick="switchBilling('yearly')">Yearly <span style="font-size:0.75rem; color:#10B981; margin-left:4px;">(Save 33%)</span></button>
+            </div>
+        </div>
+
+        <!-- Plans Grid -->
+        <div class="plans-grid" id="plans-container">
+            <!-- Dynamic Plans Loaded here -->
+            <div style="text-align: center; grid-column: 1/-1; padding: 3rem;">
+                <div class="spinner" style="margin: 0 auto 1rem;"></div>
+                <p style="color: var(--text-secondary);">Loading plans...</p>
+            </div>
+        </div>
+
+        <!-- Feature Comparison -->
+        <div class="comparison-section">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; text-align: center; margin-bottom: 2rem;">Compare Features</h2>
+            <table class="comp-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th style="width: 20%;">Free</th>
+                        <th style="width: 20%; color: var(--accent-primary);">Elite Plan</th>
+                        <th style="width: 20%; color: var(--accent-primary);">Elite Pro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Macro Economy Analyzer</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Real-time News & Market Data</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Fundamental Analysis</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Sector Heatmap</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Sector Analysis</td>
+                        <td><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> No</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                    </tr>
+                    <tr>
+                        <td>FII DII Data & FPI Flow</td>
+                        <td><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> No</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                    </tr>
+                    <tr>
+                        <td>AI Auto Screener & Alerts</td>
+                        <td><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> No</td>
+                        <td><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> No</td>
+                        <td><i class="fa-solid fa-check" style="color: var(--success);"></i> Yes</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; text-align: center; margin-bottom: 2rem;">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How does the Razorpay mock payment verify?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    We use a sandbox checkout simulator. Upon selecting a premium plan, a mock order is created on our secure backend. When you click "Pay Successfully", the backend performs order-signature verification and activates your Elite scanner features instantly.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can I upgrade from Monthly to Yearly later?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes, absolutely! You can upgrade your plan at any time. Any remaining days on your current active monthly subscription will be prorated automatically towards your yearly upgrade.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Are payments secure?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes. All transactions are routed through industry-standard SSL encryption protocols. No card data or payment credentials are stored on our servers.
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Payment Simulator Modal -->
+    <div class="payment-modal" id="payment-modal">
+        <div class="payment-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-credit-card" style="color: var(--accent-primary);"></i> Razorpay Sandbox Checkout
+                </h3>
+                <button onclick="closePaymentModal()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">ORDER DETAILS</p>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem; font-size: 0.9rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary);">Plan:</span>
+                        <strong id="modal-plan-name" style="color:#fff;">Elite Monthly</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary);">Order ID:</span>
+                        <span id="modal-order-id" style="font-family: monospace; color: var(--text-primary);">order_mock_12345</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.5rem; margin-top: 0.5rem;">
+                        <span style="color: var(--text-secondary);">Total Payable:</span>
+                        <strong style="color: var(--accent-primary); font-size: 1.1rem;" id="modal-amount">₹999.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div id="payment-status-message" class="alert-error" style="display: none; margin-bottom: 1.5rem;"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <button class="btn btn-primary" id="btn-pay-success" onclick="executeMockPayment(true)" style="background: #10B981; margin: 0; height: 46px; border-radius: 9999px; border: none; box-shadow: none;">
+                    <i class="fa-solid fa-circle-check"></i> Simulate Payment Success
+                </button>
+                <button class="btn" onclick="executeMockPayment(false)" style="height: 46px; border-radius: 9999px; border: 1px solid rgba(239, 68, 68, 0.2); color: var(--danger); background: rgba(239, 68, 68, 0.05);">
+                    <i class="fa-solid fa-circle-xmark"></i> Simulate Payment Failure
+                </button>
+            </div>
+            
+            <p style="font-size: 0.78rem; color: var(--text-secondary); text-align: center; margin-top: 1.25rem;">
+                <i class="fa-solid fa-lock" style="margin-right: 0.25rem;"></i> Simulated secure sandbox payment. No actual money will be charged.
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/pricing">Pricing Plans</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/refund-policy">Refund Policy</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // FAQ Toggle
+        function toggleFaq(el) {
+            el.parentElement.classList.toggle('active');
+        }
+
+        let allPlans = [];
+        let billingCycle = 'monthly';
+        let selectedPlan = null;
+        let activeOrderId = null;
+
+        function switchBilling(cycle) {
+            billingCycle = cycle;
+            document.getElementById('billing-monthly').classList.toggle('active', cycle === 'monthly');
+            document.getElementById('billing-yearly').classList.toggle('active', cycle === 'yearly');
+            renderPlans();
+        }
+
+        // Fetch pricing plans from backend
+        fetch('/api/plans')
+            .then(res => res.json())
+            .then(data => {
+                allPlans = data.plans || [];
+                renderPlans();
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('plans-container').innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--danger);">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Failed to load pricing plans. Please try again.</p>
+                    </div>
+                `;
+            });
+
+        function renderPlans() {
+            const container = document.getElementById('plans-container');
+            container.innerHTML = '';
+            
+            // Filter plans based on billingCycle selection
+            // We'll show Free Plan in both, Elite Monthly in 'monthly', Elite Yearly in 'yearly'
+            const filtered = allPlans.filter(p => {
+                if (p.plan_name === 'Free Plan') return true;
+                if (billingCycle === 'monthly') {
+                    return p.plan_name.toLowerCase().includes('monthly');
+                } else {
+                    return p.plan_name.toLowerCase().includes('yearly');
+                }
+            });
+
+            filtered.forEach(plan => {
+                const card = document.createElement('div');
+                const isPopular = plan.plan_name.toLowerCase().includes('pro');
+                card.className = `pricing-card ${isPopular ? 'popular' : ''}`;
+                
+                const features = JSON.parse(plan.features || '[]');
+                const featuresHtml = features.map(f => `
+                    <li class="feature-item">
+                        <i class="fa-solid fa-circle-check"></i> ${f}
+                    </li>
+                `).join('');
+
+                const periodStr = plan.plan_name === 'Free Plan' ? '/ forever' : (billingCycle === 'monthly' ? '/ month' : '/ year');
+                const priceDisplay = plan.plan_name === 'Free Plan' ? '₹0' : `₹${plan.price}`;
+
+                card.innerHTML = `
+                    ${isPopular ? '<span class="badge-popular">RECOMMENDED</span>' : ''}
+                    <h3 class="plan-name">${plan.plan_name}</h3>
+                    <div class="plan-price-box">
+                        <span class="plan-price">${priceDisplay}</span>
+                        <span class="plan-period">${periodStr}</span>
+                    </div>
+                    <ul class="features-list">
+                        ${featuresHtml}
+                    </ul>
+                    <button class="btn-choose" onclick="initiateSubscription(${plan.id})">
+                        ${plan.plan_name === 'Free Plan' ? 'Get Started' : 'Subscribe Now'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Start order initiation flow
+        function initiateSubscription(planId) {
+            // First check user auth status
+            fetch('/api/auth/status')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.logged_in) {
+                        // Redirect to login
+                        window.location.href = `/login?next=/pricing`;
+                        return;
+                    }
+                    
+                    const plan = allPlans.find(p => p.id === planId);
+                    if (!plan) return;
+                    
+                    if (plan.plan_name === 'Free Plan') {
+                        // User is logged in, Free Plan is active by default
+                        window.location.href = '/screener';
+                        return;
+                    }
+                    
+                    selectedPlan = plan;
+                    
+                    // Create payment order
+                    fetch('/api/payments/create-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan_id: planId })
+                    })
+                    .then(res => res.json())
+                    .then(orderData => {
+                        if (orderData.status === 'success') {
+                            if (orderData.is_sandbox) {
+                                activeOrderId = orderData.order_id;
+                                document.getElementById('modal-plan-name').innerText = orderData.plan_name;
+                                document.getElementById('modal-order-id').innerText = orderData.order_id;
+                                document.getElementById('modal-amount').innerText = `₹${parseFloat(orderData.amount / 100).toFixed(2)}`;
+                                document.getElementById('payment-status-message').style.display = 'none';
+                                document.getElementById('payment-modal').classList.add('active');
+                            } else {
+                                // Open official Razorpay Checkout popup
+                                const options = {
+                                    "key": orderData.key_id,
+                                    "amount": orderData.amount,
+                                    "currency": orderData.currency || "INR",
+                                    "name": "Elitelab",
+                                    "description": orderData.plan_name,
+                                    "order_id": orderData.order_id,
+                                    "handler": function (response) {
+                                        // Show loading/verifying state in modal
+                                        const modalStatus = document.getElementById('payment-status-message');
+                                        modalStatus.style.display = 'none';
+                                        
+                                        document.getElementById('modal-plan-name').innerText = orderData.plan_name;
+                                        document.getElementById('modal-order-id').innerText = response.razorpay_order_id;
+                                        document.getElementById('modal-amount').innerText = `₹${parseFloat(orderData.amount / 100).toFixed(2)}`;
+                                        
+                                        const successBtn = document.getElementById('btn-pay-success');
+                                        successBtn.disabled = true;
+                                        successBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying payment...';
+                                        document.getElementById('payment-modal').classList.add('active');
+                                        
+                                        fetch('/api/payments/verify', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                plan_id: selectedPlan.id,
+                                                razorpay_order_id: response.razorpay_order_id,
+                                                razorpay_payment_id: response.razorpay_payment_id,
+                                                razorpay_signature: response.razorpay_signature
+                                            })
+                                        })
+                                        .then(res => res.json())
+                                        .then(verifyData => {
+                                            if (verifyData.status === 'success') {
+                                                successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Activated!';
+                                                setTimeout(() => {
+                                                    closePaymentModal();
+                                                    window.location.href = '/dashboard';
+                                                }, 1500);
+                                            } else {
+                                                successBtn.disabled = false;
+                                                successBtn.innerHTML = 'Simulate Payment Success';
+                                                modalStatus.innerText = verifyData.message || 'Signature verification failed.';
+                                                modalStatus.style.display = 'block';
+                                            }
+                                        })
+                                        .catch(() => {
+                                            successBtn.disabled = false;
+                                            successBtn.innerHTML = 'Simulate Payment Success';
+                                            modalStatus.innerText = 'Network error verifying signature.';
+                                            modalStatus.style.display = 'block';
+                                        });
+                                    },
+                                    "theme": {
+                                        "color": "#8B5CF6"
+                                    }
+                                };
+                                const rzp = new Razorpay(options);
+                                rzp.open();
+                            }
+                        } else {
+                            alert(orderData.message || 'Error creating payment order.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Payment system error. Please try again.');
+                    });
+                });
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.remove('active');
+        }
+
+        // Execute checkout simulator selection
+        function executeMockPayment(isSuccess) {
+            const statusBox = document.getElementById('payment-status-message');
+            statusBox.style.display = 'none';
+            
+            if (!isSuccess) {
+                statusBox.innerText = 'Checkout Simulation: Payment was declined or cancelled by the user.';
+                statusBox.style.display = 'block';
+                return;
+            }
+
+            // Simulate sending Razorpay transaction ID, Order ID and mock signature
+            const paymentPayload = {
+                plan_id: selectedPlan.id,
+                razorpay_order_id: activeOrderId,
+                razorpay_payment_id: `pay_mock_${intRandom(100000, 999999)}`,
+                razorpay_signature: `sig_mock_${intRandom(10000000, 99999999)}`
+            };
+
+            const successBtn = document.getElementById('btn-pay-success');
+            successBtn.disabled = true;
+            successBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying signature...';
+
+            fetch('/api/payments/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(paymentPayload)
+            })
+            .then(res => res.json())
+            .then(verifyData => {
+                if (verifyData.status === 'success') {
+                    // Activate success banner and redirect
+                    successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Activated!';
+                    setTimeout(() => {
+                        closePaymentModal();
+                        window.location.href = '/screener';
+                    }, 1500);
+                } else {
+                    statusBox.innerText = verifyData.message || 'Signature verification failed.';
+                    statusBox.style.display = 'block';
+                    successBtn.disabled = false;
+                    successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Simulate Payment Success';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                statusBox.innerText = 'Network error during payment verification.';
+                statusBox.style.display = 'block';
+                successBtn.disabled = false;
+                successBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Simulate Payment Success';
+            });
+        }
+
+        function intRandom(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    </script>
+    <script src="/assets/js/market-status.js?v=62"></script>
+</body>
+</html>
+

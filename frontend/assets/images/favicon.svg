@@ -1,0 +1,12 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="#000000" />
+  <!-- L shape -->
+  <rect x="48" y="80" width="21" height="106" fill="#8B5CF6" />
+  <rect x="48" y="165" width="68" height="21" fill="#8B5CF6" />
+  <!-- Text -->
+  <text x="79" y="130" fill="#FFFFFF" font-family="sans-serif" font-weight="800" font-size="60">Elite</text>
+  <text x="116" y="186" font-family="sans-serif" font-weight="800" font-size="60">
+    <tspan fill="#F0FDF4">ab</tspan>
+    <tspan fill="#8B5CF6">.</tspan>
+  </text>
+</svg>

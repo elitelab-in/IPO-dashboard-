@@ -2,28 +2,37 @@
   "cleanUrls": true,
   "builds": [
     {
-      "src": "server.py",
+      "src": "backend/app.py",
       "use": "@vercel/python"
     },
     {
-      "src": "**/*.{html,css,js,png,jpg,jpeg,svg,gif,ico}",
+      "src": "frontend/assets/**/*.{css,js,png,jpg,jpeg,svg,gif,ico}",
       "use": "@vercel/static"
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "server.py" },
-    { "src": "/", "dest": "server.py" },
-    { "src": "/screener", "dest": "server.py" },
-    { "src": "/about", "dest": "server.py" },
-    { "src": "/contact", "dest": "server.py" },
-    { "src": "/articles", "dest": "server.py" },
-    { "src": "/article", "dest": "server.py" },
-    { "src": "/privacy", "dest": "server.py" },
-    { "src": "/terms", "dest": "server.py" },
-    { "src": "/refund-policy", "dest": "server.py" },
-    { "src": "/fundamentals", "dest": "server.py" },
-    { "src": "/economy", "dest": "server.py" },
-    { "src": "/intraday-manager", "dest": "server.py" },
-    { "src": "/(.*)", "dest": "/$1" }
+    { "src": "/api/(.*)", "dest": "backend/app.py" },
+    { "src": "/assets/(.*)", "dest": "frontend/assets/" },
+    { "src": "/", "dest": "backend/app.py" },
+    { "src": "/screener", "dest": "backend/app.py" },
+    { "src": "/about", "dest": "backend/app.py" },
+    { "src": "/contact", "dest": "backend/app.py" },
+    { "src": "/articles", "dest": "backend/app.py" },
+    { "src": "/article", "dest": "backend/app.py" },
+    { "src": "/privacy", "dest": "backend/app.py" },
+    { "src": "/terms", "dest": "backend/app.py" },
+    { "src": "/refund-policy", "dest": "backend/app.py" },
+    { "src": "/fundamentals", "dest": "backend/app.py" },
+    { "src": "/economy", "dest": "backend/app.py" },
+    { "src": "/intraday-manager", "dest": "backend/app.py" },
+    { "src": "/login", "dest": "backend/app.py" },
+    { "src": "/register", "dest": "backend/app.py" },
+    { "src": "/pricing", "dest": "backend/app.py" },
+    { "src": "/dashboard", "dest": "backend/app.py" },
+    { "src": "/author", "dest": "backend/app.py" },
+    { "src": "/sector-analysis", "dest": "backend/app.py" },
+    { "src": "/block-deals", "dest": "backend/app.py" },
+    { "src": "/(.*)", "dest": "/" }
   ]
 }
+

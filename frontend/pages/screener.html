@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elitelab - Traders Ki Apni Lab</title>
+    <meta name="description" content="Your digital trading lab to scan swing stocks, analyze IPO metrics, and track live macro drivers.">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="preconnect" href="https://s.tradingview.com" crossorigin>
+    <link rel="preconnect" href="https://www.tradingview.com" crossorigin>
+    <link rel="dns-prefetch" href="https://s.tradingview.com">
+    <link rel="dns-prefetch" href="https://www.tradingview.com">
+    <link rel="stylesheet" href="/assets/css/index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ── Tab Toggle ─────────────────────────────────────── */
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px;
+            padding: 5px;
+            margin: 1.5rem auto 2rem;
+            width: fit-content;
+        }
+        .mode-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.55rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all 0.25s ease;
+            outline: none;
+            white-space: nowrap;
+        }
+        .mode-btn.active {
+            background: var(--accent-primary);
+            color: #fff;
+            box-shadow: 0 0 18px rgba(139, 92, 246, 0.5);
+        }
+        .mode-btn:not(.active):hover {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* ── Panels ──────────────────────────────────────────── */
+        .screener-panel {
+            display: none;
+            animation: panelFadeIn 0.3s ease;
+        }
+        .screener-panel.active {
+            display: block;
+        }
+        @keyframes panelFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Intraday styles (from intraday.html) ─────────────── */
+        .search-box {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .search-box:focus { border-color: var(--accent-primary); }
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        .btn-secondary-action {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn-secondary-action:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--text-secondary);
+        }
+        .rating-badge {
+            font-weight: 800;
+            font-size: 0.8rem;
+            padding: 3px 9px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .rating-very-strong { background: rgba(34,197,94,0.12); color: #22C55E; border: 1px solid rgba(34,197,94,0.3); }
+        .rating-strong      { background: rgba(34,197,94,0.12);  color: #22C55E; border: 1px solid rgba(34,197,94,0.3); }
+        .rating-moderate    { background: rgba(245,158,11,0.12); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
+        .rating-avoid       { background: rgba(220,38,38,0.12);  color: #EF4444; border: 1px solid rgba(220,38,38,0.3); }
+        .loader {
+            display: none;
+            border: 3px solid rgba(255,255,255,0.05);
+            border-radius: 50%;
+            border-top: 3px solid var(--accent-primary);
+            width: 36px; height: 36px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+        .empty-state {
+            padding: 3.5rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .empty-icon { font-size: 2.8rem; color: var(--glass-border); }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+                <div class="market-status-widget desktop-only"></div>
+            </div>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+
+                <a href="/" class="nav-link ">Home</a>
+                <a href="/screener" class="nav-link active">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Market Data <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                        <a href="/block-deals">Block Deals</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                <a href="/block-deals" class="nav-link mobile-only">Block Deals</a>
+                
+                <a href="/economy" class="nav-link ">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero text-center" style="padding: 4rem 0 0.5rem;">
+        <div class="container hero-content">
+            <h1 class="hero-title fade-in-up" style="font-size: 2.2rem; margin-bottom: 0.25rem;">
+                AI Auto <span class="highlight-text">Screener</span>
+            </h1>
+            <p class="hero-subtitle fade-in-up delay-1" style="font-size: 1rem; color: var(--text-secondary); margin: 0;">
+                The Ultimate Tool for the Indian Stock Market.
+            </p>
+
+            <!-- Tab Toggle Buttons -->
+            <div class="mode-toggle fade-in-up delay-2">
+                <button class="mode-btn active" id="btn-intraday" onclick="switchTab('intraday')">
+                    <i class="fa-solid fa-bolt"></i> Intraday
+                </button>
+                <button class="mode-btn" id="btn-swing" onclick="switchTab('swing')">
+                    <i class="fa-solid fa-chart-line"></i> Swing
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="container dashboard-container fade-in-up delay-2">
+
+        <!-- ══════════════════════════════════════════════════════ -->
+        <!--  INTRADAY PANEL                                        -->
+        <!-- ══════════════════════════════════════════════════════ -->
+        <div id="panel-intraday" class="screener-panel active">
+            <div class="glass-panel">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.75rem; margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <div class="status-indicator" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #22C55E;">
+                        <span class="ping" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22C55E; box-shadow:0 0 8px #22C55E;"></span>
+                        <span id="intraday-scan-status">Live Scanning</span>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column;">
+                        <span style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Total Scanned Breakouts</span>
+                        <span style="font-size: 1.3rem; font-weight: 700;" id="intraday-stat-total">0</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column;">
+                        <span style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Top Momentum Sectors</span>
+                        <span style="font-size: 0.95rem; font-weight: 600;" id="intraday-stat-sector">Calculating...</span>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+                    <div style="position: relative; flex: 1; max-width: 400px; display: flex; align-items: center;">
+                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; color: var(--text-secondary);"></i>
+                        <input type="text" id="intraday-search-bar" class="search-box" placeholder="Filter scanner table..." style="width: 100%; padding-left: 2.2rem; height: 38px;">
+                    </div>
+                    <button id="intraday-refresh-btn" class="btn-action btn-secondary-action" style="padding: 0.5rem 1rem; height: 38px;">
+                        <i class="fa-solid fa-arrows-rotate"></i> Sync Scanner
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="data-table" id="intraday-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Company Name</th>
+                                <th>LTP</th>
+                                <th>% Chg</th>
+                                <th>Volume</th>
+                                <th>Sector</th>
+                                <th>Score</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody id="intraday-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div id="intraday-pagination" class="pagination-controls"></div>
+
+                <!-- Empty / Loading States -->
+                <div id="intraday-empty" class="empty-state" style="display: none;">
+                    <i class="fa-solid fa-chart-line empty-icon"></i>
+                    <h3>No breakout setups found</h3>
+                    <p style="font-size: 0.85rem; margin-top: 0.25rem;">Wait for market conditions to trigger breakout alerts on your Chartink scanner.</p>
+                </div>
+                <div id="intraday-loading" class="empty-state" style="padding: 3rem 1rem;">
+                    <div class="loader" style="display: block; margin-bottom: 1rem;"></div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">Querying Chartink and computing technical indicator checks...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════ -->
+        <!--  SWING PANEL                                           -->
+        <!-- ══════════════════════════════════════════════════════ -->
+        <div id="panel-swing" class="screener-panel">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="window-controls">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <div class="status-indicator">
+                        <span class="ping"></span>
+                        <span id="swing-scan-status">Live</span>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;">
+                        <i class="fa-solid fa-satellite-dish" style="font-size: 1.5rem; color: var(--accent-primary); margin-bottom: 0.5rem;"></i>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.2rem;">Total Scanned Stocks</span>
+                        <span style="font-size: 1.2rem; font-weight: 600;" id="swing-stat-total">0</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;">
+                        <i class="fa-solid fa-chart-pie" style="font-size: 1.5rem; color: #f59e0b; margin-bottom: 0.5rem;"></i>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.2rem;">Top Sectors</span>
+                        <span style="font-size: 0.95rem; font-weight: 500; line-height: 1.5;" id="swing-stat-sector">Calculating...</span>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="data-table" id="swing-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Company Name</th>
+                                <th>LTP</th>
+                                <th>% Chg</th>
+                                <th>Volume</th>
+                                <th>Sector</th>
+                            </tr>
+                        </thead>
+                        <tbody id="swing-table-body"></tbody>
+                    </table>
+                    <div id="swing-loading-state" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Scanning markets...</p>
+                    </div>
+                </div>
+
+                <div id="swing-pagination" class="pagination-controls"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i>
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/pricing">Pricing Plans</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/refund-policy">Refund Policy</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <!-- Chart Tooltip -->
+    <div id="chart-tooltip" class="chart-tooltip">
+        <div id="chart-container" style="width:100%;height:100%;"></div>
+    </div>
+    <!-- TradingView Widget Library -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+    <script src="/assets/js/screener.js?v=1"></script>
+    <script src="/assets/js/market-status.js?v=62"></script>
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
+

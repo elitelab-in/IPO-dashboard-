@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elitelab - Traders Ki Apni Lab</title>
+    <meta name="description" content="Your digital trading lab to scan swing stocks, analyze IPO metrics, and track live macro drivers.">
+    
+    
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .category-pills {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 3rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scrollbar-width: none;
+        }
+        .category-pills::-webkit-scrollbar {
+            display: none;
+        }
+        .category-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        .category-pill.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            font-weight: 600;
+        }
+        .category-pill:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .featured-article {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 4rem;
+            align-items: stretch;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .featured-article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+        .featured-img-container {
+            width: 100%;
+            height: 100%;
+            min-height: 350px;
+            background: url('article_placeholder.png') center/cover no-repeat;
+        }
+        .featured-content {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .badge {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent-primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+        .article-card {
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+            overflow: hidden;
+            padding: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+        .article-card-img {
+            height: 220px;
+            width: 100%;
+            background: url('article_placeholder.png') center/cover no-repeat;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .article-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .article-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .article-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+        .featured-content .article-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .article-summary {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+        .featured-content .article-summary {
+            font-size: 1.1rem;
+        }
+        .read-more-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            transition: opacity 0.2s;
+            margin-top: auto;
+        }
+        .read-more-link:hover {
+            opacity: 0.8;
+        }
+        .read-more-link i {
+            margin-left: 0.5rem;
+            font-size: 0.85rem;
+            transition: transform 0.2s;
+        }
+        .read-more-link:hover i {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+            .featured-article {
+                grid-template-columns: 1fr;
+            }
+            .featured-img-container {
+                min-height: 250px;
+            }
+            .featured-content {
+                padding: 2rem;
+            }
+            .featured-content .article-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+        <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+                <div class="market-status-widget desktop-only"></div>
+            </div>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+
+                <a href="/" class="nav-link ">Home</a>
+                <a href="/screener" class="nav-link ">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Market Data <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                        <a href="/block-deals">Block Deals</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                <a href="/block-deals" class="nav-link mobile-only">Block Deals</a>
+                
+                <a href="/economy" class="nav-link ">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero text-center" style="padding: 4rem 0 0rem;">
+        <div class="container hero-content">
+            <h1 class="hero-title fade-in-up">
+                Market <span class="highlight-text">Insights</span>
+            </h1>
+            <p class="hero-subtitle fade-in-up delay-1">
+                Strategies, analysis, and deep dives from the Elitelab team.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container dashboard-container fade-in-up delay-2" style="padding-bottom: 4rem;">
+        
+        <!-- Category Pills -->
+        <div class="category-pills">
+            <a href="#" class="category-pill active">All Articles</a>
+            <a href="#" class="category-pill">IPO Breakouts</a>
+            <a href="#" class="category-pill">Technical Analysis</a>
+            <a href="#" class="category-pill">Market Psychology</a>
+            <a href="#" class="category-pill">Platform Updates</a>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="articles-grid">
+            
+            <article class="article-card glass-panel">
+                <a href="/article" style="display: block; text-decoration: none;"><div class="article-card-img"></div></a>
+                <div class="article-card-body">
+                    <span class="badge">Psychology</span>
+                    <div class="article-meta">
+                        <span><i class="fa-regular fa-calendar"></i> June 28, 2026</span>
+                        <span>&bull;</span>
+                        <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+                    </div>
+                    <h2 class="article-title">Risk Management for Swing Traders in Volatile Markets</h2>
+                    <p class="article-summary">Protecting your capital is more important than making profits. Learn how to set intelligent stop-losses and manage position sizing.</p>
+                    <a href="/article" class="read-more-link">Read Article <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="article-card glass-panel">
+                <a href="/article" style="display: block; text-decoration: none;"><div class="article-card-img"></div></a>
+                <div class="article-card-body">
+                    <span class="badge">Technical</span>
+                    <div class="article-meta">
+                        <span><i class="fa-regular fa-calendar"></i> June 15, 2026</span>
+                        <span>&bull;</span>
+                        <span><i class="fa-regular fa-clock"></i> 6 min read</span>
+                    </div>
+                    <h2 class="article-title">Understanding Institutional Accumulation</h2>
+                    <p class="article-summary">When the big players are quietly buying, it leaves a footprint on the chart. Here is how you can read the tape and ride the wave.</p>
+                    <a href="/article" class="read-more-link">Read Article <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="article-card glass-panel">
+                <a href="/article" style="display: block; text-decoration: none;"><div class="article-card-img"></div></a>
+                <div class="article-card-body">
+                    <span class="badge">Platform</span>
+                    <div class="article-meta">
+                        <span><i class="fa-regular fa-calendar"></i> June 10, 2026</span>
+                        <span>&bull;</span>
+                        <span><i class="fa-regular fa-clock"></i> 3 min read</span>
+                    </div>
+                    <h2 class="article-title">Introducing Push Notifications for Market Alerts</h2>
+                    <p class="article-summary">Never miss a breakout again. Our new native push notification system delivers high-probability setups directly to your device.</p>
+                    <a href="#" class="read-more-link">Read Article <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/pricing">Pricing Plans</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/refund-policy">Refund Policy</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script src="/assets/js/app.js?v=62"></script>
+    <script src="/assets/js/market-status.js?v=62"></script>
+<script src="/assets/js/articles-list.js"></script>`n</body>
+</html>
+
+
+
+

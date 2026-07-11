@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elitelab - Traders Ki Apni Lab</title>
+    <meta name="description" content="Your digital trading lab to scan swing stocks, analyze IPO metrics, and track live macro drivers.">
+
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/index.css?v=62">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .article-container {
+            max-width: 860px; /* Unified width for everything */
+            margin: 0 auto;
+            padding: 4rem 1rem 5rem;
+        }
+        .article-top-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+            text-decoration: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+        .back-link:hover {
+            opacity: 0.8;
+        }
+        .article-badge {
+            background: #10b981; /* GrowthSquad Green */
+            color: #fff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+        .article-h1 {
+            font-size: clamp(38px, 6vw, 64px);
+            line-height: 1.2;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            text-align: left;
+        }
+        .article-header-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .article-header-meta {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .article-header-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .article-header-meta .author {
+            color: var(--text-secondary);
+        }
+        
+        .share-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: color 0.2s;
+            text-decoration: none;
+        }
+        .share-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .article-cover-image {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            height: auto;
+            margin: 0 0 3rem 0;
+            background: url('article_placeholder.png') center/cover no-repeat;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .article-body {
+            font-family: 'DM Sans', sans-serif; /* Clean sans-serif like ref */
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #d1d5db; 
+        }
+        .article-body p {
+            margin-bottom: 1.8rem;
+        }
+        .article-body h2 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-top: 3rem;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+        }
+        .article-body h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .article-body blockquote {
+            border-left: 4px solid var(--accent-primary);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--text-primary);
+            background: rgba(139, 92, 246, 0.05);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .article-body ul {
+            margin-bottom: 1.8rem;
+            padding-left: 1.5rem;
+        }
+        .article-body li {
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .article-h1 {
+                font-size: 2rem;
+            }
+            .article-cover-image {
+                border-radius: 0;
+            }
+            .article-container {
+                padding-top: 5rem;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .article-top-bar, .article-h1, .article-header-meta-row, .article-body {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .article-body {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+        <!-- Navbar -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+                <div class="market-status-widget desktop-only"></div>
+            </div>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+
+                <a href="/" class="nav-link ">Home</a>
+                <a href="/screener" class="nav-link ">AI Screener</a>
+                
+                <!-- Desktop Dropdown -->
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn">Market Data <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                        <a href="/block-deals">Block Deals</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile flat links -->
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                <a href="/block-deals" class="nav-link mobile-only">Block Deals</a>
+                
+                <a href="/economy" class="nav-link ">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="article-container fade-in-up delay-2">
+        <!-- Header -->
+        <header>
+            <div class="article-top-bar">
+                <a href="/articles" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Articles</a>
+                <span class="article-badge">Market Psychology</span>
+            </div>
+            
+            <h1 class="article-h1">Sacrificing Short-Term Gains for Long-Term Wealth Creation 💸</h1>
+            
+            <div class="article-header-meta-row">
+                <div class="article-header-meta">
+                    <span class="author"><i class="fa-regular fa-user"></i> Elitelab</span>
+                    <span><i class="fa-regular fa-calendar"></i> <span id="article-date">--</span></span>
+                    <span><i class="fa-regular fa-clock"></i> <span id="article-readtime">-- min read</span></span>
+                </div>
+                <button id="share-article-btn" class="share-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
+            </div>
+        </header>
+
+        <!-- Cover Image -->
+        <div class="article-cover-image"></div>
+
+        <!-- Content -->
+        <article class="article-body">
+            <p>One of the most lucrative, yet misunderstood, setups in the Indian stock market is the **IPO Base**. When a company goes public, there is often massive hype, followed by a period of cooling off where the smart money quietly accumulates shares. If you can spot the end of this accumulation phase, you position yourself for explosive returns.</p>
+
+            <p>In this guide, we will walk you through the anatomy of a perfect IPO base and exactly what technical indicators you should be looking for before you execute a trade.</p>
+
+            <h2>The Anatomy of an IPO Base</h2>
+            <p>An IPO base typically forms within the first few weeks or months after a stock lists. It is characterized by a significant decline from its listing day highs, followed by a period of sideways consolidation. This consolidation is the "base".</p>
+            
+            <blockquote>
+                "The longer the base, the higher in space. A stock that consolidates for 12 weeks has significantly more stored energy than a stock that consolidates for 2."
+            </blockquote>
+
+            <p>Here are the three critical phases you must identify:</p>
+            <ul>
+                <li><strong>The Flush:</strong> The initial panic selling by retail investors who bought the hype.</li>
+                <li><strong>The Dead Zone:</strong> Volume dries up significantly. Volatility contracts. This is where institutional players are accumulating without driving the price up.</li>
+                <li><strong>The Right Side:</strong> Price starts making higher lows. Volume begins to swell on up days.</li>
+            </ul>
+
+            <h2>Volume is Your Best Indicator</h2>
+            <p>Price action without volume is just noise. When analyzing an IPO base, you want to see a specific phenomenon known as "dry up" volume at the absolute bottom of the base. If you look at the daily charts, the red volume bars should be shrinking, indicating that selling pressure has completely exhausted itself.</p>
+
+            <p>Conversely, as the stock starts creeping up the right side of the base, you want to see "pocket pivots" — days where the buying volume is significantly higher than the largest selling volume in the past 10 days.</p>
+
+            <h2>Conclusion</h2>
+            <p>Trading IPO bases requires immense patience. You cannot anticipate the breakout; you must wait for the setup to prove itself. By combining our Elitelab screening tools with the technical knowledge outlined above, you can confidently identify high-probability setups and manage your risk effectively.</p>
+
+            <p style="margin-top: 3rem; margin-bottom: 0.5rem;">Regards,</p>
+            <p style="color: var(--text-primary); font-weight: 700; font-size: 1.2rem; margin-bottom: 3rem;">Team Elitelab</p>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 2rem;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <a href="/articles" class="btn btn-secondary btn-sm" style="border: 1px solid rgba(255, 255, 255, 0.2); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 600;"><i class="fa-solid fa-arrow-left" style="margin-right: 0.5rem;"></i> More Articles</a>
+                <span style="color: var(--text-secondary); font-size: 0.95rem; font-family: 'DM Sans', sans-serif;">Published on 15/06/2026</span>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 1.2rem; display: block; text-decoration: none;" aria-label="Elitelab Home">
+                    <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                        <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                        <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                    </svg>
+                </a>
+                
+                <div style="display: flex; gap: 1.2rem; margin-bottom: 1.2rem;">
+                    <a href="https://www.instagram.com/elitelab.in/" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Elitelab-in" target="_blank" style="color: var(--text-secondary); font-size: 1.4rem; transition: color 0.3s ease;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--text-secondary)'" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+
+                <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fa-regular fa-envelope" style="margin-right: 0.5rem;"></i> 
+                    <a href="mailto:elitelab.in@gmail.com" style="color: var(--text-secondary); text-decoration: none;">elitelab.in@gmail.com</a>
+                </p>
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/pricing">Pricing Plans</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/refund-policy">Refund Policy</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+        </div>
+        <div class="copyright-mobile"><p>&copy; 2026 Elitelab.in. All rights reserved.</p></div>
+        <div class="container footer-disclaimer">
+            <p><strong>Disclaimer:</strong> Trading in financial markets involves a high degree of risk and may not be suitable for all investors. The data, scans, and information provided by Elitelab are for educational and informational purposes only and do not constitute financial advice or trade recommendations. Past performance is not indicative of future results. Always conduct your own research or consult with a qualified, registered financial advisor before making any investment decisions.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const shareBtn = document.getElementById('share-article-btn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: document.title,
+                                text: 'Check out this article from Elitelab!',
+                                url: window.location.href
+                            });
+                        } catch (err) {
+                            console.error('Error sharing:', err);
+                        }
+                    } else {
+                        // Fallback for browsers that don't support Web Share API (like older desktop browsers)
+                        navigator.clipboard.writeText(window.location.href);
+                        const originalHTML = shareBtn.innerHTML;
+                        shareBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                        setTimeout(() => { shareBtn.innerHTML = originalHTML; }, 2000);
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="/assets/js/app.js?v=62"></script>
+    <script src="/assets/js/market-status.js?v=62"></script>
+<script src="/assets/js/article-detail.js"></script>`n</body>
+</html>
+
+
+
+

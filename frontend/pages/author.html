@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Dashboard - Elitelab</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/index.css?v=63">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .author-container {
+            max-width: 800px;
+            margin: 6rem auto 4rem auto;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 2.5rem;
+            backdrop-filter: blur(12px);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+        }
+        .form-textarea {
+            min-height: 400px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+            </div>
+            <div class="nav-links">
+                <a href="/articles" class="btn btn-secondary" style="color:white; text-decoration:none; margin-right:1rem;">Back to Articles</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="author-container">
+            <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color:white;">Write an <span style="color:#8B5CF6;">Article</span></h1>
+            <p style="color: #9CA3AF; margin-bottom: 2rem;">Publish a new news article directly to the Elitelab feed. HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;, and &lt;ul&gt; are supported.</p>
+            
+            <div id="author-error" class="alert alert-danger"></div>
+            <div id="author-success" class="alert alert-success"></div>
+
+            <form id="author-form">
+                <div class="form-group">
+                    <label class="form-label" for="article-title">Article Title</label>
+                    <input class="form-input" type="text" id="article-title" required placeholder="e.g. FIIs Inject Rs 5,000 Cr in Nifty 50">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="article-category">Category</label>
+                        <select class="form-select" id="article-category" required>
+                            <option value="Market Updates" style="color: black;">Market Updates</option>
+                            <option value="FII/DII Data" style="color: black;">FII/DII Data</option>
+                            <option value="Economy" style="color: black;">Economy</option>
+                            <option value="Platform Updates" style="color: black;">Platform Updates</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="article-readtime">Estimated Read Time (minutes)</label>
+                        <input class="form-input" type="number" id="article-readtime" min="1" value="5" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="article-image">Cover Image URL (Optional)</label>
+                    <input class="form-input" type="url" id="article-image" placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="article-content">Content (HTML Supported)</label>
+                    <textarea class="form-textarea" id="article-content" required placeholder="Write your article content here... Use <p> for paragraphs and <h2> for subheadings."></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="btn-publish" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; margin-top: 1rem; background:#8B5CF6; border:none; color:white; cursor:pointer; font-weight:bold;">
+                    <i class="fa-solid fa-paper-plane" style="margin-right: 0.5rem;"></i> Publish Article
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script src="/assets/js/author.js"></script>
+</body>
+</html>
