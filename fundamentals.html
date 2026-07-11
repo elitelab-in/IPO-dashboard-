@@ -51,8 +51,8 @@
         /* Shrunk Search Header state when results are loaded */
         .has-results .search-hero {
             min-height: auto;
-            padding: 1.5rem 1rem 1rem;
-            margin-bottom: 1rem;
+            padding: 1rem 1rem 0rem;
+            margin-bottom: 0.25rem;
             border-bottom: 1px solid var(--glass-border);
         }
         .has-results .search-hero .hero-title {
@@ -482,16 +482,18 @@
                 
                 <!-- Desktop Dropdown -->
                 <div class="nav-dropdown active desktop-only">
-                    <button class="nav-dropbtn" style="color: var(--accent-primary);">Analysis <i class="fa-solid fa-chevron-down"></i></button>
+                    <button class="nav-dropbtn" style="color: var(--accent-primary);">Market Data <i class="fa-solid fa-chevron-down"></i></button>
                     <div class="nav-dropdown-content">
                         <a href="/fundamentals" style="color: var(--accent-primary); font-weight: 700;">Fundamental Analysis</a>
                         <a href="/sector-analysis">Sector Analysis</a>
+                        <a href="/block-deals">Block Deals</a>
                     </div>
                 </div>
                 
                 <!-- Mobile flat links -->
                 <a href="/fundamentals" class="nav-link active mobile-only">Fundamentals</a>
                 <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                <a href="/block-deals" class="nav-link mobile-only">Block Deals</a>
                 
                 <a href="/economy" class="nav-link ">Economy</a>
             </div>
@@ -505,7 +507,7 @@
     </nav>
 
     <!-- Main Section -->
-    <main class="container dashboard-container fade-in-up delay-2" style="padding-top: 1rem;">
+    <main class="container dashboard-container fade-in-up delay-2" style="padding-top: 0;">
         
         <!-- Search Hero Section (Finology Style) -->
         <div class="search-hero" id="search-hero">
@@ -649,7 +651,6 @@
                                 -
                             </p>
                         </div>
-
                     </div>
 
                     <!-- Company Description Card -->
@@ -660,6 +661,13 @@
                             <button id="res-metadata-read-more-btn" style="background: none; border: none; color: #A78BFA; font-weight: 700; cursor: pointer; padding: 0 0 0 0.5rem; font-size: 0.95rem; outline: none; display: none;">Read More</button>
                         </div>
                     </div>
+
+                    <!-- TradingView Chart Card -->
+                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; height: 600px;">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Interactive Chart</span>
+                        <div id="fundamentals-chart-container" style="width: 100%; height: 100%;"></div>
+                    </div>
+                    
                     <div class="checklist-grid" id="res-checklist-grid" style="margin-bottom: 1.5rem;">
                         <!-- Checklist items populated dynamically -->
                     </div>
@@ -751,13 +759,13 @@
         <iframe id="chart-iframe" src="" frameborder="0" scrolling="no"></iframe>
     </div>
 
-    <script src="fundamentals.js?v=62"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script src="market-status.js"></script>
+    <script src="fundamentals.js"></script>
     <script>
-        // Mobile Menu Toggle
         document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
             document.querySelector('.nav-links').classList.toggle('active');
         });
     </script>
-    <script src="market-status.js?v=62"></script>
 </body>
 </html>

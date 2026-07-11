@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Deals - Traders Ki Apni Lab</title>
+    <meta name="description" content="Track live block and bulk deals from major institutions.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="index.css?v=63">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            margin-top: 5rem;
+        }
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        /* Custom Deal Toggle Buttons */
+        .deal-toggle-container {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.2);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .deal-toggle-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .deal-toggle-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .deal-toggle-btn.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+        
+        .btn-export {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-export:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10B981;
+        }
+
+        .data-table-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow-x: auto;
+            backdrop-filter: blur(12px);
+        }
+        
+        .deals-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        
+        .deals-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            white-space: nowrap;
+        }
+        
+        .deals-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+        }
+        
+        .deals-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .type-buy {
+            color: #10B981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .type-sell {
+            color: #EF4444;
+            font-weight: 700;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .symbol-col {
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar (Will be populated similarly to other pages) -->
+    <nav class="nav glass">
+        <div class="container nav-inner">
+            <a href="/" class="logo" aria-label="Elitelab Home">
+                <svg width="110" height="52" viewBox="0 0 110 52" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 4 L 9 4 L 9 39 L 36 39 L 36 48 L 0 48 Z" fill="#8B5CF6" />
+                    <text x="14" y="27" fill="#FFFFFF" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">Elite</text>
+                    <text x="40" y="48" fill="#E2E8F0" font-family="'DM Sans', sans-serif" font-weight="800" font-size="26">ab<tspan fill="#8B5CF6">.</tspan></text>
+                </svg>
+            </a>
+            <div class="nav-links">
+                <div class="mobile-menu-market-status mobile-only"></div>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/screener" class="nav-link">AI Screener</a>
+                
+                <div class="nav-dropdown desktop-only">
+                    <button class="nav-dropbtn" style="color: var(--accent-primary);">Market Data <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-content">
+                        <a href="/fundamentals">Fundamental Analysis</a>
+                        <a href="/sector-analysis">Sector Analysis</a>
+                        <a href="/block-deals" style="color: var(--accent-primary); font-weight: 700;">Block Deals</a>
+                    </div>
+                </div>
+                
+                <a href="/fundamentals" class="nav-link mobile-only">Fundamentals</a>
+                <a href="/sector-analysis" class="nav-link mobile-only">Sector Analysis</a>
+                <a href="/block-deals" class="nav-link mobile-only active">Block Deals</a>
+                
+                <a href="/economy" class="nav-link">Economy</a>
+            </div>
+            <div class="nav-actions">
+                <div class="market-status-widget desktop-only"></div>
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title">Institutional <span class="highlight-text">Block Deals</span></h1>
+            <p class="page-subtitle">Analyze massive institutional footprints. Track bulk buying and selling in real-time.</p>
+        </div>
+
+        <div class="controls-bar" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div class="deal-toggle-container">
+                <button class="deal-toggle-btn active" id="btn-buy-toggle" onclick="setDealType('BUY')">
+                    Buy Only
+                </button>
+                <button class="deal-toggle-btn" id="btn-sell-toggle" onclick="setDealType('SELL')">
+                    Sell Only
+                </button>
+            </div>
+            
+            <button class="btn-export" onclick="exportTableToCSV('block_deals.csv')">
+                <i class="fa-solid fa-file-csv"></i> Export Data
+            </button>
+        </div>
+
+        <div class="data-table-wrapper">
+            <table class="deals-table" id="dealsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Symbol</th>
+                        <th>Client Name</th>
+                        <th>Type</th>
+                        <th style="text-align: right;">Quantity</th>
+                        <th style="text-align: right;">Price (₹)</th>
+                        <th style="text-align: right;">Value (₹ Cr)</th>
+                    </tr>
+                </thead>
+                <tbody id="dealsTableBody">
+                    <tr><td colspan="7" style="text-align: center; padding: 2rem;">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 5rem;">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <p class="copyright-desktop">&copy; 2026 Elitelab.in. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/pricing">Pricing Plans</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chart Tooltip -->
+    <div id="chart-tooltip" class="chart-tooltip">
+        <div id="chart-container" style="width:100%;height:100%;"></div>
+    </div>
+    <!-- TradingView Widget Library -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    
+    <!-- Scripts -->
+    <script src="market-status.js"></script>
+    <script src="block-deals.js"></script>
+    <script>
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

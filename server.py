@@ -229,6 +229,10 @@ def test_fii_dii():
 def sector_analysis():
     return send_from_directory(get_file_path('sector-analysis.html'), 'sector-analysis.html')
 
+@app.route('/block-deals')
+def block_deals():
+    return send_from_directory(get_file_path('block-deals.html'), 'block-deals.html')
+
 def map_indian_sector(industry, sector, symbol):
     base_symbol = symbol.replace('.NS', '').replace('.BO', '')
     
@@ -498,7 +502,6 @@ def get_ticker():
     return jsonify(fallback_data)
 
 @app.route('/api/fundamentals/<symbol>')
-@subscription_required
 def get_fundamentals(symbol):
     try:
         # Ensure .NS for Indian stocks if not provided
@@ -1638,7 +1641,6 @@ def get_search_suggestions():
     return jsonify(results[:8])
 
 @app.route('/api/intraday/analyze')
-@subscription_required
 def analyze_stock():
     symbol = request.args.get('symbol', '').strip().upper()
     if not symbol:
@@ -2376,6 +2378,7 @@ def get_commodity_prices():
     })
 
 SECTOR_ANALYSIS_CACHE = {"time": 0, "data": {}}
+BLOCK_DEALS_1W_CACHE = {"time": 0, "data": []}
 SECTOR_ANALYSIS_UPDATING = False
 sector_cache_lock = threading.Lock()
 
@@ -2643,6 +2646,7 @@ def update_sector_cache_in_background():
 @subscription_required
 def get_sector_analysis_api():
     global SECTOR_ANALYSIS_CACHE, SECTOR_ANALYSIS_UPDATING
+    
     now = time.time()
     
     is_vercel = os.environ.get('VERCEL') == '1' or 'VERCEL_ENV' in os.environ
@@ -2678,6 +2682,51 @@ def get_sector_analysis_api():
         "status": "success",
         "data": SECTOR_ANALYSIS_CACHE["data"]
     })
+
+@app.route('/api/block-deals')
+@subscription_required
+def get_block_deals_api():
+    global BLOCK_DEALS_1W_CACHE
+    import nsepython
+    import datetime
+    import time
+    
+    timeframe = request.args.get('timeframe', '1D')
+    now = time.time()
+    
+    try:
+        if timeframe == '1W':
+            # Cache for 4 hours (14400 seconds)
+            if BLOCK_DEALS_1W_CACHE["data"] and (now - BLOCK_DEALS_1W_CACHE["time"] < 14400):
+                return jsonify({"status": "success", "data": BLOCK_DEALS_1W_CACHE["data"]})
+                
+            end_date = datetime.datetime.today()
+            start_date = end_date - datetime.timedelta(days=7)
+            start_str = start_date.strftime('%d-%m-%Y')
+            end_str = end_date.strftime('%d-%m-%Y')
+            
+            ld = nsepython.nse_largedeals_historical(start_str, end_str)
+            
+            data_to_cache = []
+            if isinstance(ld, dict) and 'data' in ld:
+                data_to_cache = ld['data']
+            elif hasattr(ld, 'to_dict'):
+                data_to_cache = ld.to_dict('records')
+                
+            BLOCK_DEALS_1W_CACHE = {"time": now, "data": data_to_cache}
+            return jsonify({"status": "success", "data": data_to_cache})
+        else:
+            # 1D logic
+            ld = nsepython.nse_largedeals()
+            if isinstance(ld, dict) and 'data' in ld:
+                return jsonify({"status": "success", "data": ld['data']})
+            elif hasattr(ld, 'to_dict'):
+                return jsonify({"status": "success", "data": ld.to_dict('records')})
+            else:
+                return jsonify({"status": "success", "data": []})
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()})
 
 @app.route('/api/fpi-nsdl')
 @subscription_required

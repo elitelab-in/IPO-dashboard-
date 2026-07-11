@@ -106,11 +106,12 @@ function updateAuthNavbar() {
                     // Render Login Link
                     const loginLink = document.createElement('a');
                     loginLink.href = '/login';
-                    loginLink.className = 'nav-link auth-nav-link';
-                    loginLink.innerText = 'Login';
-                    if (window.location.pathname === '/login') {
-                        loginLink.classList.add('active');
-                    }
+                    loginLink.className = 'btn btn-primary auth-nav-link';
+                    loginLink.style.marginLeft = '0.5rem';
+                    loginLink.style.padding = '0.4rem 1.2rem';
+                    loginLink.style.fontSize = '0.9rem';
+                    loginLink.style.borderRadius = '6px';
+                    loginLink.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Login / Sign up';
                     nav.appendChild(loginLink);
                 }
             });

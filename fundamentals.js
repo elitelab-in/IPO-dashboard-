@@ -26,14 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Fetch momentum checklist scorecard
             const response = await fetch(`/api/intraday/analyze?symbol=${baseSymbol}`);
-            if (response.status === 401) {
-                showPremiumLockOverlay(true);
-                throw new Error('Login required');
-            }
-            if (response.status === 402 || response.status === 403) {
-                showPremiumLockOverlay(false);
-                throw new Error('Subscription required');
-            }
             if (!response.ok) {
                 throw new Error('Symbol not found or technical load error');
             }
@@ -47,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('search-hero').classList.add('has-results');
 
             renderDashboard(momData);
+            loadTVWidget(`BSE:${baseSymbol}`);
             
             loadingState.style.display = 'none';
             dashboardData.style.display = 'block';
@@ -681,3 +674,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// TradingView Widget Integration
+function loadTVWidget(symbol) {
+    const chartContainer = document.getElementById('fundamentals-chart-container');
+    if (!chartContainer) return;
+    chartContainer.innerHTML = '';
+    
+    // Check if TradingView is loaded
+    if (typeof TradingView === 'undefined') {
+        console.error("TradingView widget script not loaded");
+        return;
+    }
+    
+    new TradingView.widget({
+        symbol: symbol,
+        interval: "D",
+        timezone: "Asia/Kolkata",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: false,
+        container_id: "fundamentals-chart-container",
+        autosize: true,
+        studies: [
+            { id: "MAExp@tv-basicstudies", inputs: { length: 9 } },
+            { id: "MAExp@tv-basicstudies", inputs: { length: 20 } }
+        ]
+    });
+}

@@ -72,35 +72,35 @@ def init_db():
             "Free Plan", 
             0.0, 
             36500, # ~100 years
-            json.dumps(["Economy Analyser Features", "Daily Sentiment Analysis", "Market Breadth Tickers"]), 
+            json.dumps(["Macro economy analyzer", "Fundamental analysis", "Sector heatmap", "Real-time market data", "Real-time News"]), 
             "active"
         ),
         (
             "Elite Monthly", 
             299.0, 
             30, 
-            json.dumps(["Economy Analyser", "Sector Analysis", "Fundamental Analysis", "Standard Filters"]), 
+            json.dumps(["Macro economy analyzer", "Fundamental analysis", "Sector analysis", "FII DII data", "FPI flow", "Real-time News"]), 
             "active"
         ),
         (
             "Elite Pro Monthly", 
             500.0, 
             30, 
-            json.dumps(["AI Scanner (Intraday + Swing)", "Sector Analysis", "Fundamental Analysis", "Economy Analyser", "Unlimited Usage", "Priority Support"]), 
+            json.dumps(["Macro economy analyzer", "Fundamental & Sector analysis", "FII DII data & FPI flow", "AI auto screener", "Alerts"]), 
             "active"
         ),
         (
             "Elite Yearly", 
             3500.0, 
             365, 
-            json.dumps(["Economy Analyser", "Sector Analysis", "Fundamental Analysis", "Standard Filters", "Discounted Price"]), 
+            json.dumps(["Macro economy analyzer", "Fundamental analysis", "Sector analysis", "FII DII data", "FPI flow", "Real-time News", "Discounted Price"]), 
             "active"
         ),
         (
             "Elite Pro Yearly", 
             5000.0, 
             365, 
-            json.dumps(["AI Scanner (Intraday + Swing)", "Sector Analysis", "Fundamental Analysis", "Economy Analyser", "Unlimited Usage", "Priority Support", "Super Saver Yearly"]), 
+            json.dumps(["Macro economy analyzer", "Fundamental & Sector analysis", "FII DII data & FPI flow", "AI auto screener", "Alerts", "Super Saver Yearly"]), 
             "active"
         )
     ]
