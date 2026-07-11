@@ -267,6 +267,13 @@
                 <button class="admin-menu-item" onclick="switchSection('payments')">
                     <i class="fa-solid fa-receipt"></i> Transactions
                 </button>
+                <button class="admin-menu-item" onclick="switchSection('plans')">
+                    <i class="fa-solid fa-tags"></i> Manage Plans
+                </button>
+                <button class="admin-menu-item" onclick="switchSection('fiidii')">
+                    <i class="fa-solid fa-paper-plane"></i> FII/DII Delivery
+                </button>
+
             </div>
 
             <!-- Content -->
@@ -558,6 +565,8 @@
             
             // Load specific tab data
             if (secId === 'users') loadUsersList();
+            if (secId === 'plans') loadAdminPlans();
+            if (secId === 'fiidii') loadFiiDiiLogs();
             if (secId === 'payments') loadPaymentsList();
             
         }
