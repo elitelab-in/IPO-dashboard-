@@ -6,33 +6,31 @@
       "use": "@vercel/python"
     },
     {
-      "src": "frontend/assets/**/*.{css,js,png,jpg,jpeg,svg,gif,ico}",
+      "src": "frontend/**/*.{html,css,js,png,jpg,jpeg,svg,gif,ico}",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "backend/app.py" },
-    { "src": "/assets/(.*)", "dest": "frontend/assets/" },
-    { "src": "/", "dest": "backend/app.py" },
-    { "src": "/screener", "dest": "backend/app.py" },
-    { "src": "/about", "dest": "backend/app.py" },
-    { "src": "/contact", "dest": "backend/app.py" },
-    { "src": "/articles", "dest": "backend/app.py" },
-    { "src": "/article", "dest": "backend/app.py" },
-    { "src": "/privacy", "dest": "backend/app.py" },
-    { "src": "/terms", "dest": "backend/app.py" },
-    { "src": "/refund-policy", "dest": "backend/app.py" },
-    { "src": "/fundamentals", "dest": "backend/app.py" },
-    { "src": "/economy", "dest": "backend/app.py" },
-    { "src": "/intraday-manager", "dest": "backend/app.py" },
-    { "src": "/login", "dest": "backend/app.py" },
-    { "src": "/register", "dest": "backend/app.py" },
-    { "src": "/pricing", "dest": "backend/app.py" },
-    { "src": "/dashboard", "dest": "backend/app.py" },
-    { "src": "/author", "dest": "backend/app.py" },
-    { "src": "/sector-analysis", "dest": "backend/app.py" },
-    { "src": "/block-deals", "dest": "backend/app.py" },
-    { "src": "/(.*)", "dest": "/" }
+    { "src": "/assets/(.*)", "dest": "frontend/assets/$1" },
+    { "src": "/", "dest": "frontend/pages/index.html" },
+    { "src": "/screener", "dest": "frontend/pages/screener.html" },
+    { "src": "/about", "dest": "frontend/pages/about.html" },
+    { "src": "/contact", "dest": "frontend/pages/contact.html" },
+    { "src": "/articles", "dest": "frontend/pages/articles.html" },
+    { "src": "/article", "dest": "frontend/pages/article-detail.html" },
+    { "src": "/privacy", "dest": "frontend/pages/privacy.html" },
+    { "src": "/terms", "dest": "frontend/pages/terms.html" },
+    { "src": "/refund-policy", "dest": "frontend/pages/refund-policy.html" },
+    { "src": "/fundamentals", "dest": "frontend/pages/fundamentals.html" },
+    { "src": "/economy", "dest": "frontend/pages/economy.html" },
+    { "src": "/intraday-manager", "dest": "frontend/pages/intraday-manager.html" },
+    { "src": "/login", "dest": "frontend/pages/login.html" },
+    { "src": "/register", "dest": "frontend/pages/register.html" },
+    { "src": "/pricing", "dest": "frontend/pages/pricing.html" },
+    { "src": "/dashboard", "dest": "frontend/pages/dashboard.html" },
+    { "src": "/sector-analysis", "dest": "frontend/pages/sector-analysis.html" },
+    { "src": "/block-deals", "dest": "frontend/pages/block-deals.html" },
+    { "src": "/author", "dest": "frontend/pages/author.html" }
   ]
 }
-
