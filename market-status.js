@@ -84,14 +84,22 @@ function updateAuthNavbar() {
                 if (data.logged_in) {
                     const dashLink = document.createElement('a');
                     dashLink.href = '/dashboard';
-                    dashLink.className = 'btn btn-primary auth-nav-link desktop-only';
-                    dashLink.innerText = 'Dashboard';
-                    dashLink.style.padding = '0.4rem 1.2rem';
-                    dashLink.style.fontSize = '0.9rem';
-                    dashLink.style.borderRadius = '6px';
-                    dashLink.style.marginRight = '1rem';
+                    dashLink.className = 'auth-nav-link desktop-only';
+                    dashLink.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(139, 92, 246, 0.15); border-radius: 50%; color: var(--accent-primary); border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <i class="fa-solid fa-user" style="font-size: 1rem;"></i>
+                        </div>
+                        <span style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px; font-weight: 700; letter-spacing: 0.5px;">Dashboard</span>
+                    `;
+                    dashLink.style.display = 'flex';
+                    dashLink.style.flexDirection = 'column';
+                    dashLink.style.alignItems = 'center';
+                    dashLink.style.marginRight = '1.5rem';
                     dashLink.style.textDecoration = 'none';
-                    if (window.location.pathname === '/dashboard') dashLink.style.opacity = '0.9';
+                    dashLink.style.transition = 'all 0.3s ease';
+                    dashLink.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
+                    dashLink.onmouseout = function() { this.style.transform = 'scale(1)'; };
+                    if (window.location.pathname === '/dashboard') dashLink.style.opacity = '0.7';
                     nav.insertBefore(dashLink, mobileMenuBtn);
                     
                     
