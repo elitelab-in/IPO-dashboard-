@@ -10,6 +10,8 @@ import concurrent.futures
 from bs4 import BeautifulSoup
 import yfinance as yf
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import time
 import cloudscraper
 import sqlite3
