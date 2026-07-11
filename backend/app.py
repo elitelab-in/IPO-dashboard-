@@ -2922,7 +2922,7 @@ def api_register():
     # Check if this is the first user (make them admin) or matches admin email
     cursor.execute("SELECT COUNT(*) FROM users")
     user_count = cursor.fetchone()[0]
-    is_admin = 1 if (user_count == 0 or email == 'admin@elitelab.in') else 0
+    is_admin = 1 if (user_count == 0 or email == 'admin@elitelab.in' or email == 'elitelab.in@gmail.com' or email == 'elitelab.in@gmil.com') else 0
     
     hashed_pwd = generate_password_hash(password)
     
