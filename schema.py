@@ -1,5 +1,4 @@
-import psycopg2
-import psycopg2.extras
+import sqlite3
 import os
 import os
 import json
@@ -13,7 +12,7 @@ def init_db():
     # Create Users Table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
@@ -26,7 +25,7 @@ def init_db():
     # Create Plans Table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS plans (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         plan_name TEXT NOT NULL,
         price REAL NOT NULL,
         duration_days INTEGER NOT NULL,
@@ -38,7 +37,7 @@ def init_db():
     # Create Payments Table (must exist before subscriptions for fk constraint)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS payments (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         amount REAL NOT NULL,
         payment_gateway TEXT NOT NULL DEFAULT 'Razorpay',
@@ -52,7 +51,7 @@ def init_db():
     # Create Subscriptions Table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS subscriptions (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         plan_id INTEGER NOT NULL,
         payment_id INTEGER,

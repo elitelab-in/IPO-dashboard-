@@ -261,15 +261,7 @@
                 <button class="admin-menu-item active" onclick="switchSection('dashboard')">
                     <i class="fa-solid fa-chart-pie"></i> Metrics
                 </button>
-                <button class="admin-menu-item" onclick="switchSection('users')">
-                    <i class="fa-solid fa-users"></i> User Database
-                </button>
-                <button class="admin-menu-item" onclick="switchSection('payments')">
-                    <i class="fa-solid fa-cash-register"></i> Transactions
-                </button>
-                <button class="admin-menu-item" onclick="switchSection('plans')">
-                    <i class="fa-solid fa-layer-group"></i> Manage Plans
-                </button>
+                
                 <button class="admin-menu-item" onclick="switchSection('marketing')">
                     <i class="fa-solid fa-bullhorn"></i> coupons & updates
                 </button>
@@ -568,7 +560,7 @@
             // Load specific tab data
             if (secId === 'users') loadUsersList();
             if (secId === 'payments') loadPaymentsList();
-            if (secId === 'plans') loadAdminPlans();
+            
         }
 
         // Load stats metrics
@@ -684,20 +676,7 @@
                 });
         }
 
-        async function loadAdminPlans() {
-            const container = document.getElementById('plans-container');
-            container.innerHTML = '<p style="color: var(--text-secondary);">Loading plans...</p>';
-            
-            try {
-                const res = await fetch('/api/plans');
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    container.innerHTML = '';
-                    if (data.plans.length === 0) {
-                        container.innerHTML = '<p style="color: var(--text-secondary);">No active plans found.</p>';
-                        return;
-                    }
+        
                     
                     data.plans.forEach(p => {
                         let featuresList = [];
@@ -748,24 +727,7 @@
             }
         }
 
-        async function updateAdminPlan(planId, btnElement) {
-            const card = btnElement.closest('.metric-card');
-            const name = card.querySelector('.plan-edit-name').value;
-            const price = card.querySelector('.plan-edit-price').value;
-            const duration = card.querySelector('.plan-edit-duration').value;
-            const featuresText = card.querySelector('.plan-edit-features').value;
-            const msgEl = card.querySelector('.plan-update-msg');
-            
-            const features = featuresText.split('\n').map(f => f.trim()).filter(f => f.length > 0);
-            
-            const origText = btnElement.innerHTML;
-            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            btnElement.disabled = true;
-            
-            try {
-                const res = await fetch('/api/admin/plans/update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+        ,
                     body: JSON.stringify({
                         plan_id: planId,
                         plan_name: name,
@@ -795,15 +757,7 @@
             }
         }
 
-        async function deleteAdminPlan(planId, btnElement) {
-            if(!confirm("Are you sure you want to permanently delete this plan? Active subscriptions on this plan may break.")) return;
-            
-            const origText = btnElement.innerHTML;
-            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            btnElement.disabled = true;
-            
-            try {
-                const res = await fetch(`/api/admin/plans/delete/${planId}`, { method: 'DELETE' });
+        `, { method: 'DELETE' });
                 const data = await res.json();
                 
                 if (data.status === 'success') {
@@ -908,8 +862,7 @@
             }
         }
         
-        async function triggerFiiDii(force = false) {
-            if (!confirm(`Are you sure you want to trigger the FII/DII delivery engine?${force ? ' (FORCE OVERRIDE ENABLED)' : ''}`)) return;
+        `)) return;
             
             const btn = document.getElementById('btn-fii-force');
             const msg = document.getElementById('fii-status-msg');
