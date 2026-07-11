@@ -39,7 +39,6 @@ function updateMarketStatus() {
     if (isOpen) {
         html = `
             <div class="market-status-box open">
-                <span class="status-time" style="margin-right: 16px;">${timeString}</span>
                 <span class="status-dot blink-green"></span>
                 <span class="status-text neon-green-text">Live</span>
             </div>
@@ -47,7 +46,6 @@ function updateMarketStatus() {
     } else {
         html = `
             <div class="market-status-box closed">
-                <span class="status-time" style="margin-right: 16px;">${timeString}</span>
                 <span class="status-dot solid-red"></span>
                 <span class="status-text neon-red-text">Closed</span>
             </div>
@@ -86,21 +84,14 @@ function updateAuthNavbar() {
                 if (data.logged_in) {
                     const dashLink = document.createElement('a');
                     dashLink.href = '/dashboard';
-                    dashLink.className = 'nav-link auth-nav-link desktop-only';
+                    dashLink.className = 'btn btn-primary desktop-only';
                     dashLink.innerText = 'Dashboard';
                     dashLink.style.marginRight = '1rem';
-                    if (window.location.pathname === '/dashboard') dashLink.classList.add('active');
+                    dashLink.style.textDecoration = 'none';
+                    if (window.location.pathname === '/dashboard') dashLink.style.opacity = '0.9';
                     nav.insertBefore(dashLink, mobileMenuBtn);
                     
-                    if (data.user && data.user.is_admin && data.user.email === 'elitelab.in@gmail.com') {
-                        const adminLink = document.createElement('a');
-                        adminLink.href = '/admin';
-                        adminLink.className = 'nav-link auth-nav-link desktop-only';
-                        adminLink.innerText = 'Admin';
-                        adminLink.style.marginRight = '1rem';
-                        if (window.location.pathname === '/admin') adminLink.classList.add('active');
-                        nav.insertBefore(adminLink, mobileMenuBtn);
-                    }
+                    
                 } else {
                     const loginLink = document.createElement('a');
                     loginLink.href = '/login';
@@ -116,21 +107,17 @@ function updateAuthNavbar() {
             
             navLinksContainers.forEach(nav => {
                 if (data.logged_in) {
-                    const dashLink = document.createElement('a');
-                    dashLink.href = '/dashboard';
-                    dashLink.className = 'nav-link auth-nav-link mobile-only';
-                    dashLink.innerText = 'Dashboard';
-                    if (window.location.pathname === '/dashboard') dashLink.classList.add('active');
-                    nav.appendChild(dashLink);
+                    const mobDash = document.createElement('a');
+                    mobDash.href = '/dashboard';
+                    mobDash.className = 'btn btn-primary';
+                    mobDash.innerText = 'Dashboard';
+                    mobDash.style.display = 'block';
+                    mobDash.style.margin = '1rem';
+                    mobDash.style.textAlign = 'center';
+                    mobDash.style.textDecoration = 'none';
+                    nav.appendChild(mobDash);
                     
-                    if (data.user && data.user.is_admin && data.user.email === 'elitelab.in@gmail.com') {
-                        const adminLink = document.createElement('a');
-                        adminLink.href = '/admin';
-                        adminLink.className = 'nav-link auth-nav-link mobile-only';
-                        adminLink.innerText = 'Admin';
-                        if (window.location.pathname === '/admin') adminLink.classList.add('active');
-                        nav.appendChild(adminLink);
-                    }
+                    
                 } else {
                     const loginLink = document.createElement('a');
                     loginLink.href = '/login';
