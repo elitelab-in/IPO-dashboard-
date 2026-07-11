@@ -188,7 +188,7 @@ def get_user_active_plan(user_id):
     cursor.execute('''
         SELECT s.id, s.expiry_date, s.status, p.plan_name FROM subscriptions s
         JOIN plans p ON s.plan_id = p.id
-        WHERE s.user_id = %s AND s.status = 'active'
+        WHERE s.user_id = ? AND s.status = 'active'
         ORDER BY s.expiry_date DESC LIMIT 1
     ''', (user_id,))
     sub = cursor.fetchone()
@@ -2955,7 +2955,7 @@ def api_register():
     try:
         cursor.execute('''
             INSERT INTO users (name, email, password_hash, is_admin)
-            VALUES (%s, %s, %s, %s)
+            VALUES (?, ?, ?, ?)
         ''', (name, email, hashed_pwd, is_admin))
         user_id = cursor.lastrowid
         conn.commit()
@@ -2968,7 +2968,7 @@ def api_register():
             expiry_date = start_date + datetime.timedelta(days=free_plan['duration_days'])
             cursor.execute('''
                 INSERT INTO subscriptions (user_id, plan_id, start_date, expiry_date, status)
-                VALUES (%s, %s, %s, %s, 'active')
+                VALUES (?, ?, ?, ?, 'active')
             ''', (user_id, free_plan['id'], start_date.strftime('%Y-%m-%d %H:%M:%S'), expiry_date.strftime('%Y-%m-%d %H:%M:%S')))
             conn.commit()
             
@@ -3039,7 +3039,7 @@ def api_auth_status():
     cursor.execute('''
         SELECT s.expiry_date, p.plan_name, p.price FROM subscriptions s
         JOIN plans p ON s.plan_id = p.id
-        WHERE s.user_id = %s AND s.status = 'active'
+        WHERE s.user_id = ? AND s.status = 'active'
         ORDER BY s.expiry_date DESC LIMIT 1
     ''', (user_id,))
     sub = cursor.fetchone()
@@ -3218,7 +3218,7 @@ def api_verify_payment():
         # Record payment transaction
         cursor.execute('''
             INSERT INTO payments (user_id, amount, payment_gateway, transaction_id, status)
-            VALUES (%s, %s, 'Razorpay', %s, 'success')
+            VALUES (?, ?, 'Razorpay', ?, 'success')
         ''', (user_id, plan['price'], payment_id))
         db_payment_id = cursor.lastrowid
         
@@ -3232,7 +3232,7 @@ def api_verify_payment():
         # Record new subscription
         cursor.execute('''
             INSERT INTO subscriptions (user_id, plan_id, payment_id, order_id, start_date, expiry_date, status)
-            VALUES (%s, %s, %s, %s, %s, %s, 'active')
+            VALUES (?, ?, ?, ?, ?, ?, 'active')
         ''', (user_id, plan_id, db_payment_id, order_id, start_date.strftime('%Y-%m-%d %H:%M:%S'), expiry_date.strftime('%Y-%m-%d %H:%M:%S')))
         
         conn.commit()
@@ -3258,7 +3258,7 @@ def api_payment_history():
         SELECT p.id, p.amount, p.created_at, p.status, pl.plan_name FROM payments p
         JOIN subscriptions s ON s.payment_id = p.id
         JOIN plans pl ON s.plan_id = pl.id
-        WHERE p.user_id = %s
+        WHERE p.user_id = ?
         ORDER BY p.created_at DESC
     ''', (user_id,)).fetchall()
     conn.close()
@@ -3369,7 +3369,7 @@ def api_admin_plans_add():
     try:
         cursor.execute('''
             INSERT INTO plans (plan_name, price, duration_days, features, status)
-            VALUES (%s, %s, %s, %s, 'active')
+            VALUES (?, ?, ?, ?, 'active')
         ''', (name, price, duration, json.dumps(features_list)))
         conn.commit()
         conn.close()
