@@ -3201,7 +3201,7 @@ def api_verify_payment():
     cursor = conn.cursor()
     
     # Fetch plan details
-    plan = cursor.execute("SELECT * FROM plans WHERE id = %s", (plan_id,)).fetchone()
+    plan = conn.execute("SELECT * FROM plans WHERE id = %s", (plan_id,)).fetchone()
     if not plan:
         conn.close()
         return jsonify({"status": "error", "message": "Invalid plan ID"}), 400
@@ -3316,7 +3316,7 @@ def api_admin_dashboard():
     total_revenue = cursor.fetchone()[0] or 0.0
     
     # 5. Recent payments
-    payments_raw = cursor.execute('''
+    payments_raw = conn.execute('''
         SELECT p.amount, p.created_at, p.transaction_id, u.name, u.email FROM payments p
         JOIN users u ON p.user_id = u.id
         ORDER BY p.created_at DESC LIMIT 5
