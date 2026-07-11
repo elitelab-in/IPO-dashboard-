@@ -89,7 +89,7 @@ function updateAuthNavbar() {
                         <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(139, 92, 246, 0.15); border-radius: 50%; color: var(--accent-primary); border: 1px solid rgba(139, 92, 246, 0.3);">
                             <i class="fa-solid fa-user" style="font-size: 1rem;"></i>
                         </div>
-                        <span style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Dashboard</span>
+                        <span style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px; font-weight: 700; letter-spacing: 0.5px; text-transform: capitalize;">Dashboard</span>
                     `;
                     dashLink.style.display = 'flex';
                     dashLink.style.flexDirection = 'column';
