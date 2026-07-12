@@ -163,26 +163,8 @@
             <div id="error-alert" class="alert-error"></div>
             <div id="success-alert" class="alert-success"></div>
 
-            <!-- Google Sign-In -->
-            <script src="https://accounts.google.com/gsi/client" async defer></script>
-            <div id="g_id_onload"
-                 data-client_id="1081000923104-rs1i8c58j7alcfklugtn9aemejfd8r8o.apps.googleusercontent.com"
-                 data-context="signup"
-                 data-ux_mode="popup"
-                 data-callback="handleGoogleSignup"
-                 data-auto_prompt="false">
-            </div>
-            
-            <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-shape="rectangular"
-                     data-theme="outline"
-                     data-text="continue_with"
-                     data-size="large"
-                     data-logo_alignment="left"
-                     data-width="356">
-                </div>
+            <div style="display: flex; justify-content: center; margin-bottom: 1.5rem; width: 100%;">
+                <div id="google-btn-container" style="width: 100%; display: flex; justify-content: center;"></div>
             </div>
             
             <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
@@ -195,10 +177,54 @@
                 <i class="fa-regular fa-envelope"></i> Continue with Email
             </button>
 
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
             <script>
                 document.getElementById('btn-show-email').addEventListener('click', function() {
                     this.style.display = 'none';
                     document.getElementById('register-form').style.display = 'block';
+                });
+
+                function renderGoogleButton() {
+                    const container = document.getElementById('google-btn-container');
+                    if (!container) return;
+                    
+                    let btnWidth = container.offsetWidth;
+                    if (btnWidth > 400) btnWidth = 400; 
+                    
+                    google.accounts.id.initialize({
+                        client_id: "1081000923104-rs1i8c58j7alcfklugtn9aemejfd8r8o.apps.googleusercontent.com",
+                        callback: handleGoogleSignup,
+                        context: "signup",
+                        ux_mode: "popup"
+                    });
+                    
+                    google.accounts.id.renderButton(
+                        container,
+                        { 
+                            theme: "outline", 
+                            size: "large", 
+                            type: "standard", 
+                            text: "continue_with",
+                            width: btnWidth,
+                            logo_alignment: "left"
+                        }
+                    );
+                }
+
+                window.onload = function() {
+                    if (window.google && google.accounts) {
+                        renderGoogleButton();
+                    } else {
+                        setTimeout(renderGoogleButton, 500);
+                    }
+                };
+
+                window.addEventListener('resize', () => {
+                    const container = document.getElementById('google-btn-container');
+                    if (container) {
+                        container.innerHTML = '';
+                        renderGoogleButton();
+                    }
                 });
 
                 function handleGoogleSignup(response) {

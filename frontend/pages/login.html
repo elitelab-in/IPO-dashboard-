@@ -152,26 +152,8 @@
             <!-- Error message container -->
             <div id="error-alert" class="alert-error"></div>
             
-            <!-- Google Sign-In -->
-            <script src="https://accounts.google.com/gsi/client" async defer></script>
-            <div id="g_id_onload"
-                 data-client_id="1081000923104-rs1i8c58j7alcfklugtn9aemejfd8r8o.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-callback="handleGoogleLogin"
-                 data-auto_prompt="false">
-            </div>
-            
-            <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-shape="rectangular"
-                     data-theme="outline"
-                     data-text="continue_with"
-                     data-size="large"
-                     data-logo_alignment="left"
-                     data-width="356">
-                </div>
+            <div style="display: flex; justify-content: center; margin-bottom: 1.5rem; width: 100%;">
+                <div id="google-btn-container" style="width: 100%; display: flex; justify-content: center;"></div>
             </div>
             
             <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
@@ -184,10 +166,58 @@
                 <i class="fa-regular fa-envelope"></i> Continue with Email
             </button>
 
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
             <script>
                 document.getElementById('btn-show-email').addEventListener('click', function() {
                     this.style.display = 'none';
                     document.getElementById('login-form').style.display = 'block';
+                });
+
+                function renderGoogleButton() {
+                    const container = document.getElementById('google-btn-container');
+                    if (!container) return;
+                    
+                    // Get container width, subtracting padding if necessary
+                    let btnWidth = container.offsetWidth;
+                    if (btnWidth > 400) btnWidth = 400; // Google's max width limit
+                    
+                    google.accounts.id.initialize({
+                        client_id: "1081000923104-rs1i8c58j7alcfklugtn9aemejfd8r8o.apps.googleusercontent.com",
+                        callback: handleGoogleLogin,
+                        context: "signin",
+                        ux_mode: "popup"
+                    });
+                    
+                    google.accounts.id.renderButton(
+                        container,
+                        { 
+                            theme: "outline", 
+                            size: "large", 
+                            type: "standard", 
+                            text: "continue_with",
+                            width: btnWidth,
+                            logo_alignment: "left"
+                        }
+                    );
+                }
+
+                // Render button once the GIS library loads
+                window.onload = function() {
+                    // Try immediately if loaded, otherwise wait a bit
+                    if (window.google && google.accounts) {
+                        renderGoogleButton();
+                    } else {
+                        setTimeout(renderGoogleButton, 500);
+                    }
+                };
+
+                // Redraw on window resize to keep it responsive
+                window.addEventListener('resize', () => {
+                    const container = document.getElementById('google-btn-container');
+                    if (container) {
+                        container.innerHTML = '';
+                        renderGoogleButton();
+                    }
                 });
 
                 function handleGoogleLogin(response) {
