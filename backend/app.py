@@ -18,6 +18,8 @@ import sqlite3
 import datetime
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 # Authoritative source for sector, industry, index, FNO data
 from services.metadata_service import getStockMetadata, getSector, getIndustry, getIndices
@@ -2951,6 +2953,79 @@ def api_register():
     except Exception as e:
         conn.close()
         return jsonify({"status": "error", "message": str(e)}), 500
+
+GOOGLE_CLIENT_ID = "1081000923104-rs1i8c58j7alcfklugtn9aemejfd8r8o.apps.googleusercontent.com"
+
+@app.route('/api/auth/google', methods=['POST'])
+def api_google_login():
+    data = request.get_json() or {}
+    token = data.get('credential')
+    
+    if not token:
+        return jsonify({"status": "error", "message": "No Google credential provided"}), 400
+        
+    try:
+        # Verify the token
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), GOOGLE_CLIENT_ID)
+        
+        email = idinfo['email'].lower()
+        name = idinfo.get('name', 'Google User')
+        google_id = idinfo['sub']
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if user exists
+        cursor.execute("SELECT id, name, is_admin FROM users WHERE email = ?", (email,))
+        user = cursor.fetchone()
+        
+        if user:
+            # Update google_id and auth_provider if they don't have it
+            cursor.execute("UPDATE users SET google_id = ?, auth_provider = 'google' WHERE email = ?", (google_id, email))
+            user_id = user['id']
+            is_admin = user['is_admin']
+            user_name = user['name']
+        else:
+            # Create new user
+            cursor.execute("SELECT COUNT(*) FROM users")
+            user_count = cursor.fetchone()[0]
+            is_admin = 1 if (user_count == 0 or email == 'admin@elitelab.in' or email == 'elitelab.in@gmail.com' or email == 'elitelab.in@gmil.com') else 0
+            
+            cursor.execute('''
+                INSERT INTO users (name, email, google_id, auth_provider, is_admin, email_verified)
+                VALUES (?, ?, ?, 'google', ?, 1)
+            ''', (name, email, google_id, is_admin))
+            user_id = cursor.lastrowid
+            user_name = name
+            
+            # Auto-create Free Plan subscription
+            cursor.execute("SELECT id, duration_days FROM plans WHERE plan_name = 'Free Plan'")
+            free_plan = cursor.fetchone()
+            if free_plan:
+                start_date = datetime.datetime.now()
+                expiry_date = start_date + datetime.timedelta(days=free_plan['duration_days'])
+                cursor.execute('''
+                    INSERT INTO subscriptions (user_id, plan_id, start_date, expiry_date, status)
+                    VALUES (?, ?, ?, ?, 'active')
+                ''', (user_id, free_plan['id'], start_date.strftime('%Y-%m-%d %H:%M:%S'), expiry_date.strftime('%Y-%m-%d %H:%M:%S')))
+        
+        conn.commit()
+        conn.close()
+        
+        session.clear()
+        session['user_id'] = user_id
+        session['user_name'] = user_name
+        session['is_admin'] = is_admin
+        session.permanent = True
+        
+        return jsonify({"status": "success", "message": "Logged in successfully"}), 200
+        
+    except ValueError as e:
+        # Invalid token
+        return jsonify({"status": "error", "message": "Invalid Google token"}), 401
+    except Exception as e:
+        print("Google Login Error:", e)
+        return jsonify({"status": "error", "message": "An error occurred during Google sign in"}), 500
 
 @app.route('/api/auth/login', methods=['POST'])
 def api_login():

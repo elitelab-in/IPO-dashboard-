@@ -163,6 +163,70 @@
             <div id="error-alert" class="alert-error"></div>
             <div id="success-alert" class="alert-success"></div>
 
+            <!-- Google Sign-In -->
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
+            <div id="g_id_onload"
+                 data-client_id="1081000923104-rs1i8c58j7alcfklugtn9aemejfd8r8o.apps.googleusercontent.com"
+                 data-context="signup"
+                 data-ux_mode="popup"
+                 data-callback="handleGoogleSignup"
+                 data-auto_prompt="false">
+            </div>
+            
+            <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signup_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     data-width="100%">
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+                <div style="padding: 0 1rem; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">OR</div>
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+            </div>
+
+            <script>
+                function handleGoogleSignup(response) {
+                    const errorAlert = document.getElementById('error-alert');
+                    const successAlert = document.getElementById('success-alert');
+                    errorAlert.style.display = 'none';
+                    successAlert.style.display = 'none';
+                    
+                    fetch('/api/auth/google', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            credential: response.credential
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            successAlert.innerText = 'Account connected successfully! Redirecting...';
+                            successAlert.style.display = 'block';
+                            setTimeout(() => {
+                                window.location.href = '/dashboard';
+                            }, 1000);
+                        } else {
+                            errorAlert.innerText = data.message;
+                            errorAlert.style.display = 'block';
+                        }
+                    })
+                    .catch(err => {
+                        errorAlert.innerText = 'An error occurred during Google sign in. Please try again.';
+                        errorAlert.style.display = 'block';
+                    });
+                }
+            </script>
+
             <form id="register-form">
                 <div class="form-group">
                     <label class="form-label" for="name">Full Name</label>

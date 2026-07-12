@@ -11,3 +11,5 @@ razorpay
 nsepython
 Pillow
 pywebpush
+
+google-auth
