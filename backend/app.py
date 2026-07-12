@@ -2992,8 +2992,8 @@ def api_google_login():
             is_admin = 1 if (user_count == 0 or email == 'admin@elitelab.in' or email == 'elitelab.in@gmail.com' or email == 'elitelab.in@gmil.com') else 0
             
             cursor.execute('''
-                INSERT INTO users (name, email, google_id, auth_provider, is_admin, email_verified)
-                VALUES (?, ?, ?, 'google', ?, 1)
+                INSERT INTO users (name, email, password_hash, google_id, auth_provider, is_admin, email_verified)
+                VALUES (?, ?, 'oauth', ?, 'google', ?, 1)
             ''', (name, email, google_id, is_admin))
             user_id = cursor.lastrowid
             user_name = name
