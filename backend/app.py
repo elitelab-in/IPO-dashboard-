@@ -168,7 +168,41 @@ app.config.update(
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'database', 'elitelab.db')
 
+class DBWrapper:
+    def __init__(self, conn):
+        self.conn = conn
+    def cursor(self):
+        return self.conn.cursor()
+    def commit(self):
+        self.conn.commit()
+    def close(self):
+        self.conn.close()
+
 def get_db_connection():
+    # If a PostgreSQL database URL is provided (e.g. on Vercel/Production), use it!
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        import psycopg2
+        import psycopg2.extras
+        conn = psycopg2.connect(database_url, cursor_factory=psycopg2.extras.DictCursor)
+        
+        # Auto-migrate for Postgres
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
+                columns = [row['column_name'] for row in cur.fetchall()]
+                if 'google_id' not in columns:
+                    cur.execute("ALTER TABLE users ADD COLUMN google_id TEXT")
+                if 'auth_provider' not in columns:
+                    cur.execute("ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'local'")
+            conn.commit()
+        except Exception as e:
+            print("Postgres auto-migration error:", e)
+            conn.rollback()
+            
+        return DBWrapper(conn)
+        
+    # Otherwise, fallback to local SQLite
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     
