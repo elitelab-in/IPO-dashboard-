@@ -3037,7 +3037,7 @@ def api_google_login():
         return jsonify({"status": "error", "message": "Invalid Google token"}), 401
     except Exception as e:
         print("Google Login Error:", e)
-        return jsonify({"status": "error", "message": "An error occurred during Google sign in"}), 500
+        return jsonify({"status": "error", "message": "Backend Error: " + str(e)}), 500
 
 @app.route('/api/auth/login', methods=['POST'])
 def api_login():
