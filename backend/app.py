@@ -180,24 +180,96 @@ class DBWrapper:
 
 def get_db_connection():
     # If a PostgreSQL database URL is provided (e.g. on Vercel/Production), use it!
-    database_url = os.environ.get('DATABASE_URL')
+    database_url = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL')
     if database_url:
         import psycopg2
         import psycopg2.extras
         conn = psycopg2.connect(database_url, cursor_factory=psycopg2.extras.DictCursor)
         
-        # Auto-migrate for Postgres
+        # Auto-migrate or Auto-initialize for Postgres
         try:
             with conn.cursor() as cur:
                 cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
                 columns = [row['column_name'] for row in cur.fetchall()]
-                if 'google_id' not in columns:
-                    cur.execute("ALTER TABLE users ADD COLUMN google_id TEXT")
-                if 'auth_provider' not in columns:
-                    cur.execute("ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'local'")
+                
+                if not columns:
+                    # Database is completely empty, initialize it!
+                    cur.execute('''
+                    CREATE TABLE users (
+                        id SERIAL PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        email TEXT UNIQUE NOT NULL,
+                        password_hash TEXT,
+                        google_id TEXT,
+                        auth_provider TEXT DEFAULT 'local',
+                        email_verified INTEGER DEFAULT 0,
+                        is_admin INTEGER DEFAULT 0,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    
+                    CREATE TABLE plans (
+                        id SERIAL PRIMARY KEY,
+                        plan_name TEXT NOT NULL,
+                        price REAL NOT NULL,
+                        duration_days INTEGER NOT NULL,
+                        features TEXT NOT NULL,
+                        status TEXT NOT NULL DEFAULT 'active'
+                    );
+                    
+                    CREATE TABLE payments (
+                        id SERIAL PRIMARY KEY,
+                        user_id INTEGER NOT NULL REFERENCES users(id),
+                        amount REAL NOT NULL,
+                        payment_gateway TEXT NOT NULL DEFAULT 'Razorpay',
+                        transaction_id TEXT NOT NULL,
+                        status TEXT NOT NULL DEFAULT 'success',
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    
+                    CREATE TABLE subscriptions (
+                        id SERIAL PRIMARY KEY,
+                        user_id INTEGER NOT NULL REFERENCES users(id),
+                        plan_id INTEGER NOT NULL REFERENCES plans(id),
+                        payment_id INTEGER REFERENCES payments(id),
+                        order_id TEXT,
+                        start_date TIMESTAMP NOT NULL,
+                        expiry_date TIMESTAMP NOT NULL,
+                        status TEXT NOT NULL DEFAULT 'active'
+                    );
+                    
+                    CREATE TABLE articles (
+                        id SERIAL PRIMARY KEY,
+                        title TEXT NOT NULL,
+                        slug TEXT UNIQUE NOT NULL,
+                        content TEXT NOT NULL,
+                        category TEXT NOT NULL,
+                        read_time_minutes INTEGER DEFAULT 5,
+                        image_url TEXT,
+                        author_id INTEGER NOT NULL REFERENCES users(id),
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    ''')
+                    
+                    import json
+                    initial_plans = [
+                        ("Free Plan", 0.0, 36500, json.dumps(["Macro economy analyzer", "Fundamental analysis", "Sector heatmap", "Real-time market data", "Real-time News"]), "active"),
+                        ("Elite Monthly", 299.0, 30, json.dumps(["Everything in Free", "Advanced Technical Screener", "F&O Analytics", "Premium Support", "Ad-free experience"]), "active"),
+                        ("Elite Quarterly", 799.0, 90, json.dumps(["Everything in Monthly", "Priority Email Support", "Exclusive Market Webinars", "Custom Alerts (coming soon)"]), "active"),
+                        ("Elite Yearly", 2499.0, 365, json.dumps(["Everything in Quarterly", "1-on-1 Strategy Session", "Early Access to New Features", "VIP Whatsapp Group"]), "active")
+                    ]
+                    for p in initial_plans:
+                        cur.execute("INSERT INTO plans (plan_name, price, duration_days, features, status) VALUES (%s, %s, %s, %s, %s)", p)
+                        
+                else:
+                    # Database exists, just check for new columns
+                    if 'google_id' not in columns:
+                        cur.execute("ALTER TABLE users ADD COLUMN google_id TEXT")
+                    if 'auth_provider' not in columns:
+                        cur.execute("ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'local'")
+                        
             conn.commit()
         except Exception as e:
-            print("Postgres auto-migration error:", e)
+            print("Postgres init/migration error:", e)
             conn.rollback()
             
         return DBWrapper(conn)
