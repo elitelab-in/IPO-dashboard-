@@ -167,10 +167,10 @@
                      data-type="standard"
                      data-shape="rectangular"
                      data-theme="outline"
-                     data-text="signin_with"
+                     data-text="continue_with"
                      data-size="large"
                      data-logo_alignment="left"
-                     data-width="100%">
+                     data-width="400">
                 </div>
             </div>
             
@@ -180,7 +180,16 @@
                 <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
             </div>
 
+            <button type="button" class="btn-submit" id="btn-show-email" style="margin-bottom: 1.5rem;">
+                <i class="fa-regular fa-envelope"></i> Continue with Email
+            </button>
+
             <script>
+                document.getElementById('btn-show-email').addEventListener('click', function() {
+                    this.style.display = 'none';
+                    document.getElementById('login-form').style.display = 'block';
+                });
+
                 function handleGoogleLogin(response) {
                     const errorAlert = document.getElementById('error-alert');
                     errorAlert.style.display = 'none';
@@ -194,7 +203,12 @@
                             credential: response.credential
                         })
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            return res.json().then(err => { throw new Error(err.message || 'Login failed') });
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if(data.status === 'success') {
                             window.location.href = '/dashboard';
@@ -204,13 +218,13 @@
                         }
                     })
                     .catch(err => {
-                        errorAlert.innerText = 'An error occurred during Google sign in. Please try again.';
+                        errorAlert.innerText = 'Error: ' + err.message;
                         errorAlert.style.display = 'block';
                     });
                 }
             </script>
 
-            <form id="login-form">
+            <form id="login-form" style="display: none;">
                 <div class="form-group">
                     <label class="form-label" for="email">Email Address</label>
                     <input class="form-input" type="email" id="email" required placeholder="name@domain.com">
