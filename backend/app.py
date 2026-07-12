@@ -171,9 +171,21 @@ DB_PATH = os.path.join(os.path.dirname(__file__), 'database', 'elitelab.db')
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
+    
+    # Auto-migrate: Add Google Auth columns if they don't exist
+    try:
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(users)")
+        columns = [column['name'] for column in cursor.fetchall()]
+        if 'google_id' not in columns:
+            cursor.execute("ALTER TABLE users ADD COLUMN google_id TEXT")
+        if 'auth_provider' not in columns:
+            cursor.execute("ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'local'")
+        conn.commit()
+    except Exception as e:
+        print("Auto-migration error:", e)
+        
     return conn
-    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.DictCursor)
-    return DBWrapper(conn)
 
 
 def get_user_active_plan(user_id):
