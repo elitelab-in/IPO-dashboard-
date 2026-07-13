@@ -4004,7 +4004,7 @@ def api_verify_payment():
         
         conn.commit()
         conn.close()
-        return jsonify({"status": "success", "message": "Subscription activated successfully!"})
+        
     except Exception as e:
         conn.rollback()
         conn.close()
