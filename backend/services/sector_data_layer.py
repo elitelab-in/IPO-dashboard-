@@ -279,7 +279,7 @@ class SectorDataLayer:
     def _build_synthetic_index(self, constituents):
         """Builds a synthetic index by averaging performance of major constituent stocks."""
         dfs = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             future_to_stock = {executor.submit(self.get_stock_data, sym): sym for sym in constituents[:5]}
             for future in concurrent.futures.as_completed(future_to_stock):
                 res = future.result()
@@ -415,12 +415,11 @@ class SectorDataLayer:
             print(f"[Batch] Index download error: {e}")
 
     def fetch_all_sectors_data(self):
-        """Prefetch all data in batch, then process sectors concurrently."""
-        # One batch call seeds the cache for all get_stock_data/get_index_data calls
+        """Fetch and aggregate data for all configured sectors."""
         self.prefetch_batch()
 
         results = {}
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             future_to_sector = {
                 executor.submit(self.get_index_data, name, cfg["ticker"], cfg["constituents"]): name
                 for name, cfg in SECTORS_CONFIG.items()

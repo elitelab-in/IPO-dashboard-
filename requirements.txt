@@ -4,12 +4,11 @@ requests
 beautifulsoup4
 yfinance
 cloudscraper
-gunicorn
 smartapi-python
 pyotp
 razorpay
 nsepython
 Pillow
 pywebpush
-
 google-auth
+psycopg2-binary

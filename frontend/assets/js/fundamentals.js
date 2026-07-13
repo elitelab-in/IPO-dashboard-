@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('search-hero').classList.add('has-results');
 
             renderDashboard(momData);
+            renderAdvancedFundamentals(baseSymbol, momData);
             loadTVWidget(`BSE:${baseSymbol}`);
             
             loadingState.style.display = 'none';
@@ -696,4 +697,207 @@ function loadTVWidget(symbol) {
             { id: "MAExp@tv-basicstudies", inputs: { length: 20 } }
         ]
     });
+}
+
+function renderAdvancedFundamentals(symbol, momData) {
+    // 1. Extract real data from backend API response
+    const mockData = momData.advanced_fundamentals || momData || {};
+    
+    // Fallback structure in case API failed to generate some fields or they are incomplete
+    const ipo = mockData.ipo || {};
+    const ipoCategory = ipo.category || "Mainboard";
+    const ipoDate = ipo.date || "-";
+    const ipoListingDate = ipo.listingDate || "-";
+    const ipoPrice = ipo.price || "-";
+    const ipoListGain = ipo.listGain || "-";
+    const ipoCurrentGain = ipo.currentGain || "-";
+    const ipoLockin = ipo.lockin || "-";
+
+    const valuation = mockData.valuation || {};
+    const valPE = valuation.pe || "-";
+    const valIndPE = valuation.indPe || "-";
+    const valPB = valuation.pb || "-";
+    const valEV = valuation.ev || "-";
+    const valIsAttractive = valuation.isAttractive || false;
+
+    const revenue = mockData.revenue || {};
+    const revTrend = revenue.trend || "-";
+    const revG3y = revenue.g3y || "-";
+    const revG5y = revenue.g5y || "-";
+    const revIsGood = revenue.isGood || false;
+
+    const pat = mockData.pat || {};
+    const patLatest = pat.latest || "-";
+    const patT3y = pat.t3y || "-";
+    const patT5y = pat.t5y || "-";
+    const patIsGood = pat.isGood || false;
+
+    const capex = mockData.capex || {};
+    const capexCurr = capex.curr || "-";
+    const capexPrev = capex.prev || "-";
+    const capexTrend = capex.trend || "-";
+    const capexStatus = capex.status || "-";
+    const capexSummary = capex.summary || "-";
+
+    const tailwinds = mockData.tailwinds || {};
+    const tailRating = tailwinds.rating || "-";
+    const tailDrivers = Array.isArray(tailwinds.drivers) ? tailwinds.drivers : [];
+    const tailSummary = tailwinds.summary || "-";
+
+    const headwinds = mockData.headwinds || {};
+    const headRating = headwinds.rating || "-";
+    const headRisks = Array.isArray(headwinds.risks) ? headwinds.risks : [];
+
+    const concalls = Array.isArray(mockData.concalls) ? mockData.concalls : [];
+
+    // 2. Populate IPO Info
+    const ipoBadge = document.getElementById('ui-ipo-badge-container');
+    const topIpoBadge = document.getElementById('ui-top-ipo-badge-container');
+    let badgeHTML = "";
+    if (ipoCategory === 'Mainboard') {
+        badgeHTML = `<span class="ipo-badge ipo-mainboard" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;"><i class="fa-solid fa-circle-check"></i> Mainboard IPO</span>`;
+    } else {
+        badgeHTML = `<span class="ipo-badge ipo-sme" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;"><i class="fa-solid fa-star"></i> SME IPO</span>`;
+    }
+    
+    if(ipoBadge) ipoBadge.innerHTML = badgeHTML;
+    if(topIpoBadge) topIpoBadge.innerHTML = badgeHTML;
+    
+    const uiIpoDate = document.getElementById('ui-ipo-date');
+    if (uiIpoDate) uiIpoDate.textContent = ipoDate;
+
+    const uiIpoListDate = document.getElementById('ui-ipo-list-date');
+    if (uiIpoListDate) uiIpoListDate.textContent = ipoListingDate;
+
+    const uiIpoPrice = document.getElementById('ui-ipo-price');
+    if (uiIpoPrice) uiIpoPrice.textContent = ipoPrice;
+
+    const uiIpoListGain = document.getElementById('ui-ipo-list-gain');
+    if (uiIpoListGain) {
+        const listGainStr = String(ipoListGain);
+        const gainClass = listGainStr.includes('+') ? 'text-green' : (listGainStr.includes('-') && listGainStr !== '-' ? 'text-red' : 'text-yellow');
+        uiIpoListGain.innerHTML = `<span class="${gainClass}">${listGainStr}</span>`;
+    }
+
+    const uiIpoCurrentGain = document.getElementById('ui-ipo-current-gain');
+    if (uiIpoCurrentGain) {
+        const currentGainStr = String(ipoCurrentGain);
+        const gainClass = currentGainStr.includes('+') ? 'text-green' : (currentGainStr.includes('-') && currentGainStr !== '-' ? 'text-red' : 'text-yellow');
+        uiIpoCurrentGain.innerHTML = `<span class="${gainClass}">${currentGainStr}</span>`;
+    }
+
+    const uiIpoLockin = document.getElementById('ui-ipo-lockin');
+    if (uiIpoLockin) uiIpoLockin.textContent = ipoLockin;
+
+    // 3. Populate Valuation
+    const uiValPE = document.getElementById('ui-val-pe');
+    if (uiValPE) uiValPE.innerHTML = `<span class="${valIsAttractive ? 'text-green' : 'text-red'}">${valPE}</span>`;
+
+    const uiValIndPE = document.getElementById('ui-val-ind-pe');
+    if (uiValIndPE) uiValIndPE.textContent = valIndPE;
+
+    const uiValPB = document.getElementById('ui-val-pb');
+    if (uiValPB) uiValPB.textContent = valPB;
+
+    const uiValEV = document.getElementById('ui-val-ev');
+    if (uiValEV) uiValEV.textContent = valEV;
+
+    // 4. Populate Revenue
+    const greenArr = `<i class="fa-solid fa-arrow-trend-up trend-icon"></i>`;
+    const redArr = `<i class="fa-solid fa-arrow-trend-down trend-icon"></i>`;
+    const uiRevTrend = document.getElementById('ui-rev-trend');
+    if (uiRevTrend) uiRevTrend.innerHTML = `<span class="${revIsGood ? 'text-green' : 'text-red'}">${revTrend} ${revIsGood ? greenArr : redArr}</span>`;
+
+    const uiRev3y = document.getElementById('ui-rev-3y');
+    if (uiRev3y) uiRev3y.textContent = revG3y;
+
+    const uiRev5y = document.getElementById('ui-rev-5y');
+    if (uiRev5y) uiRev5y.textContent = revG5y;
+
+    // 5. Populate PAT
+    const uiPatLatest = document.getElementById('ui-pat-latest');
+    if (uiPatLatest) uiPatLatest.textContent = patLatest;
+
+    const uiPat3y = document.getElementById('ui-pat-3y');
+    if (uiPat3y) uiPat3y.innerHTML = `<span class="${patIsGood ? 'text-green' : 'text-red'}">${patT3y} ${patIsGood ? greenArr : redArr}</span>`;
+
+    const uiPat5y = document.getElementById('ui-pat-5y');
+    if (uiPat5y) uiPat5y.innerHTML = `<span class="${patIsGood ? 'text-green' : 'text-red'}">${patT5y} ${patIsGood ? greenArr : redArr}</span>`;
+
+    // 6. Populate Capex
+    const uiCapexCurr = document.getElementById('ui-capex-curr');
+    if (uiCapexCurr) uiCapexCurr.textContent = capexCurr;
+
+    const uiCapexPrev = document.getElementById('ui-capex-prev');
+    if (uiCapexPrev) uiCapexPrev.textContent = capexPrev;
+
+    const uiCapexTrend = document.getElementById('ui-capex-trend');
+    if (uiCapexTrend) uiCapexTrend.textContent = capexTrend;
+    
+    const uiCapexStatus = document.getElementById('ui-capex-status');
+    if (uiCapexStatus) {
+        if (capexStatus === "Expansion Mode") {
+            uiCapexStatus.innerHTML = `<span style="background: rgba(34,197,94,0.15); color:#22c55e; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">🟢 ${capexStatus}</span>`;
+        } else {
+            uiCapexStatus.innerHTML = `<span style="background: rgba(239,68,68,0.15); color:#ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">🔴 ${capexStatus}</span>`;
+        }
+    }
+
+    const uiCapexSummary = document.getElementById('ui-capex-summary');
+    if (uiCapexSummary) uiCapexSummary.textContent = capexSummary;
+
+    // 7. Populate Tailwinds
+    const tailStatus = document.getElementById('ui-tail-status');
+    if (tailStatus) {
+        tailStatus.textContent = tailRating;
+        if (String(tailRating).includes("Strong")) {
+            tailStatus.style.background = "rgba(34,197,94,0.15)";
+            tailStatus.style.color = "#22c55e";
+            tailStatus.style.borderColor = "rgba(34,197,94,0.3)";
+        } else {
+            tailStatus.style.background = "rgba(249,115,22,0.15)";
+            tailStatus.style.color = "#f97316";
+            tailStatus.style.borderColor = "rgba(249,115,22,0.3)";
+        }
+    }
+    
+    const uiTailDrivers = document.getElementById('ui-tail-drivers');
+    if (uiTailDrivers) {
+        uiTailDrivers.innerHTML = tailDrivers.map(d => 
+            `<span style="background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); padding: 4px 10px; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">#${d}</span>`
+        ).join('');
+    }
+
+    const uiTailSummary = document.getElementById('ui-tail-summary');
+    if (uiTailSummary) uiTailSummary.textContent = tailSummary;
+
+    // 8. Populate Headwinds
+    const uiHeadStatus = document.getElementById('ui-head-status');
+    if (uiHeadStatus) uiHeadStatus.textContent = `Risk Level: ${headRating}`;
+
+    const uiHeadList = document.getElementById('ui-head-list');
+    if (uiHeadList) {
+        uiHeadList.innerHTML = headRisks.map(r => 
+            `<li style="margin-bottom: 0.4rem;">${r}</li>`
+        ).join('');
+    }
+
+    // 9. Populate Concall PDFs
+    const concallList = document.getElementById('ui-concall-list');
+    if(concallList) {
+        if(concalls.length > 0) {
+            concallList.innerHTML = concalls.map(c => `
+                <a href="${c.url}" target="_blank" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 8px; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                    <i class="fa-regular fa-file-pdf" style="font-size: 1.5rem; color: #ef4444;"></i>
+                    <div style="text-align: left;">
+                        <span style="display: block; color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">${c.title}</span>
+                        <span style="display: block; color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.15rem;">${c.date}</span>
+                    </div>
+                    <i class="fa-solid fa-download" style="margin-left: auto; color: var(--text-secondary);"></i>
+                </a>
+            `).join('');
+        } else {
+            concallList.innerHTML = `<div style="color: var(--text-secondary); font-size: 0.9rem; padding: 1rem; text-align: center;">No recent transcripts found.</div>`;
+        }
+    }
 }

@@ -156,11 +156,13 @@ def send_push_notification(subscription_info, payload_data):
         return False
 
 app.secret_key = os.environ.get('SECRET_KEY', 'elitelab_super_secret_key_987654321_signing_key')
+# Auto-detect production environment (Vercel sets VERCEL=1)
+IS_PRODUCTION = os.environ.get('VERCEL') == '1' or 'VERCEL_ENV' in os.environ
 # Configure session options
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
-    SESSION_COOKIE_SECURE=False, # Set to True in production with HTTPS
+    SESSION_COOKIE_SECURE=IS_PRODUCTION,  # True on Vercel (HTTPS), False for local dev
     PERMANENT_SESSION_LIFETIME=datetime.timedelta(days=7)
 )
 
@@ -1194,7 +1196,12 @@ def get_deterministic_holdings(symbol, ticker, fast=False):
     }
 
 SCREENER_SYMBOL_MAP = {
-    "ITCH": "ITCHOTELS"
+    "ITCH": "ITCHOTELS",
+    "ZOMATO": "ETERNAL"
+}
+
+REBRANDED_SYMBOLS_MAP = {
+    "ZOMATO": "ETERNAL",
 }
 SCREENER_QUARTERS_CACHE = {}
 
@@ -1316,6 +1323,500 @@ def scrape_screener_quarters(symbol):
     except Exception:
         return None
 
+NSE_EQUITY_L_CACHE = {}
+NSE_EQUITY_L_LOCK = threading.Lock()
+
+def load_nse_equity_l_cache():
+    global NSE_EQUITY_L_CACHE
+    if NSE_EQUITY_L_CACHE:
+        return
+    with NSE_EQUITY_L_LOCK:
+        if NSE_EQUITY_L_CACHE:
+            return
+        try:
+            import requests
+            import csv
+            import io
+            url = 'https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+            res = requests.get(url, headers=headers, timeout=10)
+            if res.status_code == 200:
+                csv_data = res.text
+                reader = csv.DictReader(io.StringIO(csv_data))
+                reader.fieldnames = [f.strip() for f in reader.fieldnames]
+                temp_cache = {}
+                for row in reader:
+                    sym = row.get('SYMBOL', '').strip().upper()
+                    ld = row.get('DATE OF LISTING', '').strip()
+                    if sym and ld:
+                        temp_cache[sym] = ld
+                NSE_EQUITY_L_CACHE = temp_cache
+                print(f"[IPO Cache] Loaded {len(NSE_EQUITY_L_CACHE)} equity listing dates from NSE.", flush=True)
+        except Exception as e:
+            print(f"[IPO Cache] Failed to load NSE listing dates: {e}", flush=True)
+
+SCREENER_ADVANCED_CACHE = {}
+
+def scrape_screener_advanced_fundamentals(symbol, price, change_pct, rsi_15m, sector, info=None, ticker=None):
+    global SCREENER_ADVANCED_CACHE
+    base_symbol = symbol.split('.')[0].upper()
+    base_symbol = SCREENER_SYMBOL_MAP.get(base_symbol, base_symbol)
+    now = time.time()
+    
+    cache_key = f"{base_symbol}_{bool(info)}_{bool(ticker)}"
+    if cache_key in SCREENER_ADVANCED_CACHE:
+        entry = SCREENER_ADVANCED_CACHE[cache_key]
+        if now - entry["time"] < 86400:
+            return entry["val"]
+            
+    advanced_fundamentals = {
+        "ipo": {"category": "Mainboard", "date": "-", "listingDate": "-", "price": "-", "listGain": "-", "currentGain": "-", "lockin": "-"},
+        "valuation": {"pe": "-", "indPe": "-", "pb": "-", "ev": "-", "isAttractive": False},
+        "revenue": {"trend": "-", "g3y": "-", "g5y": "-", "isGood": False},
+        "pat": {"latest": "-", "t3y": "-", "t5y": "-", "isGood": False},
+        "capex": {"curr": "-", "prev": "-", "trend": "-", "status": "-", "summary": "-"},
+        "tailwinds": {"rating": "-", "drivers": [], "summary": "-"},
+        "headwinds": {"rating": "-", "risks": []},
+        "concalls": []
+    }
+    
+    try:
+        import requests
+        from bs4 import BeautifulSoup
+        import re
+        
+        url = f"https://www.screener.in/company/{base_symbol}/"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        res = requests.get(url, headers=headers, timeout=10)
+        if res.status_code != 200:
+            url = f"https://www.screener.in/company/{base_symbol}/consolidated/"
+            res = requests.get(url, headers=headers, timeout=10)
+            
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.text, 'html.parser')
+            
+            ratios = {}
+            top_ratios = soup.find('ul', id='top-ratios')
+            if top_ratios:
+                for li in top_ratios.find_all('li'):
+                    name_el = li.find('span', class_='name')
+                    val_el = li.find('span', class_='number')
+                    if name_el and val_el:
+                        name = name_el.text.strip().lower()
+                        val_text = val_el.text.strip().replace(',', '')
+                        try:
+                            ratios[name] = float(val_text)
+                        except ValueError:
+                            ratios[name] = val_text
+                            
+            industry_pe = "-"
+            warehouse_match = re.search(r'data-warehouse-id="(\d+)"', res.text) or re.search(r'/company/actions/(\d+)/', res.text) or re.search(r'/insights/company/(\d+)/', res.text) or re.search(r'/trades/company-(\d+)/', res.text)
+            if warehouse_match:
+                warehouse_id = warehouse_match.group(1)
+                peers_url = f"https://www.screener.in/api/company/{warehouse_id}/peers/"
+                res_peers = requests.get(peers_url, headers=headers, timeout=10)
+                if res_peers.status_code == 200:
+                    soup_peers = BeautifulSoup(res_peers.text, 'html.parser')
+                    table = soup_peers.find('table')
+                    if table:
+                        pe_col_idx = -1
+                        rows = table.find_all('tr')
+                        if rows:
+                            headers_row = rows[0]
+                            for idx, th in enumerate(headers_row.find_all(['th', 'td'])):
+                                th_text = th.text.strip().lower()
+                                if 'p/e' in th_text:
+                                    pe_col_idx = idx
+                                    break
+                            
+                            if pe_col_idx != -1:
+                                pe_values = []
+                                for tr in rows[1:]:
+                                    cells = tr.find_all('td')
+                                    if len(cells) > pe_col_idx:
+                                        pe_text = cells[pe_col_idx].text.strip()
+                                        try:
+                                            val = float(pe_text)
+                                            if val > 0:
+                                                pe_values.append(val)
+                                        except ValueError:
+                                            pass
+                                if pe_values:
+                                    pe_values.sort()
+                                    industry_pe = f"{pe_values[len(pe_values)//2]:.2f}"
+                                    
+            revenue_trend = "-"
+            rev_g3y = "-"
+            rev_g5y = "-"
+            rev_is_good = False
+            
+            pat_latest = "-"
+            pat_g3y = "-"
+            pat_g5y = "-"
+            pat_is_good = False
+            
+            pnl_sec = soup.find('section', id='profit-loss')
+            if pnl_sec:
+                table = pnl_sec.find('table')
+                if table:
+                    headers_row = table.find('thead').find_all('tr')[-1] if table.find('thead') else table.find('tr')
+                    
+                    sales_vals = []
+                    pat_vals = []
+                    
+                    tbody = table.find('tbody')
+                    target_rows = tbody.find_all('tr') if tbody else table.find_all('tr')
+                    for tr in target_rows:
+                        cols = tr.find_all(['td', 'th'])
+                        if not cols:
+                            continue
+                        row_name = cols[0].text.strip().lower()
+                        row_vals = []
+                        for td in cols[1:]:
+                            val_txt = td.text.strip().replace(',', '').strip()
+                            try:
+                                row_vals.append(float(val_txt))
+                            except ValueError:
+                                row_vals.append(None)
+                                
+                        if 'sales' in row_name:
+                            sales_vals = row_vals
+                        elif 'net profit' in row_name:
+                            pat_vals = row_vals
+                    
+                    def calc_cagr(vals, periods):
+                        valid_idx = [i for i, v in enumerate(vals) if v is not None]
+                        if len(valid_idx) < periods + 1:
+                            return None, False
+                        latest_i = valid_idx[-1]
+                        prev_i = latest_i - periods
+                        if prev_i < 0 or prev_i not in valid_idx:
+                            return None, False
+                        v_latest = vals[latest_i]
+                        v_prev = vals[prev_i]
+                        if v_latest is not None and v_prev is not None and v_latest > 0 and v_prev > 0:
+                            cagr = ((v_latest / v_prev) ** (1.0 / periods)) - 1.0
+                            return cagr, True
+                        return None, False
+
+                    if sales_vals:
+                        valid_sales = [v for v in sales_vals if v is not None]
+                        if len(valid_sales) >= 2:
+                            if valid_sales[-1] > valid_sales[-2]:
+                                revenue_trend = "Increasing"
+                            else:
+                                revenue_trend = "Declining" if valid_sales[-1] < valid_sales[-2] else "Stable"
+                                
+                        cagr3_rev, ok3 = calc_cagr(sales_vals, 3)
+                        if ok3:
+                            rev_g3y = f"{cagr3_rev*100:+.1f}% CAGR"
+                            rev_is_good = bool(cagr3_rev > 0.10)
+                        cagr5_rev, ok5 = calc_cagr(sales_vals, 5)
+                        if ok5:
+                            rev_g5y = f"{cagr5_rev*100:+.1f}% CAGR"
+                            
+                    if pat_vals:
+                        valid_pat = [v for v in pat_vals if v is not None]
+                        if valid_pat:
+                            pat_latest = f"₹{valid_pat[-1]:,.0f} Cr"
+                        cagr3_pat, ok3 = calc_cagr(pat_vals, 3)
+                        if ok3:
+                            pat_g3y = f"{cagr3_pat*100:+.1f}% CAGR"
+                            pat_is_good = bool(cagr3_pat > 0.12)
+                        cagr5_pat, ok5 = calc_cagr(pat_vals, 5)
+                        if ok5:
+                            pat_g5y = f"{cagr5_pat*100:+.1f}% CAGR"
+                            
+            capex_curr = "-"
+            capex_prev = "-"
+            capex_trend = "-"
+            capex_status = "-"
+            capex_summary = "-"
+            
+            bs_sec = soup.find('section', id='balance-sheet')
+            if bs_sec:
+                table = bs_sec.find('table')
+                if table:
+                    fa_vals = []
+                    cwip_vals = []
+                    tbody = table.find('tbody')
+                    target_rows = tbody.find_all('tr') if tbody else table.find_all('tr')
+                    for tr in target_rows:
+                        cols = tr.find_all(['td', 'th'])
+                        if not cols:
+                            continue
+                        row_name = cols[0].text.strip().lower()
+                        row_vals = []
+                        for td in cols[1:]:
+                            val_txt = td.text.strip().replace(',', '').strip()
+                            try:
+                                row_vals.append(float(val_txt))
+                            except ValueError:
+                                row_vals.append(0.0)
+                        if 'fixed assets' in row_name:
+                            fa_vals = row_vals
+                        elif 'cwip' in row_name:
+                            cwip_vals = row_vals
+                            
+                    if fa_vals:
+                        if not cwip_vals or len(cwip_vals) < len(fa_vals):
+                            cwip_vals = [0.0] * len(fa_vals)
+                            
+                        total_capex = [fa + cwip for fa, cwip in zip(fa_vals, cwip_vals)]
+                        if len(total_capex) >= 2:
+                            capex_curr = f"₹{total_capex[-1]:,.0f} Cr"
+                            capex_prev = f"₹{total_capex[-2]:,.0f} Cr"
+                            diff = total_capex[-1] - total_capex[-2]
+                            capex_trend = "Massive Jump" if diff > total_capex[-2]*0.15 else ("Increasing" if diff > 0 else "Stable")
+                            capex_status = "Expansion Mode" if diff > total_capex[-2]*0.05 else "Steady State"
+                            
+                            if capex_status == "Expansion Mode":
+                                capex_summary = f"The company's fixed assets & capital work in progress jumped to {capex_curr} (from {capex_prev}), indicating major expansion or capacity addition."
+                            else:
+                                capex_summary = f"Capital expenditure remains in a maintenance phase, with fixed assets stable at {capex_curr} compared to {capex_prev} last year."
+
+            pe_val = ratios.get('stock p/e', '-')
+            pb_val = ratios.get('book value', '-')
+            current_price = ratios.get('current price', 0.0)
+            
+            pb_ratio = "-"
+            if isinstance(pb_val, (int, float)) and pb_val > 0 and current_price > 0:
+                pb_ratio = f"{(current_price / pb_val):.2f}"
+                
+            pe_str = f"{pe_val:.2f}" if isinstance(pe_val, (int, float)) else str(pe_val)
+            pb_str = str(pb_ratio)
+            
+            is_attractive = False
+            if isinstance(pe_val, (int, float)) and pe_val > 0:
+                is_attractive = pe_val < 25
+                
+            roce = ratios.get('roce', 0.0)
+            roe = ratios.get('roe', 0.0)
+            
+            tail_rating = "Stable Tailwind"
+            tail_drivers = ["Operational Stability"]
+            tail_summary = "The company is executing in a stable regulatory and economic landscape."
+            
+            if isinstance(roce, (int, float)) and roce > 20:
+                tail_rating = "Strong Tailwind"
+                tail_drivers = ["High Capital Efficiency", "Strong Return Ratios"]
+                tail_summary = f"The company is operating with high capital efficiency (ROCE of {roce}%). This makes it highly competitive."
+                
+            head_rating = "Low Risk"
+            head_risks = ["Minor raw material price fluctuations"]
+            
+            if isinstance(pe_val, (int, float)) and pe_val > 45:
+                head_rating = "High Risk"
+                head_risks = [f"Valuation is expensive (PE of {pe_val})", "Growth expectations are priced in"]
+            elif isinstance(roe, (int, float)) and roe < 10:
+                head_rating = "Moderate Risk"
+                head_risks = ["Low return on equity", "Stagnant profit generation efficiency"]
+                
+            advanced_fundamentals["ipo"]["category"] = "Mainboard" if ratios.get('market cap', 0.0) > 10000 else "SME"
+            advanced_fundamentals["valuation"] = {
+                "pe": pe_str,
+                "indPe": industry_pe,
+                "pb": pb_str,
+                "ev": "-",
+                "isAttractive": is_attractive
+            }
+            advanced_fundamentals["revenue"] = {
+                "trend": revenue_trend,
+                "g3y": rev_g3y,
+                "g5y": rev_g5y,
+                "isGood": rev_is_good
+            }
+            advanced_fundamentals["pat"] = {
+                "latest": pat_latest,
+                "t3y": pat_g3y,
+                "t5y": pat_g5y,
+                "isGood": pat_is_good
+            }
+            advanced_fundamentals["capex"] = {
+                "curr": capex_curr,
+                "prev": capex_prev,
+                "trend": capex_trend,
+                "status": capex_status,
+                "summary": capex_summary
+            }
+            advanced_fundamentals["tailwinds"] = {
+                "rating": tail_rating,
+                "drivers": tail_drivers,
+                "summary": tail_summary
+            }
+            advanced_fundamentals["headwinds"] = {
+                "rating": head_rating,
+                "risks": head_risks
+            }
+    except Exception as ex:
+        print(f"Error scraping screener advanced fundamentals: {ex}")
+        
+    if info:
+        try:
+            if advanced_fundamentals["valuation"]["pe"] == "-":
+                pe = info.get("trailingPE") or info.get("forwardPE")
+                if pe: 
+                    advanced_fundamentals["valuation"]["pe"] = f"{pe:.2f}"
+                    advanced_fundamentals["valuation"]["isAttractive"] = bool(pe < 25)
+            if advanced_fundamentals["valuation"]["pb"] == "-":
+                pb = info.get("priceToBook")
+                if pb: advanced_fundamentals["valuation"]["pb"] = f"{pb:.2f}"
+            
+            ev = info.get("enterpriseToEbitda")
+            if ev:
+                advanced_fundamentals["valuation"]["ev"] = f"{ev:.2f}"
+                
+            if advanced_fundamentals["ipo"]["category"] == "SME":
+                mc = info.get("marketCap", 0)
+                if mc > 10000000000:
+                    advanced_fundamentals["ipo"]["category"] = "Mainboard"
+        except Exception as ex:
+            print(f"Error merging yfinance fallback ratios: {ex}")
+            
+    if ticker:
+        try:
+            # Ensure NSE CSV listing dates cache is loaded
+            load_nse_equity_l_cache()
+            
+            listing_date = "-"
+            listing_price = 0.0
+            list_gain_val = 0.0
+            current_gain_val = 0.0
+            lockin = "-"
+            
+            import requests
+            import datetime
+            
+            # Try to get Listing Date from NSE CSV first
+            nse_ld_str = NSE_EQUITY_L_CACHE.get(base_symbol)
+            if nse_ld_str:
+                parts = nse_ld_str.split('-')
+                if len(parts) == 3:
+                    day, month, year = parts
+                    month = month.capitalize()
+                    listing_date = f"{day} {month} {year}"
+                    try:
+                        dt = datetime.datetime.strptime(nse_ld_str, "%d-%b-%Y")
+                        time_diff = datetime.datetime.now() - dt
+                        lockin = "Yes" if time_diff.days > 365 else "No"
+                        
+                        # Query Yahoo Finance chart for Listing Price (5-day window)
+                        start_ts = int(dt.timestamp()) - 86400
+                        end_ts = start_ts + 5 * 86400
+                        yf_sym = f"{base_symbol}.NS" if "." not in base_symbol else base_symbol
+                        
+                        s = requests.Session()
+                        s.headers.update({
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                        })
+                        s.get('https://fc.yahoo.com', timeout=5)
+                        crumb_res = s.get('https://query1.finance.yahoo.com/v1/test/getcrumb', timeout=5)
+                        crumb = crumb_res.text.strip()
+                        
+                        url = f'https://query1.finance.yahoo.com/v8/finance/chart/{yf_sym}?period1={start_ts}&period2={end_ts}&interval=1d&crumb={crumb}'
+                        res = s.get(url, timeout=5).json()
+                        
+                        if "chart" in res and res["chart"]["result"]:
+                            result = res["chart"]["result"][0]
+                            indicators = result.get("indicators", {})
+                            quote = indicators.get("quote", [{}])[0]
+                            timestamps = result.get("timestamp", [])
+                            if timestamps and quote:
+                                for idx, t in enumerate(timestamps):
+                                    o = quote.get("open", [])[idx]
+                                    c = quote.get("close", [])[idx]
+                                    if o is not None and c is not None:
+                                        listing_price = float(o)
+                                        close_val = float(c)
+                                        break
+                                        
+                        if listing_price > 0:
+                            list_gain_val = ((close_val - listing_price) / listing_price) * 100
+                            if price:
+                                current_gain_val = ((float(price) - listing_price) / listing_price) * 100
+                    except Exception as e_direct:
+                        print(f"[IPO Direct] Yahoo Finance query failed for {base_symbol}: {e_direct}", flush=True)
+            
+            # Fallback to yfinance if symbol not in NSE cache or direct YF query failed to get price
+            if listing_date == "-" or listing_price <= 0:
+                try:
+                    import yfinance as yf
+                    yf_sym = f"{base_symbol}.NS" if "." not in base_symbol else base_symbol
+                    session = requests.Session()
+                    session.headers.update({
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                    })
+                    fresh_ticker = yf.Ticker(yf_sym, session=session)
+                    hist = fresh_ticker.history(period="max")
+                    
+                    if not hist.empty:
+                        first_row = hist.iloc[0]
+                        if listing_date == "-":
+                            listing_date = hist.index[0].strftime("%d %b %Y")
+                        listing_price = float(first_row['Open'])
+                        open_val = float(first_row['Open'])
+                        close_val = float(first_row['Close'])
+                        if open_val > 0:
+                            list_gain_val = ((close_val - open_val) / open_val) * 100
+                        if listing_price > 0 and price:
+                            current_gain_val = ((float(price) - listing_price) / listing_price) * 100
+                        
+                        time_diff = datetime.datetime.now() - hist.index[0].to_pydatetime().replace(tzinfo=None)
+                        lockin = "Yes" if time_diff.days > 365 else "No"
+                except Exception as ex_yf:
+                    print(f"[IPO Fallback] yfinance fetch failed for {base_symbol}: {ex_yf}", flush=True)
+                    
+            advanced_fundamentals["ipo"].update({
+                "date": listing_date,
+                "listingDate": listing_date,
+                "price": f"₹{listing_price:.2f}" if listing_price > 0 else "-",
+                "listGain": f"{list_gain_val:+.1f}%" if listing_price > 0 else "-",
+                "currentGain": f"{current_gain_val:+.1f}%" if listing_price > 0 else "-",
+                "lockin": lockin
+            })
+        except Exception as e_ipo:
+            print(f"[IPO Main] Failed to compute IPO details for {base_symbol}: {e_ipo}", flush=True)
+
+            fin = ticker.financials
+            if not fin.empty:
+                if advanced_fundamentals["revenue"]["g3y"] == "-" and 'Total Revenue' in fin.index:
+                    rev_series = fin.loc['Total Revenue'].dropna()
+                    if len(rev_series) >= 4:
+                        rev_3y = rev_series.iloc[3]
+                        if rev_3y > 0 and rev_series.iloc[0] > 0:
+                            cagr3 = ((rev_series.iloc[0] / rev_3y) ** (1/3)) - 1
+                            advanced_fundamentals["revenue"]["g3y"] = f"{cagr3*100:+.1f}% CAGR"
+                            advanced_fundamentals["revenue"]["isGood"] = bool(cagr3 > 0.1)
+                            
+                if advanced_fundamentals["pat"]["t3y"] == "-" and 'Net Income' in fin.index:
+                    pat_series = fin.loc['Net Income'].dropna()
+                    if len(pat_series) >= 4:
+                        pat_3y = pat_series.iloc[3]
+                        if pat_3y > 0 and pat_series.iloc[0] > 0:
+                            cagr3_pat = ((pat_series.iloc[0] / pat_3y) ** (1/3)) - 1
+                            advanced_fundamentals["pat"]["t3y"] = f"{cagr3_pat*100:+.1f}% CAGR"
+                            advanced_fundamentals["pat"]["isGood"] = bool(cagr3_pat > 0.12)
+        except Exception as ex:
+            print(f"Error merging yfinance fallback financials: {ex}")
+            
+    try:
+        advanced_fundamentals["concalls"] = scrape_screener_documents(symbol)
+    except Exception as ex:
+        print(f"Error scraping concalls: {ex}")
+        
+    # If IPO data failed to load (price is '-'), only cache for 5 minutes so we can retry YF later
+    is_incomplete = advanced_fundamentals.get("ipo", {}).get("price") == "-"
+    SCREENER_ADVANCED_CACHE[cache_key] = {
+        "time": now if not is_incomplete else (now - 86400 + 300), # effectively 5 min TTL
+        "val": advanced_fundamentals
+    }
+    
+    return advanced_fundamentals
+
 def get_fallback_quarters(symbol, price):
     try:
         import hashlib
@@ -1396,6 +1897,72 @@ def get_cached_news_sentiment(symbol, ticker):
     val = check_news_sentiment(ticker)
     NEWS_SENTIMENT_CACHE[sym] = {"time": now, "val": val}
     return val
+
+SCREENER_DOCS_CACHE = {}
+
+def scrape_screener_documents(symbol):
+    global SCREENER_DOCS_CACHE
+    base_symbol = symbol.split('.')[0].upper()
+    base_symbol = SCREENER_SYMBOL_MAP.get(base_symbol, base_symbol)
+    now = time.time()
+    
+    if base_symbol in SCREENER_DOCS_CACHE:
+        entry = SCREENER_DOCS_CACHE[base_symbol]
+        if now - entry["time"] < 86400: # 24 hours
+            return entry["val"]
+            
+    docs = []
+    try:
+        import requests
+        from bs4 import BeautifulSoup
+        url = f"https://www.screener.in/company/{base_symbol}/"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        res = requests.get(url, headers=headers, timeout=10)
+        if res.status_code != 200:
+            url = f"https://www.screener.in/company/{base_symbol}/consolidated/"
+            res = requests.get(url, headers=headers, timeout=10)
+            if res.status_code != 200:
+                return docs
+                
+        soup = BeautifulSoup(res.text, 'html.parser')
+        docs_section = soup.find('section', id='documents')
+        if not docs_section:
+            return docs
+            
+        concall_headers = docs_section.find_all('h3')
+        for h in concall_headers:
+            if 'Concalls' in h.text or 'Transcripts' in h.text:
+                concall_list = h.find_next('ul')
+                if concall_list:
+                    lis = concall_list.find_all('li')
+                    for li in lis[:3]: # top 3 recent
+                        a_tag = li.find('a')
+                        if not a_tag: continue
+                        
+                        href = a_tag.get('href', '')
+                        title_text = a_tag.text.strip().replace('\n', ' ')
+                        # Clean up multiple spaces
+                        import re
+                        title = re.sub(' +', ' ', title_text)
+                        
+                        date_div = li.find('div', class_='ink-600')
+                        date_text = date_div.text.strip() if date_div else "Recent"
+                        
+                        docs.append({
+                            "title": title,
+                            "url": href,
+                            "date": date_text
+                        })
+                break
+                
+    except Exception as e:
+        print(f"Error scraping documents from Screener: {e}")
+        
+    if docs:
+        SCREENER_DOCS_CACHE[base_symbol] = {"time": now, "val": docs}
+    return docs
 
 def run_stock_analysis_internal(symbol, fast=False, nifty_closes=None):
     try:
@@ -1765,6 +2332,17 @@ def run_stock_analysis_internal(symbol, fast=False, nifty_closes=None):
         if not quarterly_earnings:
             quarterly_earnings = get_fallback_quarters(symbol, price)
             
+        # 7. Advanced Fundamentals (Screener.in Scraper + yfinance fallback)
+        advanced_fundamentals = scrape_screener_advanced_fundamentals(
+            symbol=symbol,
+            price=price,
+            change_pct=change_pct,
+            rsi_15m=rsi_15m,
+            sector=sector,
+            info=info if not fast else None,
+            ticker=ticker if not fast else None
+        )
+            
         return {
             "symbol": symbol,
             "name": name,
@@ -1783,6 +2361,7 @@ def run_stock_analysis_internal(symbol, fast=False, nifty_closes=None):
             "shareholding_pattern": holdings,
             "evaluation_ratings": evaluation_ratings,
             "quarterly_earnings": quarterly_earnings,
+            "advanced_fundamentals": advanced_fundamentals,
             "last_updated": time.strftime("%H:%M:%S")
         }
     except Exception as e:
@@ -1875,22 +2454,43 @@ def get_search_suggestions():
     results.sort(key=lambda x: (x["priority"], x["symbol"]))
     return jsonify(results[:8])
 
+@app.route('/api/test-ipo')
+def api_test_ipo():
+    symbol = request.args.get('symbol', 'WIPRO').upper()
+    symbol = REBRANDED_SYMBOLS_MAP.get(symbol, symbol)
+    try:
+        yf_sym = f"{symbol}.NS" if "." not in symbol else symbol
+        t = yf.Ticker(yf_sym)
+        res = scrape_screener_advanced_fundamentals(symbol, 100, 1, 50, 'IT', info=t.info, ticker=t)
+        return jsonify(res.get('ipo', {}))
+    except Exception as e:
+        import traceback
+        return jsonify({"error": str(e), "trace": traceback.format_exc()})
+
 @app.route('/api/intraday/analyze')
 def analyze_stock():
     symbol = request.args.get('symbol', '').strip().upper()
+    symbol = REBRANDED_SYMBOLS_MAP.get(symbol, symbol)
+    fast = request.args.get('fast', 'false').lower() == 'true'
+    cache_key = f"{symbol}_{fast}"
+    
+    print(f"[API] analyze_stock called for {symbol}, fast={fast}, cache_key={cache_key}", flush=True)
+    
     if not symbol:
         return jsonify({"error": "Symbol parameter is required"}), 400
         
     now = time.time()
     # 10-minute cache for detailed stock analysis
-    if symbol in STOCK_ANALYSIS_CACHE:
-        entry = STOCK_ANALYSIS_CACHE[symbol]
+    if cache_key in STOCK_ANALYSIS_CACHE:
+        entry = STOCK_ANALYSIS_CACHE[cache_key]
         if now - entry["time"] < 600:
+            print(f"[API] Returning from STOCK_ANALYSIS_CACHE for {cache_key}", flush=True)
             return jsonify(entry["val"])
             
-    res = run_stock_analysis_internal(symbol)
+    print(f"[API] Calling run_stock_analysis_internal for {symbol}", flush=True)
+    res = run_stock_analysis_internal(symbol, fast=fast)
     if res:
-        STOCK_ANALYSIS_CACHE[symbol] = {"time": now, "val": res}
+        STOCK_ANALYSIS_CACHE[cache_key] = {"time": now, "val": res}
         return jsonify(res)
     return jsonify({"error": f"Failed to analyze symbol {symbol}. Verify it is active on NSE."}), 500
 
@@ -3305,8 +3905,8 @@ def api_create_order():
         return jsonify({"status": "error", "message": "Invalid Plan ID"}), 400
         
     is_sandbox = True
-    razorpay_key = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_TBsqdEhYUgNIfu')
-    razorpay_secret = os.environ.get('RAZORPAY_KEY_SECRET', 'MQuJFMYiFXtD00ZHVLVGPalr')
+    razorpay_key = os.environ.get('RAZORPAY_KEY_ID', 'rzp_live_TCfH1yRXBhYuPv')
+    razorpay_secret = os.environ.get('RAZORPAY_KEY_SECRET', 'RZ2anZSUoulib7kMhGF096Jy')
     
     order_id = f"order_mock_{int(time.time())}_{session['user_id']}"
     
@@ -3361,8 +3961,8 @@ def api_verify_payment():
     is_sandbox = order_id.startswith('order_mock_')
     
     if not is_sandbox:
-        razorpay_key = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_TBsqdEhYUgNIfu')
-        razorpay_secret = os.environ.get('RAZORPAY_KEY_SECRET', 'MQuJFMYiFXtD00ZHVLVGPalr')
+        razorpay_key = os.environ.get('RAZORPAY_KEY_ID', 'rzp_live_TCfH1yRXBhYuPv')
+        razorpay_secret = os.environ.get('RAZORPAY_KEY_SECRET', 'RZ2anZSUoulib7kMhGF096Jy')
         try:
             import razorpay
             client = razorpay.Client(auth=(razorpay_key, razorpay_secret))
@@ -3707,7 +4307,7 @@ def serve_assets(filename):
 
 if __name__ == '__main__':
     print("[Prewarm] App is starting...")
-    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True, use_reloader=False)
 
 
 

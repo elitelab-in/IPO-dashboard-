@@ -460,6 +460,180 @@
                 min-width: 550px !important;
             }
         }
+        
+        /* New Advanced Fundamental Styles */
+        .advanced-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Sticky Page Nav */
+        .page-nav {
+            display: flex;
+            gap: 1.5rem;
+            background: var(--bg-main);
+            padding: 0 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .page-nav::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for cleaner look */
+        }
+        .page-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 1rem 0.5rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .page-nav a:hover {
+            color: #FFFFFF;
+        }
+        .page-nav a.active {
+            color: #8b5cf6;
+            border-bottom: 2px solid #8b5cf6;
+        }
+
+        
+        /* Accordion Styles */
+        .collapsible-section {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .collapsible-header {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.2s ease;
+        }
+        .collapsible-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .collapsible-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .collapsible-icon {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+        .collapsible-content {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .collapsible-section.active .collapsible-content {
+            padding: 1.5rem;
+            max-height: 2500px; /* Large enough for content */
+            opacity: 1;
+        }
+        .collapsible-section.active .collapsible-icon {
+            transform: rotate(180deg);
+            color: #8b5cf6;
+        }
+        
+        .ipo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .ipo-mainboard {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .ipo-sme {
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .metric-value {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .text-green { color: #22c55e; }
+        .text-yellow { color: #eab308; }
+        .text-red { color: #ef4444; }
+        .tailwind-card {
+            background: rgba(17, 12, 28, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.15), inset 0 0 10px rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .tailwind-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #8B5CF6, #EC4899);
+        }
+        .ai-verdict-section {
+            background: linear-gradient(145deg, rgba(139, 92, 246, 0.05) 0%, rgba(0, 0, 0, 0.2) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            position: relative;
+        }
+        .verdict-badge {
+            font-size: 1.2rem;
+            font-weight: 800;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        .trend-icon {
+            font-size: 0.9rem;
+            margin-left: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -560,15 +734,26 @@
             </div>
             
             <div id="dashboard-data">
-                <div class="stock-header">
+                
+                <div class="stock-header" id="section-overview">
                     <div class="stock-title">
-                        <h2 id="stock-name">Reliance Industries <span class="stock-symbol-badge" id="stock-symbol">RELIANCE.NS</span></h2>
+                        <h2 id="stock-name" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">Reliance Industries <span class="stock-symbol-badge" id="stock-symbol">RELIANCE.NS</span> <span id="ui-top-ipo-badge-container"></span></h2>
                         <span style="color: var(--text-secondary); font-size: 0.9rem;" id="stock-sector">Energy</span>
                     </div>
                     <div class="stock-price">
                         <p class="price" id="live-price">₹0.00</p>
                         <p class="change positive" id="live-change"><i class="fa-solid fa-caret-up"></i> 0.00%</p>
                     </div>
+                </div>
+
+                <!-- Sticky Page Navigation -->
+                <div class="page-nav">
+                    <a class="active" onclick="navScrollTo('section-overview', this)">Overview</a>
+                    <a onclick="navScrollTo('section-company-profile', this)">Company Profile</a>
+                    <a onclick="navScrollTo('section-interactive-chart', this)">Interactive Chart</a>
+                    <a onclick="navScrollTo('adv-fundamentals-accordion', this)">Advanced Fundamentals</a>
+                    <a onclick="navScrollTo('technical-criteria-accordion', this)">Technical Criterias</a>
+                    <a onclick="navScrollTo('shareholding-accordion', this)">Shareholding Pattern</a>
                 </div>
                 
                 <!-- Momentum Scorecard -->
@@ -656,32 +841,204 @@
                     </div>
 
                     <!-- Company Description Card -->
-                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column;">
+                    <div id="section-company-profile" style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column;">
                         <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Company Profile Description</span>
                         <div style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin: 0;" id="res-metadata-summary-container">
                             <span id="res-metadata-summary-text">-</span>
                             <button id="res-metadata-read-more-btn" style="background: none; border: none; color: #A78BFA; font-weight: 700; cursor: pointer; padding: 0 0 0 0.5rem; font-size: 0.95rem; outline: none; display: none;">Read More</button>
                         </div>
                     </div>
-
                     <!-- TradingView Chart Card -->
-                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; height: 600px;">
+                    <div id="section-interactive-chart" style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; height: 600px;">
                         <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Interactive Chart</span>
                         <div id="fundamentals-chart-container" style="width: 100%; height: 100%;"></div>
                     </div>
+
+                    <!-- ADVANCED FUNDAMENTALS SECTION -->
+                    <div class="collapsible-section" id="adv-fundamentals-accordion">
+                        <div class="collapsible-header" onclick="this.parentElement.classList.toggle('active')">
+                            <h3 class="collapsible-title"><i class="fa-solid fa-chart-pie" style="color: #8b5cf6;"></i> Advanced Fundamental Analysis</h3>
+                            <i class="fa-solid fa-chevron-down collapsible-icon"></i>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="advanced-grid" style="margin-top: 1rem;">
+                        
+                        <!-- 1. IPO Information -->
+                        <div class="tt-card">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">IPO Information</span>
+                            <div style="margin-bottom: 1rem;" id="ui-ipo-badge-container">
+                                <!-- Badge injected via JS -->
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">IPO Date</span>
+                                <span class="metric-value" id="ui-ipo-date">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Listing Date</span>
+                                <span class="metric-value" id="ui-ipo-list-date">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">IPO Price</span>
+                                <span class="metric-value" id="ui-ipo-price">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Listing Gain</span>
+                                <span class="metric-value" id="ui-ipo-list-gain">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Current Gain</span>
+                                <span class="metric-value" id="ui-ipo-current-gain">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Lock-in Completed</span>
+                                <span class="metric-value" id="ui-ipo-lockin">-</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. Valuation -->
+                        <div class="tt-card">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Valuation</span>
+                            <div class="metric-row">
+                                <span class="metric-label">PE Ratio</span>
+                                <span class="metric-value" id="ui-val-pe">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Industry PE</span>
+                                <span class="metric-value" id="ui-val-ind-pe">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">PB Ratio</span>
+                                <span class="metric-value" id="ui-val-pb">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">EV/EBITDA</span>
+                                <span class="metric-value" id="ui-val-ev">-</span>
+                            </div>
+                        </div>
+
+                        <!-- 3. Revenue Growth -->
+                        <div class="tt-card">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Revenue Growth</span>
+                            <div class="metric-row">
+                                <span class="metric-label">Revenue Trend</span>
+                                <span class="metric-value" id="ui-rev-trend">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">3-Year Growth</span>
+                                <span class="metric-value" id="ui-rev-3y">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">5-Year Growth</span>
+                                <span class="metric-value" id="ui-rev-5y">-</span>
+                            </div>
+                        </div>
+
+                        <!-- 4. PAT Analysis -->
+                        <div class="tt-card">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">PAT Analysis</span>
+                            <div class="metric-row">
+                                <span class="metric-label">Latest PAT</span>
+                                <span class="metric-value" id="ui-pat-latest">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">3-Year Trend</span>
+                                <span class="metric-value" id="ui-pat-3y">-</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">5-Year Trend</span>
+                                <span class="metric-value" id="ui-pat-5y">-</span>
+                            </div>
+                        </div>
+
+                        <!-- 5. Capex Analysis -->
+                        <div class="tt-card" style="grid-column: 1 / -1;">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Capex Analysis</span>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1; min-width: 250px;">
+                                    <div class="metric-row">
+                                        <span class="metric-label">Current Capex</span>
+                                        <span class="metric-value" id="ui-capex-curr">-</span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Previous Capex</span>
+                                        <span class="metric-value" id="ui-capex-prev">-</span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Capex Trend</span>
+                                        <span class="metric-value" id="ui-capex-trend">-</span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Status</span>
+                                        <span class="metric-value" id="ui-capex-status">-</span>
+                                    </div>
+                                </div>
+                                <div style="flex: 1; min-width: 250px; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                                    <h4 style="font-size: 0.85rem; color: #a78bfa; margin-top: 0; margin-bottom: 0.5rem;"><i class="fa-solid fa-robot"></i> AI Expansion Summary</h4>
+                                    <p id="ui-capex-summary" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Tailwind Analysis (Highest Priority) -->
+                        <div class="tailwind-card">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">🚀 Industry Tailwinds</span>
+                            <div style="margin-bottom: 1rem;">
+                                <span class="verdict-badge" id="ui-tail-status" style="background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); font-size: 1rem;">-</span>
+                            </div>
+                            <div id="ui-tail-drivers" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+                                <!-- Badges injected via JS -->
+                            </div>
+                            <p id="ui-tail-summary" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">-</p>
+                        </div>
+
+                        <!-- 7. Headwinds -->
+                        <div class="tt-card">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Headwinds & Risks</span>
+                            <div style="margin-bottom: 1rem;">
+                                <span class="verdict-badge" id="ui-head-status" style="background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); font-size: 1rem; padding: 0.3rem 0.8rem;">-</span>
+                            </div>
+                            <ul id="ui-head-list" style="margin: 0; padding-left: 1.2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+                                <!-- List items injected via JS -->
+                            </ul>
+                        </div>
+
+                        <!-- 8. Latest Concall PDFs -->
+                        <div class="tt-card">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Latest Concall PDFs</span>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="ui-concall-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                            </div> <!-- End of advanced-grid -->
+                        </div> <!-- End of collapsible-content -->
+                    </div> <!-- End of collapsible-section -->
                     
-                    <div class="checklist-grid" id="res-checklist-grid" style="margin-bottom: 1.5rem;">
-                        <!-- Checklist items populated dynamically -->
+                    <!-- Technical Criterias Section -->
+                    <div class="collapsible-section" id="technical-criteria-accordion">
+                        <div class="collapsible-header" onclick="this.parentElement.classList.toggle('active')">
+                            <h3 class="collapsible-title"><i class="fa-solid fa-microchip" style="color: #f59e0b;"></i> Technical Criterias</h3>
+                            <i class="fa-solid fa-chevron-down collapsible-icon"></i>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="checklist-grid" id="res-checklist-grid" style="margin-top: 1rem; margin-bottom: 1.5rem;">
+                                <!-- Checklist items populated dynamically -->
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Shareholding Pattern Section -->
-                    <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; display: flex; flex-direction: column;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;">
+                    <div class="collapsible-section" id="shareholding-accordion" style="margin-top: 2rem;">
+                        <div class="collapsible-header" onclick="this.parentElement.classList.toggle('active')">
                             <div>
-                                <h3 style="font-size: 1.35rem; font-weight: 700; color: #FFFFFF; margin: 0;">Shareholding Pattern</h3>
-                                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.25rem;">Numbers in percentages</span>
+                                <h3 class="collapsible-title"><i class="fa-solid fa-users" style="color: #3b82f6;"></i> Shareholding Pattern</h3>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 0.25rem; font-weight: 400;">Numbers in percentages</span>
                             </div>
+                            <i class="fa-solid fa-chevron-down collapsible-icon"></i>
                         </div>
+                        <div class="collapsible-content">
+                            <div style="padding-top: 1.5rem; padding-bottom: 1.5rem; display: flex; flex-direction: column;">
                         
                         <div class="table-responsive" style="overflow-x: auto; margin-top: 0.5rem;">
                             <table class="data-table financial-table" style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -704,9 +1061,9 @@
                         <div id="holdings-trend-notes" style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;">
                             <!-- Populated dynamically -->
                         </div>
+                            </div>
+                        </div>
                     </div>
-
-
 
                 
             </div>
@@ -768,6 +1125,27 @@
         document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
             document.querySelector('.nav-links').classList.toggle('active');
         });
+
+        function navScrollTo(sectionId, element) {
+            // Remove active class from all nav links
+            document.querySelectorAll('.page-nav a').forEach(a => a.classList.remove('active'));
+            // Add active class to clicked link
+            if (element) {
+                element.classList.add('active');
+            }
+            
+            const section = document.getElementById(sectionId);
+            if (section) {
+                // If it's an accordion, make sure it's open
+                if (section.classList.contains('collapsible-section')) {
+                    section.classList.add('active');
+                }
+                
+                // Scroll with offset for sticky nav
+                const y = section.getBoundingClientRect().top + window.scrollY - 180;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }
+        }
     </script>
 </body>
 </html>
