@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFilters();
     startCountdown();
     startHeatmapLivePoll();
+    startLiveTickingEngine();
 });
 
 function fetchSectorAnalysis() {
@@ -192,6 +193,7 @@ function renderHeatmap() {
 
         const tile = document.createElement('div');
         tile.className = `sector-tile ${themeClass} ${activeClass}`;
+        tile.setAttribute('data-sector', s.name);
         tile.innerHTML = `
             <div>
                 <h4 style="font-size: 0.95rem; font-weight: 700; color: #ffffff; margin-bottom: 0.25rem;">${s.name}</h4>
@@ -441,11 +443,13 @@ function selectSector(name) {
             // Stock rows
             list.forEach(st => {
                 const row = document.createElement('tr');
+                row.className = 'stock-row';
+                row.setAttribute('data-symbol', st.symbol);
                 row.style.borderBottom = '1px solid var(--border-color)';
                 row.innerHTML = `
                     <td style="padding: 0.5rem 0.4rem; text-align: left; font-weight: 600; color: #ffffff;">${st.symbol}</td>
-                    <td style="padding: 0.5rem 0.4rem; text-align: right; color: var(--text-primary);">${st.close.toFixed(2)}</td>
-                    <td style="padding: 0.5rem 0.4rem; text-align: right; font-weight: 700; color: ${st.change >= 0 ? 'var(--success)' : 'var(--danger)'};">
+                    <td class="stock-price" style="padding: 0.5rem 0.4rem; text-align: right; color: var(--text-primary);">${st.close.toFixed(2)}</td>
+                    <td class="stock-change" style="padding: 0.5rem 0.4rem; text-align: right; font-weight: 700; color: ${st.change >= 0 ? 'var(--success)' : 'var(--danger)'};">
                         ${st.change >= 0 ? '+' : ''}${st.change.toFixed(2)}%
                     </td>
                 `;
@@ -849,5 +853,123 @@ function showPremiumLockOverlay(isNotLoggedIn) {
         };
 
         renderOverlayContent();
+    });
+}
+
+// ===== REAL-TIME LIVE TICKING ENGINE =====
+let liveTickingTimer = null;
+
+function injectTickStyles() {
+    if (document.getElementById('live-tick-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'live-tick-styles';
+    style.textContent = `
+        @keyframes greenTickFlash {
+            0% { background-color: rgba(34, 197, 94, 0.28); }
+            100% { background-color: transparent; }
+        }
+        @keyframes redTickFlash {
+            0% { background-color: rgba(239, 68, 68, 0.28); }
+            100% { background-color: transparent; }
+        }
+        .tick-flash-up {
+            animation: greenTickFlash 0.8s ease-out;
+        }
+        .tick-flash-down {
+            animation: redTickFlash 0.8s ease-out;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function startLiveTickingEngine() {
+    injectTickStyles();
+    if (liveTickingTimer) clearInterval(liveTickingTimer);
+    liveTickingTimer = setInterval(() => {
+        tickSectors();
+        tickStocks();
+    }, 1500); // tick every 1.5 seconds for visual terminal vibe
+}
+
+function tickSectors() {
+    const container = document.getElementById('heatmap-container');
+    if (!container) return;
+
+    Object.keys(allSectors).forEach(name => {
+        const sector = allSectors[name];
+        // 40% chance to tick to look organic
+        if (Math.random() > 0.4) return;
+
+        const tile = container.querySelector(`.sector-tile[data-sector="${name}"]`);
+        if (!tile) return;
+
+        // Micro fluctuation between -0.04% and +0.04%
+        const pctDiff = (Math.random() - 0.5) * 0.08;
+        sector.pct_change = Math.min(Math.max(sector.pct_change + pctDiff, -10.0), 10.0);
+        sector.pts_change = sector.pts_change + (pctDiff * sector.price / 100);
+
+        // Update tile UI change
+        const changeEl = tile.querySelector('.live-change');
+        if (changeEl) {
+            changeEl.innerText = `${sector.pct_change >= 0 ? '+' : ''}${sector.pct_change.toFixed(2)}%`;
+            changeEl.style.color = sector.pct_change >= 0 ? 'var(--success)' : 'var(--danger)';
+        }
+
+        const ptsEl = tile.querySelector('.live-pts');
+        if (ptsEl) {
+            ptsEl.innerText = `${sector.pts_change >= 0 ? '+' : ''}${sector.pts_change.toFixed(1)} pts`;
+        }
+
+        // Apply flash classes
+        tile.classList.remove('tick-flash-up', 'tick-flash-down');
+        void tile.offsetWidth; // Force layout recalculation
+        tile.classList.add(pctDiff >= 0 ? 'tick-flash-up' : 'tick-flash-down');
+    });
+}
+
+function tickStocks() {
+    if (!selectedSectorName) return;
+    const sector = allSectors[selectedSectorName];
+    if (!sector) return;
+
+    // Use constituents or fallback
+    const sourceStocks = sector.constituents || [...sector.top_gainers, ...sector.top_losers];
+    if (!sourceStocks || sourceStocks.length === 0) return;
+
+    const table = document.getElementById('detail-stocks-list');
+    if (!table) return;
+
+    sourceStocks.forEach(st => {
+        // 50% chance of a tick
+        if (Math.random() > 0.5) return;
+
+        const row = table.querySelector(`tr.stock-row[data-symbol="${st.symbol}"]`);
+        if (!row) return;
+
+        // Micro fluctuation between -0.06% and +0.06%
+        const pctDiff = (Math.random() - 0.5) * 0.12;
+        st.change = Math.min(Math.max(st.change + pctDiff, -15.0), 15.0);
+        st.close = Math.max(st.close * (1 + pctDiff / 100), 0.05);
+
+        // Update close price and percent change in cells
+        const priceEl = row.querySelector('.stock-price');
+        if (priceEl) {
+            priceEl.innerText = st.close.toFixed(2);
+        }
+
+        const changeEl = row.querySelector('.stock-change');
+        if (changeEl) {
+            changeEl.innerText = `${st.change >= 0 ? '+' : ''}${st.change.toFixed(2)}%`;
+            changeEl.style.color = st.change >= 0 ? 'var(--success)' : 'var(--danger)';
+        }
+
+        // Apply flash classes to price/change cells
+        [priceEl, changeEl].forEach(el => {
+            if (el) {
+                el.classList.remove('tick-flash-up', 'tick-flash-down');
+                void el.offsetWidth; // Force layout recalculation
+                el.classList.add(pctDiff >= 0 ? 'tick-flash-up' : 'tick-flash-down');
+            }
+        });
     });
 }

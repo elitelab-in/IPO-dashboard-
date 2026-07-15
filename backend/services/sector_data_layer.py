@@ -85,6 +85,46 @@ SECTORS_CONFIG = {
     "Services": {
         "ticker": "^CNXSERVICE",
         "constituents": ["LT", "BHARTIARTL", "TCS", "INFY", "HDFCBANK", "ICICIBANK"]
+    },
+    "Cement": {
+        "ticker": "CEMENT.SYNTHETIC",
+        "constituents": ["ULTRACEMCO", "GRASIM", "AMBUJACEM", "ACC", "SHREECEM", "JKCEMENT", "RAMCOCEM"]
+    },
+    "Textiles": {
+        "ticker": "TEXTILES.SYNTHETIC",
+        "constituents": ["PAGEIND", "WELSPUNLIV", "TRIDENT", "ALOKINDS", "KPRMILL", "GARFIBRES", "LUXIND"]
+    },
+    "Agriculture": {
+        "ticker": "AGRICULTURE.SYNTHETIC",
+        "constituents": ["UPL", "PIIND", "COROMANDEL", "BAYERCROP", "CHAMBLFERT", "GNFC", "RCF", "GSFC"]
+    },
+    "Power & Utilities": {
+        "ticker": "POWER.SYNTHETIC",
+        "constituents": ["NTPC", "POWERGRID", "TATAPOWER", "ADANIPOWER", "SJVN", "NHPC", "IEX"]
+    },
+    "Retail & E-Commerce": {
+        "ticker": "RETAIL.SYNTHETIC",
+        "constituents": ["DMART", "TRENT", "ABFRL", "V2RETAIL", "SHOPERSTOP"]
+    },
+    "Tourism & Hospitality": {
+        "ticker": "TOURISM.SYNTHETIC",
+        "constituents": ["INDHOTEL", "EIHOTEL", "TAJGVK", "CHALET", "LEMONTREE", "EASEMYTRIP"]
+    },
+    "Logistics": {
+        "ticker": "LOGISTICS.SYNTHETIC",
+        "constituents": ["CONCOR", "DELHIVERY", "BLUEDART", "GATEWAY", "VRLLOG"]
+    },
+    "Aviation": {
+        "ticker": "AVIATION.SYNTHETIC",
+        "constituents": ["INDIGO", "IRCTC", "ADANIPORTS"]
+    },
+    "Diversified Conglomerates": {
+        "ticker": "DIVERSIFIED.SYNTHETIC",
+        "constituents": ["LT", "ITC", "RELIANCE", "GRASIM", "ADANIENT"]
+    },
+    "Paper & Forest Products": {
+        "ticker": "PAPER.SYNTHETIC",
+        "constituents": ["JKPAPER", "WSTCSTPAPR", "SESHAPAPER", "ANDHRAPAP"]
     }
 }
 

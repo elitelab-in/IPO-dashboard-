@@ -3607,9 +3607,64 @@ def register_page():
         return redirect(url_for('dashboard_page'))
     return send_from_directory(app.template_folder, 'register.html')
 
+@app.route('/forgot-password')
+def forgot_password_page():
+    if 'user_id' in session:
+        return redirect(url_for('dashboard_page'))
+    return send_from_directory(app.template_folder, 'forgot-password.html')
+
 @app.route('/pricing')
 def pricing_page():
     return send_from_directory(app.template_folder, 'pricing.html')
+
+@app.route('/api/auth/captcha', methods=['GET'])
+def get_captcha():
+    import random
+    import base64
+    chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ23456789"
+    captcha_text = "".join(random.choice(chars) for _ in range(5))
+    session['captcha'] = captcha_text.lower()
+    
+    svg_width = 140
+    svg_height = 45
+    
+    noise_lines = ""
+    for _ in range(5):
+        x1, y1 = random.randint(5, 40), random.randint(5, svg_height-5)
+        x2, y2 = random.randint(svg_width-40, svg_width-5), random.randint(5, svg_height-5)
+        color = random.choice(["#8B5CF6", "#10B981", "#3B82F6", "#F59E0B"])
+        noise_lines += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{color}" stroke-width="1.5" opacity="0.35"/>'
+
+    noise_dots = ""
+    for _ in range(25):
+        cx, cy = random.randint(5, svg_width-5), random.randint(5, svg_height-5)
+        r = random.uniform(0.8, 1.8)
+        color = random.choice(["#8B5CF6", "#10B981", "#3B82F6", "#60A5FA", "#A78BFA"])
+        noise_dots += f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{color}" opacity="0.3"/>'
+
+    text_nodes = ""
+    char_colors = ["#a78bfa", "#34d399", "#60a5fa", "#fbcfe8", "#fde047", "#fb923c"]
+    for i, char in enumerate(captcha_text):
+        x = 15 + i * 24
+        y = 30 + random.randint(-4, 4)
+        rot = random.randint(-15, 15)
+        color = random.choice(char_colors)
+        text_nodes += f'<text x="{x}" y="{y}" font-family="Courier New, monospace" font-size="28" font-weight="900" fill="{color}" transform="rotate({rot} {x} {y})">{char}</text>'
+
+    svg_content = f"""<svg width="{svg_width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#11111b" rx="8"/>
+        {noise_dots}
+        {noise_lines}
+        {text_nodes}
+    </svg>"""
+    
+    b64_svg = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
+    data_url = f"data:image/svg+xml;base64,{b64_svg}"
+    
+    return jsonify({
+        "status": "success",
+        "image": data_url
+    })
 
 @app.route('/dashboard')
 @login_required
@@ -3620,6 +3675,15 @@ def dashboard_page():
 @app.route('/api/auth/register', methods=['POST'])
 def api_register():
     data = request.get_json() or {}
+    
+    # Captcha verification
+    user_captcha = data.get('captcha', '').strip().lower()
+    expected_captcha = session.get('captcha', '')
+    if 'captcha' in session:
+        session.pop('captcha')
+    if not expected_captcha or user_captcha != expected_captcha:
+        return jsonify({"status": "error", "message": "Invalid security code (captcha)"}), 400
+        
     name = data.get('name', '').strip()
     email = data.get('email', '').strip().lower()
     password = data.get('password', '')
@@ -3748,6 +3812,15 @@ def api_google_login():
 @app.route('/api/auth/login', methods=['POST'])
 def api_login():
     data = request.get_json() or {}
+    
+    # Captcha verification
+    user_captcha = data.get('captcha', '').strip().lower()
+    expected_captcha = session.get('captcha', '')
+    if 'captcha' in session:
+        session.pop('captcha')
+    if not expected_captcha or user_captcha != expected_captcha:
+        return jsonify({"status": "error", "message": "Invalid security code (captcha)"}), 400
+        
     email = data.get('email', '').strip().lower()
     password = data.get('password', '')
     
@@ -3782,6 +3855,103 @@ def api_login():
 def api_logout():
     session.clear()
     return jsonify({"status": "success", "message": "Logged out successfully"})
+
+def send_text_email(recipient, subject, body_content):
+    if not SMTP_PASSWORD:
+        return False
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = SMTP_EMAIL
+    msg['To'] = recipient
+    
+    html = f"""
+    <html>
+      <head></head>
+      <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; background-color: #f9fafb; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 24px; text-align: center; border-bottom: 2px solid #8B5CF6;">
+                <h2 style="margin: 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: 0.5px;">EliteLab<span style="color:#8B5CF6;">.</span>in</h2>
+                <p style="margin: 4px 0 0 0; font-size: 13px; color: #94a3b8; font-weight: 500;">Security Notification</p>
+            </div>
+            <div style="padding: 30px; font-size: 15px; color: #334155;">
+                {body_content}
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 25px 0;">
+                <p style="font-size: 11px; color: #64748b; text-align: center; margin: 0; line-height: 1.5;">This is an automated security notification from EliteLab.in. Please do not reply to this email.</p>
+            </div>
+        </div>
+      </body>
+    </html>
+    """
+    msg.attach(MIMEText(html, 'html'))
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(SMTP_EMAIL, SMTP_PASSWORD)
+        server.sendmail(SMTP_EMAIL, recipient, msg.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print("SMTP Send Email Error:", e)
+        return False
+
+def generate_temp_password():
+    import random
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789"
+    return "".join(random.choice(chars) for _ in range(8))
+
+@app.route('/api/auth/forgot-password', methods=['POST'])
+def api_forgot_password():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    
+    if not email:
+        return jsonify({"status": "error", "message": "Email is required"}), 400
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name FROM users WHERE email = ?", (email,))
+    user = cursor.fetchone()
+    
+    if not user:
+        conn.close()
+        # Return success anyway for security reasons (prevents email harvesting)
+        return jsonify({
+            "status": "success",
+            "message": "If the email is registered, a new temporary password has been sent."
+        }), 200
+        
+    temp_pwd = generate_temp_password()
+    hashed_pwd = generate_password_hash(temp_pwd)
+    
+    try:
+        cursor.execute("UPDATE users SET password_hash = ? WHERE id = ?", (hashed_pwd, user['id']))
+        conn.commit()
+        conn.close()
+        
+        email_body = f"""
+        <p style="margin-top: 0; font-size: 16px; font-weight: 700; color: #0f172a;">Hello {user['name']},</p>
+        <p>A request was received to reset the password for your account. We have generated a new secure temporary password for you:</p>
+        <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 20px; font-size: 20px; font-weight: 800; font-family: monospace; letter-spacing: 2px; color: #0f172a; text-align: center; margin: 24px 0; max-width: 250px; margin-left: auto; margin-right: auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+            {temp_pwd}
+        </div>
+        <p>Please log in using this temporary password, and make sure to update it immediately inside your account profile dashboard settings.</p>
+        <p style="margin-bottom: 0;">If you did not request this reset, you can safely ignore this email or contact support if you suspect unauthorized access.</p>
+        """
+        
+        email_sent = send_text_email(email, "EliteLab • Temporary Password Reset", email_body)
+        if not email_sent:
+            return jsonify({
+                "status": "error",
+                "message": "Failed to send email. Please verify SMTP setup or try again."
+            }), 500
+            
+        return jsonify({
+            "status": "success",
+            "message": "A new temporary password has been sent to your email."
+        }), 200
+    except Exception as e:
+        if conn:
+            conn.close()
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/api/auth/status')
 def api_auth_status():

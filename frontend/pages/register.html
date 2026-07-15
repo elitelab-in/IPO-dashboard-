@@ -280,6 +280,16 @@
                     <label class="form-label" for="password">Password (min 6 characters)</label>
                     <input class="form-input" type="password" id="password" required minlength="6" placeholder="••••••••">
                 </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" for="captcha-input">Security Verification</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+                        <img id="captcha-img" src="" alt="Captcha Image" style="height: 42px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: #11111b; cursor: pointer; flex-shrink: 0; min-width: 120px;" onclick="loadCaptcha()">
+                        <button type="button" id="btn-refresh-captcha" onclick="loadCaptcha()" style="background: none; border: none; color: var(--accent-primary); font-size: 1.15rem; cursor: pointer; padding: 0.5rem; display: flex; align-items: center;" title="Refresh Captcha">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                    </div>
+                    <input class="form-input" type="text" id="captcha-input" required placeholder="Enter code above">
+                </div>
                 <button type="submit" class="btn-submit" id="btn-register-submit">
                     <i class="fa-solid fa-user-plus"></i> Create Account
                 </button>
@@ -338,6 +348,28 @@
             document.querySelector('.nav-links').classList.toggle('active');
         });
 
+        // Captcha loader
+        function loadCaptcha() {
+            const captchaImg = document.getElementById('captcha-img');
+            const captchaInput = document.getElementById('captcha-input');
+            if (captchaInput) captchaInput.value = '';
+            
+            fetch('/api/auth/captcha')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && captchaImg) {
+                        captchaImg.src = data.image;
+                    }
+                })
+                .catch(err => console.error('Failed to load captcha:', err));
+        }
+
+        document.getElementById('btn-show-email').addEventListener('click', function() {
+            this.style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+            loadCaptcha();
+        });
+
         // Form handler
         const registerForm = document.getElementById('register-form');
         const errorAlert = document.getElementById('error-alert');
@@ -354,11 +386,12 @@
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const captcha = document.getElementById('captcha-input').value.trim();
 
             fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
+                body: JSON.stringify({ name, email, password, captcha })
             })
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
             .then(res => {
@@ -373,6 +406,7 @@
                     errorAlert.style.display = 'block';
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Account';
+                    loadCaptcha(); // Refresh on failure
                 }
             })
             .catch(err => {
@@ -381,6 +415,7 @@
                 errorAlert.style.display = 'block';
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Account';
+                loadCaptcha();
             });
         });
     </script>
